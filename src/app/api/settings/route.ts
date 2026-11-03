@@ -13,5 +13,6 @@ export async function PUT(req: Request) {
     p.published = b.published;
   }
   if (typeof b.allowedOrigins === "string") p.allowedOrigins = b.allowedOrigins.split(/[\s,]+/).map((s: string) => s.trim()).filter(Boolean).slice(0, 50).join("\n");
+  if (typeof b.openOnLoad === "boolean") p.openOnLoad = b.openOnLoad;
   return NextResponse.json((await setSettings(p)));
 }

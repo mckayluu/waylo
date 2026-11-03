@@ -8,10 +8,11 @@ import { CopyButton } from "./CopyButton";
 export const dynamic = "force-dynamic";
 export default async function Settings() {
   const b = (await getBranding());
-  const snippet = mkSnippet();
+  const st = await getSettings();
+  const snippet = mkSnippet("default", !!st.openOnLoad);
   return (<>
     <PageHeader title="Settings" sub="Workspace details, chat branding and install settings." />
-    <div className="mb-6"><Card title="General"><GeneralForm initial={(await getSettings())} /></Card></div>
+    <div className="mb-6"><Card title="General"><GeneralForm initial={st} /></Card></div>
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="lg:col-span-3"><Card title="Sidebar branding"><BrandingForm initial={b} /></Card></div>
       <div className="space-y-6 lg:col-span-2">
