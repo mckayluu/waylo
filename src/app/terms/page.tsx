@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/Prose";
-export const metadata: Metadata = { title: "Terms of Service — Waylo" };
+export const metadata: Metadata = { title: "Terms of Service", alternates: { canonical: "/terms" } };
 export default function Terms() {
   return <LegalPage title="Terms of Service" updated="November 3, 2026">
     <p>These Terms govern your use of Waylo (the “Service”), operated by Waylo (“we”, “us”). By creating an account, embedding the widget, or using the Service, you agree to these Terms.</p>

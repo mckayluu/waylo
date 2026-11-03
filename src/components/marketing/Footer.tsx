@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Wordmark } from "./Header";
 export function Footer() {
   const cols: [string, [string, string][]][] = [
-    ["Product", [["Features", "/#features"], ["How it works", "/#how"], ["Pricing", "/pricing"], ["Live demo", "/demo"]]],
-    ["Docs", [["Docs home", "/docs"], ["Install guide", "/docs/install"], ["Embed options", "/docs/install#options"], ["JavaScript API", "/docs/install#api"]]],
+    ["Product", [["Features", "/features"], ["Use cases", "/use-cases"], ["Pricing", "/pricing"], ["FAQ", "/faq"], ["Live demo", "/demo"]]],
+    ["Docs", [["Docs home", "/docs"], ["Install guide", "/docs/install"], ["Embed modes", "/docs/embed-modes"], ["JavaScript API", "/docs/install#api"]]],
     ["Account", [["Sign in", "/admin/login"], ["Dashboard", "/admin"], ["Request access", "mailto:hello@waylo.ai?subject=Waylo%20access"]]],
     ["Legal", [["Terms", "/terms"], ["Privacy", "/privacy"]]],
   ];

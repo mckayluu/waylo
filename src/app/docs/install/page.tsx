@@ -1,13 +1,15 @@
+import { pageMeta, JsonLd, crumbsLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { DocsLayout } from "@/components/marketing/DocsLayout";
 import { Code } from "@/components/marketing/Code";
 import { snippet, WAYLO_URL } from "@/lib/embed";
-export const metadata: Metadata = { title: "Install guide — Waylo docs", description: "Add the Waylo chat widget to any website with one line of HTML." };
+export const metadata: Metadata = pageMeta("/docs/install", "Install guide: add Waylo to any website", "Add the Waylo AI chat widget to any website with one async script tag. Covers embed options, JavaScript API, domain allowlist, CMS notes, and troubleshooting.");
 const attrs: [string, string, string][] = [["data-site", "default", "Your workspace id."], ["data-mode", "launcher", "launcher (floating button), sidebar (always-open panel), or track (analytics only, no chat)."], ["data-position", "right", "right or left."], ["data-color", "#0f766e", "Launcher / accent color (any hex)."], ["data-open", "false", "true opens the chat on page load."]];
 const cms: [string, string][] = [["Webflow", "Site settings → Custom code → Footer code. Publish."], ["WordPress", "Use a header/footer code plugin, or add to your theme’s footer.php before </body>."], ["Squarespace", "Settings → Advanced → Code injection → Footer."], ["Wix", "Settings → Custom code → Add code → Body – end, all pages."], ["Shopify", "Online Store → Themes → Edit code → theme.liquid → paste before </body>."], ["Google Tag Manager", "New tag → Custom HTML → paste snippet → trigger: All Pages → Publish."], ["Next.js / React", "Add the tag to your root layout (e.g. next/script with strategy=\"afterInteractive\")."]];
 export default function Install() {
   const s = snippet();
   return <DocsLayout>
+    <JsonLd data={crumbsLd([["Docs", "/docs"], ["Install guide", "/docs/install"]])} />
     <p className="w-eyebrow">Install guide</p>
     <h1 className="mt-2">Install Waylo</h1>
     <p className="text-lg text-stone-600">One line of HTML adds a chat launcher to every page and starts tracking visitor journeys.</p>

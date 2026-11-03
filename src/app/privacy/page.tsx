@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/Prose";
-export const metadata: Metadata = { title: "Privacy Policy — Waylo" };
+export const metadata: Metadata = { title: "Privacy Policy", alternates: { canonical: "/privacy" } };
 export default function Privacy() {
   return <LegalPage title="Privacy Policy" updated="November 3, 2026">
     <p>This policy explains what information Waylo collects, how we use it, and your choices. It covers two groups: <b>customers</b> (businesses that use Waylo and their team members) and <b>visitors</b> (people who chat with a Waylo widget on a customer’s website). For visitor data, the customer is the controller and Waylo processes it on their behalf.</p>

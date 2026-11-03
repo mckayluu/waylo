@@ -5,8 +5,10 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { Section, Shell } from "@/components/marketing/Section";
 import { Code } from "@/components/marketing/Code";
+import { FactsBlock } from "@/components/marketing/Page";
+import { JsonLd, orgLd, appLd, faqLd, FAQS, DEFINITION } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Waylo — AI website chat that shows its sources", description: "AI website chat that answers visitors with cited sources, tracks buying intent, and hands hot leads to your team." };
+export const metadata: Metadata = { title: { absolute: "Waylo — AI website chat that shows its sources" }, description: "Waylo is AI website chat that answers visitors with cited sources from your pages, flags buying intent, and hands warm leads to Slack or your CRM. One-line install.", alternates: { canonical: "/" } };
 
 const ACCESS = "mailto:hello@waylo.ai?subject=Waylo%20early%20access";
 const features = [
@@ -21,16 +23,7 @@ const features = [
 ];
 const steps = [["Add your site", "Enter your domain and Waylo crawls your public pages."], ["Paste one line", "Drop the snippet into your site, CMS, or tag manager."], ["Answer visitors", "A chat launcher answers questions with cited sources, 24/7."], ["Act on signals", "Hot leads and handoffs land in Slack or your CRM."]];
 const outcomes = [["Visitors stop hunting through pages.", "They get a straight answer with a link."], ["You stop guessing who’s serious.", "Waylo flags buying signals as they happen."], ["Good leads stop slipping away.", "Handoff goes straight to Slack or your CRM."]];
-const faqs = [
-  ["What is Waylo?", "An AI chat for your website. It answers visitor questions using your own pages, cites its sources, and lets you know when someone looks ready to buy."],
-  ["Where do the answers come from?", "From the public HTML pages Waylo crawls on your site, plus any facts and rules you add. Each answer links to its sources. JavaScript-rendered pages and PDFs aren’t supported yet."],
-  ["What if Waylo doesn’t know something?", "It says so and offers to connect the visitor with your team instead of guessing. You can add facts to fill the gap."],
-  ["How long does install take?", "A few minutes. Paste one script tag before </body>, or add it through Google Tag Manager or your CMS’s custom-code settings."],
-  ["Will it slow my site down?", "No — the script loads with async, so it never blocks your page from rendering. The chat panel only loads when opened."],
-  ["Does it work with my CRM?", "Today via webhooks, which work with HubSpot, Salesforce, Zapier, Make, and most CRMs. Native apps are on the roadmap."],
-  ["Which AI model does it use?", "OpenAI models when connected. Your content is sent to OpenAI only to generate replies. See our Privacy Policy."],
-  ["Is Waylo available now?", "We’re in early access. Request access and we’ll set up your site with you."],
-];
+const faqs = FAQS;
 function ProductMock() {
   return (
     <div className="w-card overflow-hidden">
@@ -55,6 +48,7 @@ export default function Home() {
     <Shell>
       <Header />
       <main>
+        <JsonLd data={[orgLd, appLd, faqLd(FAQS)]} />
         <section className="px-5 pb-16 pt-20 sm:pt-28">
           <div className="mx-auto max-w-3xl text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-800"><span className="h-1.5 w-1.5 rounded-full bg-teal-600" />Early access · AI chat for your website</p>
@@ -77,12 +71,13 @@ export default function Home() {
           <div className="mx-auto mt-12 max-w-2xl"><Code label="Paste before </body>">{snippet()}</Code><p className="mt-3 text-center text-sm"><Link href="/docs/install" className="font-medium text-teal-700 hover:underline">Read the install guide →</Link></p></div>
           <p className="mt-10 text-center text-sm text-stone-500">Works with Webflow · WordPress · Squarespace · Wix · Shopify · Google Tag Manager · Slack · CRM webhooks</p>
         </Section>
+        <Section id="what" eyebrow="In short" title="What is Waylo?"><p className="mx-auto max-w-3xl text-center text-lg leading-8 text-stone-700">{DEFINITION}</p><div className="mt-10"><FactsBlock /></div><p className="mt-6 text-center text-sm"><Link href="/features" className="font-medium text-teal-700 hover:underline">All features →</Link> · <Link href="/use-cases" className="font-medium text-teal-700 hover:underline">Use cases →</Link></p></Section>
         <Section id="pricing" eyebrow="Pricing" title="Simple plans while we’re in early access">
           <div className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-3">{[["Trial", "$0", "1 site · 500 AI messages"], ["Starter", "$79/mo", "3,000 messages · webhooks · handoff"], ["Growth", "$249/mo", "3 sites · 15,000 messages · Audiences"]].map(([n, p, d]) => <div key={n} className="w-card p-6 text-center"><p className="font-semibold">{n}</p><p className="mt-2 text-3xl font-semibold tracking-tight">{p}</p><p className="mt-2 text-sm text-stone-600">{d}</p></div>)}</div>
           <p className="mt-8 text-center"><Link href="/pricing" className="w-btn-ghost">Compare plans →</Link></p>
         </Section>
         <Section id="faq" eyebrow="FAQ" title="Questions, answered" className="bg-white">
-          <div className="mx-auto max-w-3xl divide-y divide-stone-200 border-y border-stone-200">{faqs.map(([q, a]) => <details key={q} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between font-medium">{q}<span className="text-teal-700 transition group-open:rotate-45">+</span></summary><p className="mt-3 text-sm leading-6 text-stone-600">{a}</p></details>)}</div>
+          <div className="mx-auto max-w-3xl divide-y divide-stone-200 border-y border-stone-200">{faqs.map(([q, a]) => <details key={q} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between font-medium"><h3>{q}</h3><span className="text-teal-700 transition group-open:rotate-45">+</span></summary><p className="mt-3 text-sm leading-6 text-stone-600">{a}</p></details>)}</div>
         </Section>
         <section className="px-5 py-20"><div className="mx-auto max-w-4xl rounded-2xl bg-teal-700 px-8 py-14 text-center text-white"><h2 className="text-3xl font-semibold tracking-tight">Give every visitor a straight answer</h2><p className="mt-3 text-teal-100">Ask the demo a question and watch the signal land in the dashboard. We’re onboarding our first teams now.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><a href={ACCESS} className="rounded-lg bg-white px-5 py-3 font-medium text-teal-800 hover:bg-teal-50">Request access</a><Link href="/demo" className="rounded-lg border border-teal-400 px-5 py-3 font-medium hover:bg-teal-800">Try the live demo</Link></div></div></section>
       </main>

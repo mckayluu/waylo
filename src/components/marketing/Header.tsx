@@ -4,7 +4,7 @@ export function Wordmark({ invert = false }: { invert?: boolean }) {
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img src="/brand/mark.svg" alt="" width={28} height={28} className="h-7 w-7" />Waylo</Link>;
 }
-const nav: [string, string][] = [["Product", "/#product"], ["How it works", "/#how"], ["Pricing", "/pricing"], ["Docs", "/docs"]];
+const nav: [string, string][] = [["Features", "/features"], ["Use cases", "/use-cases"], ["Pricing", "/pricing"], ["Docs", "/docs"], ["FAQ", "/faq"]];
 export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-stone-200/80 bg-stone-50/85 backdrop-blur">

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Header } from "./Header"; import { Footer } from "./Footer"; import { Shell } from "./Section";
-const nav: [string, string][] = [["Overview", "/docs"], ["Install guide", "/docs/install"], ["Embed options", "/docs/install#options"], ["JavaScript API", "/docs/install#api"], ["Allow your domain", "/docs/install#allowlist"], ["CMS notes", "/docs/install#cms"], ["Troubleshooting", "/docs/install#troubleshooting"]];
+const nav: [string, string][] = [["Overview", "/docs"], ["Install guide", "/docs/install"], ["Embed modes", "/docs/embed-modes"], ["All attributes", "/docs/install#options"], ["JavaScript API", "/docs/install#api"], ["Allow your domain", "/docs/install#allowlist"], ["CMS notes", "/docs/install#cms"], ["Troubleshooting", "/docs/install#troubleshooting"]];
 export function DocsLayout({ children }: { children: React.ReactNode }) {
   return <Shell><Header /><div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-[200px_1fr]">
     <aside className="hidden md:block"><p className="w-eyebrow">Docs</p><ul className="sticky top-24 mt-3 space-y-2 text-sm">{nav.map(([l, h]) => <li key={h}><Link href={h} className="text-stone-600 hover:text-teal-700">{l}</Link></li>)}</ul></aside>
