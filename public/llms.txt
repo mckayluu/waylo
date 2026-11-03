@@ -23,3 +23,8 @@ Site: https://waylo-j5hv.onrender.com · Contact: hello@waylo.ai · Status: earl
 - [Docs](https://waylo-j5hv.onrender.com/docs)
 - [Install guide](https://waylo-j5hv.onrender.com/docs/install)
 - [Embed modes](https://waylo-j5hv.onrender.com/docs/embed-modes)
+- [Resources hub](https://waylo-j5hv.onrender.com/resources)
+- [Waylo for marketing teams](https://waylo-j5hv.onrender.com/solutions/marketing)
+- [Waylo for sales teams](https://waylo-j5hv.onrender.com/solutions/sales)
+- [Waylo for SaaS websites & docs](https://waylo-j5hv.onrender.com/solutions/saas)
+- [Waylo for agencies](https://waylo-j5hv.onrender.com/solutions/agencies)

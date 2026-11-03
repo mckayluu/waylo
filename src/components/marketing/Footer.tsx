@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Wordmark } from "./Header";
 export function Footer() {
   const cols: [string, [string, string][]][] = [
-    ["Product", [["Features", "/features"], ["Use cases", "/use-cases"], ["Pricing", "/pricing"], ["FAQ", "/faq"], ["Live demo", "/demo"]]],
-    ["Docs", [["Docs home", "/docs"], ["Install guide", "/docs/install"], ["Embed modes", "/docs/embed-modes"], ["JavaScript API", "/docs/install#api"]]],
-    ["Account", [["Sign in", "/admin/login"], ["Dashboard", "/admin"], ["Request access", "mailto:hello@waylo.ai?subject=Waylo%20access"]]],
-    ["Legal", [["Terms", "/terms"], ["Privacy", "/privacy"]]],
+    ["Product", [["Features", "/features"], ["Cited answers", "/features#answers"], ["Intent signals", "/features#signals"], ["Lead handoff", "/features#handoff"], ["Embed modes", "/docs/embed-modes"], ["Pricing", "/pricing"], ["Live demo", "/demo"]]],
+    ["Solutions", [["All use cases", "/use-cases"], ["Marketing teams", "/solutions/marketing"], ["Sales teams", "/solutions/sales"], ["SaaS & docs", "/solutions/saas"], ["Agencies", "/solutions/agencies"]]],
+    ["Resources", [["Resources hub", "/resources"], ["Documentation", "/docs"], ["Install guide", "/docs/install"], ["JavaScript API", "/docs/install#api"], ["FAQ", "/faq"]]],
+    ["Account & legal", [["Sign in", "/admin/login"], ["Request access", "mailto:hello@waylo.ai?subject=Waylo%20access"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
   ];
   return (
     <footer className="relative bg-stone-950 text-stone-300"><div className="w-accent-line" />
