@@ -3,12 +3,13 @@ import { Wordmark } from "./Header";
 export function Footer() {
   const cols: [string, [string, string][]][] = [
     ["Product", [["Features", "/#features"], ["How it works", "/#how"], ["Pricing", "/pricing"], ["Live demo", "/demo"]]],
+    ["Docs", [["Docs home", "/docs"], ["Install guide", "/docs/install"], ["Embed options", "/docs/install#options"], ["JavaScript API", "/docs/install#api"]]],
     ["Account", [["Sign in", "/admin/login"], ["Dashboard", "/admin"], ["Request access", "mailto:hello@waylo.ai?subject=Waylo%20access"]]],
     ["Legal", [["Terms", "/terms"], ["Privacy", "/privacy"]]],
   ];
   return (
     <footer className="border-t border-stone-200 bg-white">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-5">
         <div><Wordmark /><p className="mt-3 text-sm text-stone-500">Website conversations, turned into sales signals.</p></div>
         {cols.map(([h, links]) => (
           <div key={h}><p className="text-xs font-semibold uppercase tracking-wider text-stone-500">{h}</p>
