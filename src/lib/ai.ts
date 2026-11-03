@@ -1,0 +1,105 @@
+// Responder: uses OpenAI if OPENAI_API_KEY is set, otherwise a mock grounded responder.
+import { getGuidance, getSettings, type Citation, type Message, type Fact } from "./store";
+import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl } from "./retrieve";
+
+export type Answer = { text: string; citations: Citation[] };
+const cite = (ps: { title: string; url: string }[]) => ps.map(({ title, url }) => ({ title, url }));
+
+const STOP = new Set("the a an is are was what how do does can i you we our your to of and or for in on it with be my me about".split(" "));
+const words = (s: string) => (s.toLowerCase().match(/[a-z0-9$]+/g) || []).filter((w) => w.length > 2 && !STOP.has(w));
+// Facts whose words overlap the question (mock retrieval).
+function matchFacts(text: string, facts: Fact[]) {
+  const q = new Set(words(text));
+  return facts.filter((f) => words(f.text).some((w) => q.has(w) || q.has(w.replace(/s$/, ""))));
+}
+export async function guidancePrompt() {
+  const g = (await getGuidance()); const st = (await getSettings());
+  return [
+    `COMPANY: ${st.siteName}` + (st.companyProfile ? `\nCOMPANY PROFILE (authoritative):\n${st.companyProfile}` : ""),
+    g.facts.length && `AUTHORITATIVE FACTS (override knowledge pages if they conflict):\n${g.facts.map((f) => "- " + f.text).join("\n")}`,
+    g.rules.length && `RULES (always obey):\n${g.rules.map((r) => "- " + r.text).join("\n")}`,
+    g.skills.length && `SKILLS (playbooks; follow when the visitor's intent matches):\n${g.skills.map((k) => `- ${k.name}: ${k.instructions}`).join("\n")}`,
+  ].filter(Boolean).join("\n\n");
+}
+
+async function mock(text: string, signals: string[], hasEmail: boolean): Promise<Answer> {
+  const g = (await getGuidance()); const facts = matchFacts(text, g.facts);
+  const noPricing = g.rules.some((r) => /pric/i.test(r.text) && /(never|don'?t|do not)/i.test(r.text));
+  let rel = (await retrieve(text));
+  const st = (await getSettings());
+  if (st.companyProfile && /\b(who are you|about (you|the company|us)|what (do|does) (you|they|the company) do|company|tell me about)\b/i.test(text))
+    return { text: `**About ${st.siteName}:** ${st.companyProfile}`, citations: [] };
+  if (noPricing) rel = rel.filter((k) => k.url !== "/docs/pricing" && !/pric/i.test(k.title));
+  const skill = g.skills.find((k) => words(k.name).some((w) => new Set(words(text)).has(w)));
+  const tail = skill ? `\n\n_${skill.instructions}_` : "";
+  if (facts.length) {
+    const out = facts.map((f) => f.text).join("\n\n") + (rel.length ? "\n\n" + rel.map((k) => k.summary).join("\n\n") : "");
+    return { text: out + tail, citations: cite(rel) };
+  }
+  if (noPricing && signals.includes("pricing") && rel.length === 0)
+    return { text: "I can't quote pricing here — leave your details in the **Contact** tab and the team will send exact numbers." + tail, citations: [] };
+  if (/^(hi|hello|hey)\b/i.test(text.trim()) && rel.length === 0)
+    return { text: "Hi! I can help with:\n- **Pricing** and plans\n- **Installing** the sidebar\n- **Booking a demo**\n\nWhat would you like to know?", citations: [] };
+  if (rel.length === 0)
+    return { text: "I couldn't find that on this site yet. Could you tell me a bit more — or leave a message in the **Contact** tab and the team will follow up?", citations: [] };
+  let out = (await hasCrawl()) ? rel.map((k, i) => `${k.summary} [${i + 1}]`).join("\n\n") : rel.map((k) => k.summary).join("\n\n");
+  if (signals.includes("demo") || signals.includes("pricing"))
+    out += hasEmail ? "\n\nThanks — the team will follow up shortly." : "\n\nWant a tailored walkthrough? Use **Contact → Book a demo**.";
+  return { text: out + tail, citations: cite(rel) };
+}
+
+export type OnDelta = (t: string) => void | Promise<void>;
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+async function simulate(text: string, onDelta: OnDelta) {
+  for (const tok of text.match(/\s*\S+/g) || []) { await onDelta(tok); await sleep(18 + Math.random() * 22); }
+}
+async function systemPrompt(src: { title: string; url: string; summary: string }[]) {
+  return `You are Waylo's concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance; if unsure, suggest the Contact tab. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
+}
+function parse(raw: string, src: { title: string; url: string }[]): Answer {
+  const m = raw.match(/\n?SOURCES:\s*([^\n]*)\s*$/i);
+  const nums = m ? (m[1].match(/\d+/g) || []).map(Number) : [];
+  return { text: (m ? raw.slice(0, m.index) : raw).trim(), citations: cite(nums.map((n) => src[n - 1]).filter(Boolean).slice(0, 3)) };
+}
+
+/** Answer a visitor. If onDelta is given, text is streamed (real OpenAI streaming, or simulated for the mock). */
+export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta): Promise<Answer> {
+  const key = process.env.OPENAI_API_KEY;
+  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); if (onDelta) await simulate(a.text, onDelta); return a; };
+  if (!key) return fallback();
+  const src = (await retrieveForLLM(text));
+  let emitted = 0;
+  try {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || "gpt-4o-mini", stream: !!onDelta,
+        messages: [{ role: "system", content: (await systemPrompt(src)) }, ...history.map((m) => ({ role: m.role === "visitor" ? "user" : "assistant", content: m.text }))],
+      }),
+    });
+    if (!r.ok) throw new Error(`OpenAI ${r.status}`);
+    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; return raw ? parse(raw, src) : (await fallback()); }
+    // Stream, holding back anything that might be the trailing "SOURCES:" line.
+    const reader = r.body!.getReader(); const dec = new TextDecoder(); let buf = "", raw = "";
+    for (;;) {
+      const { done, value } = await reader.read(); if (done) break;
+      buf += dec.decode(value, { stream: true }); const lines = buf.split("\n"); buf = lines.pop()!;
+      for (const l of lines) {
+        if (!l.startsWith("data:")) continue; const d = l.slice(5).trim(); if (d === "[DONE]") continue;
+        try { raw += JSON.parse(d).choices?.[0]?.delta?.content || ""; } catch {}
+      }
+      const cut = raw.search(/\n?\s*S(O(U(R(C(E(S(:)?)?)?)?)?)?)?\s*$/i); // possible start of SOURCES
+      const safe = (cut >= 0 ? raw.slice(0, cut) : raw).replace(/\s+$/, (w) => w.slice(0, 0));
+      const stop = raw.search(/\n\s*SOURCES:/i); const upto = stop >= 0 ? Math.min(stop, safe.length) : safe.length;
+      if (upto > emitted) { await onDelta(raw.slice(emitted, upto)); emitted = upto; }
+    }
+    if (!raw) return fallback();
+    const a = parse(raw, src);
+    if (a.text.length > emitted) await onDelta(a.text.slice(emitted));
+    return a;
+  } catch {
+    if (emitted === 0) return fallback();
+    return { text: "", citations: [] };
+  }
+}

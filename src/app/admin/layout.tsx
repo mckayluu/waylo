@@ -1,0 +1,38 @@
+import Link from "next/link";
+import { AdminNav } from "./AdminNav";
+import { getSettings } from "@/lib/store";
+import { currentSession } from "@/lib/auth";
+import { authEnabled } from "@/lib/session";
+export const dynamic = "force-dynamic";
+// TODO(auth): gate /admin behind login before any real deployment.
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const st = (await getSettings()); const auth = authEnabled(); const s = await currentSession();
+  if (auth && !s) return <>{children}</>; // login / invite pages render bare (middleware guards the rest)
+  const who = s?.email || "Owner"; const ini = who.split(/[@.\s]/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toUpperCase()).join("");
+  return (
+    <div className="min-h-screen bg-stone-50 text-stone-800 md:flex">
+      <aside className="sticky top-0 z-20 flex shrink-0 items-center gap-4 bg-[#0d1b1e] px-3 py-2 md:h-screen md:w-60 md:flex-col md:items-stretch md:px-3 md:py-4">
+        <Link href="/admin" className="flex items-center gap-2.5 px-2 md:mb-6">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-teal-600 text-[15px] font-bold text-white">W</span>
+          <span className="hidden text-[15px] font-semibold tracking-tight text-white md:inline">Waylo</span>
+        </Link>
+        <p className="mb-2 hidden px-3 text-[10px] font-semibold uppercase tracking-widest text-stone-500 md:block">Workspace</p>
+        <AdminNav />
+        <div className="mt-auto hidden space-y-1 md:block">
+          <Link href="/demo" target="_blank" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-stone-400 hover:bg-white/5 hover:text-stone-200">Open live demo <span>↗</span></Link>
+        </div>
+      </aside>
+      <div className="min-w-0 flex-1">
+        <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-stone-200 bg-white/85 px-6 backdrop-blur">
+          <div className="flex items-center gap-2 text-sm"><span className="font-medium text-stone-800">{st.siteName}</span>{st.published ? <span className="rounded-md bg-teal-50 px-1.5 py-0.5 text-[11px] font-medium text-teal-800 ring-1 ring-inset ring-teal-200">Live</span> : <span className="rounded-md bg-amber-50 px-1.5 py-0.5 text-[11px] font-medium text-amber-800 ring-1 ring-inset ring-amber-200">Preview only</span>}</div>
+          <div className="flex items-center gap-3">
+            <Link href="/demo" target="_blank" className="hidden text-sm text-stone-500 hover:text-stone-800 sm:inline">Preview widget</Link>
+            <span className="grid h-8 w-8 place-items-center rounded-full border border-stone-200 text-xs text-stone-500" title="Help">?</span>
+            <span className="flex items-center gap-2 rounded-full border border-stone-200 py-1 pl-1 pr-3 text-sm" title={`${who} · ${s?.role}`}><span className="grid h-6 w-6 place-items-center rounded-full bg-teal-700 text-[11px] font-semibold text-white">{ini || "W"}</span><span className="hidden text-stone-700 sm:inline">{auth ? who : "Local owner"}</span><span className="hidden text-[11px] text-stone-400 sm:inline">{s?.role}</span></span>{auth && <form action="/api/auth/logout" method="post"><button className="text-sm text-stone-500 hover:text-stone-800">Sign out</button></form>}
+          </div>
+        </header>
+        {!auth && <div className="border-b border-amber-200 bg-amber-50 px-6 py-2 text-center text-xs text-amber-900">Admin is open to anyone who can reach it. Set <code className="font-semibold">WAYLO_ADMIN_PASSWORD</code> to lock it.</div>}
+        <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+      </div>
+    </div>);
+}

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: waylo
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: DATABASE_URL
+        sync: false
+      - key: WAYLO_ADMIN_PASSWORD
+        sync: false
+      - key: WAYLO_PUBLIC_URL
+        sync: false
+      - key: WAYLO_SESSION_SECRET
+        generateValue: true

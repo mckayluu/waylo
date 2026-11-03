@@ -1,0 +1,28 @@
+export type Citation = { title: string; url: string };
+export type Message = { id: string; role: "visitor" | "bot"; text: string; at: string; citations?: Citation[]; feedback?: "up" | "down" };
+export type Lead = { id: string; name: string; email: string; message: string; intent: "message" | "demo"; consent: boolean; conversationId?: string; createdAt: string };
+export type Branding = { botName: string; accent: string; greeting: string };
+export const DEFAULT_BRANDING: Branding = { botName: "Waylo", accent: "#0f766e", greeting: "Hi! I'm Waylo's AI assistant. Ask me anything about the product, pricing, or setup." };
+export type Conversation = {
+  id: string; visitorName?: string; visitorEmail?: string; visitorType?: string;
+  themes: string[]; signals: string[]; messages: Message[]; createdAt: string; updatedAt: string;
+  crmContactId?: string; // set by CRM sync later
+  visitorId?: string;
+};
+export type Fact = { id: string; text: string; createdAt: string };
+export type Rule = { id: string; text: string; createdAt: string };
+export type Skill = { id: string; name: string; instructions: string; createdAt: string };
+export type Guidance = { facts: Fact[]; rules: Rule[]; skills: Skill[] };
+export type SiteSettings = { siteName: string; siteUrl: string; companyProfile: string; published: boolean };
+export const DEFAULT_SETTINGS: SiteSettings = { siteName: "Acme Co", siteUrl: "", companyProfile: "", published: false };
+export type Member = { id: string; email: string; role: "Viewer" | "Editor" | "Owner"; invitedAt: string; inviteToken?: string; passwordHash?: string; joinedAt?: string };
+export type AudienceRule = { field: "signal" | "path" | "referrer" | "pageviews" | "visitorType"; op: "contains" | "equals" | "gte"; value: string };
+export type Audience = { id: string; name: string; match: "all" | "any"; rules: AudienceRule[]; createdAt: string };
+export type Integrations = { slackWebhook: string; crmWebhook: string; notifyLeads: boolean; notifyHighIntent: boolean; notifyHandoffs: boolean };
+export const DEFAULT_INTEGRATIONS: Integrations = { slackWebhook: "", crmWebhook: "", notifyLeads: true, notifyHighIntent: true, notifyHandoffs: true };
+export type Handoff = { id: string; conversationId?: string; visitorId?: string; name?: string; email?: string; note?: string; status: "open" | "resolved"; createdAt: string; resolvedAt?: string };
+export type Delivery = { id: string; at: string; target: "slack" | "crm"; event: string; ok: boolean; status?: number; error?: string; test?: boolean };
+export type Pageview = { path: string; title?: string; referrer?: string; at: string };
+export type Visitor = { id: string; firstSeen: string; lastSeen: string; pageviews: Pageview[]; userAgent?: string };
+export type Page = { id: string; url: string; title: string; text: string; updatedAt: string };
+export type CrawlRun = { startUrl: string; startedAt: string; finishedAt?: string; pages: number; errors: number; status: "running" | "done" | "error"; message?: string };
