@@ -6,7 +6,7 @@ import type { SiteSettings } from "@/lib/store";
 export function GeneralForm({ initial }: { initial: SiteSettings }) {
   const [v, setV] = useState(initial); const [msg, setMsg] = useState(""); const [busy, setBusy] = useState(false); const r = useRouter();
   async function save(e: React.FormEvent) { e.preventDefault(); setBusy(true);
-    const res = await api<SiteSettings>("/api/settings", { method: "PUT", json: v }); setBusy(false);
+    const res = await api<SiteSettings>("/api/settings", { method: "PUT", json: { ...v, openOnLoad: !!v.openOnLoad } }); setBusy(false);
     if (!res.ok) { setMsg("✗ " + res.error); return; }
     setV(res.data); setMsg("✓ Saved"); setTimeout(() => setMsg(""), 2000); r.refresh(); }
   return <form onSubmit={save} className="space-y-3">

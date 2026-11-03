@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSettings, setSettings } from "@/lib/store";
 import { billingAllowsPublish } from "@/lib/stripe";
 export const dynamic = "force-dynamic";
-export async function GET() { return NextResponse.json((await getSettings())); }
+export async function GET() { const s = await getSettings(); return NextResponse.json({ ...s, openOnLoad: !!s.openOnLoad }); }
 export async function PUT(req: Request) {
   const b = await req.json().catch(() => ({})); const p: Record<string, unknown> = {};
   if (typeof b.siteName === "string" && b.siteName.trim()) p.siteName = b.siteName.trim().slice(0, 80);
@@ -14,5 +14,6 @@ export async function PUT(req: Request) {
   }
   if (typeof b.allowedOrigins === "string") p.allowedOrigins = b.allowedOrigins.split(/[\s,]+/).map((s: string) => s.trim()).filter(Boolean).slice(0, 50).join("\n");
   if (typeof b.openOnLoad === "boolean") p.openOnLoad = b.openOnLoad;
-  return NextResponse.json((await setSettings(p)));
+  const saved = await setSettings(p);
+  return NextResponse.json({ ...saved, openOnLoad: !!saved.openOnLoad });
 }
