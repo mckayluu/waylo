@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { api } from "@/lib/api-client";
 import type { Guidance } from "@/lib/store";
 import { PageHeader } from "../ui";
 type K = "facts" | "rules" | "skills";
@@ -13,19 +14,19 @@ export function GuidanceEditor({ initial }: { initial: Guidance }) {
   const [text, setText] = useState(""); const [name, setName] = useState(""); const [err, setErr] = useState("");
   async function add(e: React.FormEvent) {
     e.preventDefault(); setErr("");
-    const r = await fetch("/api/guidance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(tab === "skills" ? { kind: tab, name, instructions: text } : { kind: tab, text }) });
-    if (!r.ok) return setErr((await r.json()).error); const it = await r.json();
+    const r = await api("/api/guidance", { method: "POST", json: tab === "skills" ? { kind: tab, name, instructions: text } : { kind: tab, text } });
+    if (!r.ok) return setErr(r.error === "missing fields" ? (tab === "skills" ? "Add a name and instructions." : "Write something first.") : r.error); const it = r.data;
     setG({ ...g, [tab]: [...g[tab], it] }); setText(""); setName("");
   }
   async function del(id: string) {
-    await fetch(`/api/guidance?kind=${tab}&id=${id}`, { method: "DELETE" });
+    const r = await api(`/api/guidance?kind=${tab}&id=${id}`, { method: "DELETE" }); if (!r.ok) return setErr(r.error);
     setG({ ...g, [tab]: (g[tab] as { id: string }[]).filter((x) => x.id !== id) } as Guidance);
   }
   const f = "w-input";
   return (<div>
     <PageHeader title="Guidance" sub="Shape how Waylo answers. Everything here applies to every chat." />
     <div className="flex gap-1 rounded-lg border border-stone-200 bg-white p-1 text-sm shadow-sm w-fit">
-      {(Object.keys(INFO) as K[]).map((k) => <button key={k} onClick={() => { setTab(k); setErr(""); }} className={`rounded-md px-3.5 py-1.5 font-medium transition ${tab === k ? "bg-teal-700 text-white" : "text-stone-600 hover:bg-stone-100"}`}>{INFO[k].label} <span className={`ml-1 text-xs ${tab === k ? "text-teal-100" : "text-stone-400"}`}>{g[k].length}</span></button>)}
+      {(Object.keys(INFO) as K[]).map((k) => <button type="button" key={k} onClick={() => { setTab(k); setErr(""); }} className={`rounded-md px-3.5 py-1.5 font-medium transition ${tab === k ? "bg-teal-700 text-white" : "text-stone-600 hover:bg-stone-100"}`}>{INFO[k].label} <span className={`ml-1 text-xs ${tab === k ? "text-teal-100" : "text-stone-400"}`}>{g[k].length}</span></button>)}
     </div>
     <p className="mt-4 text-sm text-stone-600">{INFO[tab].blurb}</p>
     <form onSubmit={add} className="w-card mt-3 space-y-3 p-5">

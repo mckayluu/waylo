@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 export default function TagEditor({ id, initial }: { id: string; initial: string[] }) {
   const [tags, setTags] = useState(initial); const [val, setVal] = useState(""); const [saving, setSaving] = useState(false); const router = useRouter();
   async function save(next: string[]) {
-    setTags(next); setSaving(true);
-    await fetch(`/api/conversations/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ signals: next }) });
+    const prev = tags; setTags(next); setSaving(true);
+    const res = await fetch(`/api/conversations/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ signals: next }) }).catch(() => null);
+    if (!res?.ok) { setTags(prev); alert("Couldn't save tags" + (res ? ` (HTTP ${res.status})` : "")); }
     setSaving(false); router.refresh();
   }
   return (<section className="w-card">

@@ -7,12 +7,12 @@ export function IntegrationsForm({ initial }: { initial: Integrations }) {
   const flash = (k: string, m: string) => { setMsg((x) => ({ ...x, [k]: m })); setTimeout(() => setMsg((x) => ({ ...x, [k]: "" })), 4000); };
   async function save(k = "save") {
     setBusy(k); const res = await fetch("/api/integrations", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(v) });
-    const j = await res.json(); setBusy(""); if (!res.ok) { flash(k, j.error); return false; } setV(j); flash("save", "Saved"); r.refresh(); return true;
+    const j = await res.json().catch(() => ({})); setBusy(""); if (!res.ok) { flash(k, `✗ ${j.error || `HTTP ${res.status}`}`); return false; } setV(j); flash("save", "Saved"); r.refresh(); return true;
   }
   async function test(target: "slack" | "crm") {
     if (!(await save(target))) return; setBusy(target);
     const res = await fetch("/api/integrations/test", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ target }) });
-    const j = await res.json(); setBusy(""); flash(target, j.ok ? `✓ Delivered (HTTP ${j.status})` : `✗ ${j.error || `HTTP ${j.status}`}`); r.refresh();
+    const j = await res.json().catch(() => ({ ok: false, status: res.status })); setBusy(""); flash(target, j.ok ? `✓ Delivered (HTTP ${j.status})` : `✗ ${j.error || `HTTP ${j.status}`}`); r.refresh();
   }
   const Block = ({ k, title, desc, ph, help }: { k: "slackWebhook" | "crmWebhook"; title: string; desc: string; ph: string; help: React.ReactNode }) => {
     const t = k === "slackWebhook" ? "slack" : "crm";

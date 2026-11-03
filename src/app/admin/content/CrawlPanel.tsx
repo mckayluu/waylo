@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api-client";
 import type { CrawlRun } from "@/lib/store";
 export function CrawlPanel({ siteUrl, last }: { siteUrl: string; last?: CrawlRun }) {
   const [url, setUrl] = useState(siteUrl); const [max, setMax] = useState(50); const [busy, setBusy] = useState(false); const [msg, setMsg] = useState(""); const r = useRouter();
   async function go(e: React.FormEvent) {
     e.preventDefault(); setBusy(true); setMsg("Crawling… this can take a minute.");
-    const res = await fetch("/api/crawl", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url, max }) });
-    const j = await res.json(); setBusy(false);
-    setMsg(res.ok ? `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${j.errors ? ` · ${j.errors} errors` : ""}${j.message ? ` — ${j.message}` : ""}` : j.error || j.message || "Crawl failed");
+    const res = await api("/api/crawl", { method: "POST", json: { url, max } }); const j = res.data; setBusy(false);
+    setMsg(res.ok ? `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${j.errors ? ` · ${j.errors} errors` : ""}${j.message ? ` — ${j.message}` : ""}` : `Crawl failed — ${res.error}`);
     r.refresh();
   }
   return <form onSubmit={go} className="space-y-3">
