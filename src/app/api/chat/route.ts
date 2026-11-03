@@ -4,10 +4,12 @@ import { detectSignals, mergeSignals, inferVisitorType, EMAIL_RE } from "@/lib/s
 import { respond } from "@/lib/ai";
 import { syncConversation } from "@/lib/crm";
 import { notify } from "@/lib/notify";
+import { guard } from "@/lib/guard";
 export const dynamic = "force-dynamic";
 const VID = /^[a-zA-Z0-9_-]{6,64}$/;
 
 export async function POST(req: Request) {
+  { const g = await guard(req, "chat"); if (g) return g; }
   const { conversationId, text, visitorId, stream } = await req.json().catch(() => ({}));
   if (!text || typeof text !== "string") return NextResponse.json({ error: "text required" }, { status: 400 });
   const now = new Date().toISOString();

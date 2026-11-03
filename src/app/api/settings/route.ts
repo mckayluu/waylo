@@ -8,5 +8,6 @@ export async function PUT(req: Request) {
   if (typeof b.siteUrl === "string") { const u = b.siteUrl.trim(); p.siteUrl = !u ? "" : /^https?:\/\//i.test(u) ? u : "https://" + u; }
   if (typeof b.companyProfile === "string") p.companyProfile = b.companyProfile.trim().slice(0, 4000);
   if (typeof b.published === "boolean") p.published = b.published;
+  if (typeof b.allowedOrigins === "string") p.allowedOrigins = b.allowedOrigins.split(/[\s,]+/).map((s: string) => s.trim()).filter(Boolean).slice(0, 50).join("\n");
   return NextResponse.json((await setSettings(p)));
 }

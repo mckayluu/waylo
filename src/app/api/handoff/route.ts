@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { addHandoff, getConversation, listHandoffs, updateConversation } from "@/lib/store";
 import { EMAIL_RE } from "@/lib/signals";
 import { notify } from "@/lib/notify";
+import { guard } from "@/lib/guard";
 export const dynamic = "force-dynamic";
 // Visitor-facing: request a human.
 export async function POST(req: Request) {
+  { const g = await guard(req, "handoff"); if (g) return g; }
   const b = await req.json().catch(() => ({}));
   const conversationId = typeof b.conversationId === "string" ? b.conversationId : undefined;
   const c = conversationId ? (await getConversation(conversationId)) : undefined;

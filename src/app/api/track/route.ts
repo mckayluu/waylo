@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { trackPageview } from "@/lib/store";
+import { guard } from "@/lib/guard";
 export const dynamic = "force-dynamic";
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
 const VID = /^[a-zA-Z0-9_-]{6,64}$/;
 export async function OPTIONS() { return new Response(null, { status: 204, headers: CORS }); }
 export async function POST(req: Request) {
+  { const g = await guard(req, "track"); if (g) return g; }
   // Accept JSON or text/plain (sendBeacon) bodies.
   const b = await req.text().then((t) => { try { return JSON.parse(t); } catch { return {}; } });
   const visitorId = String(b.visitorId || ""), path = String(b.path || "").slice(0, 500);

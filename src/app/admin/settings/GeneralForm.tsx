@@ -13,6 +13,8 @@ export function GeneralForm({ initial }: { initial: SiteSettings }) {
       <p className="mt-1 text-xs text-stone-500">Where Content → Crawl starts. Waylo indexes same-site pages from here.</p></div>
     <div><label className="w-label">Company profile</label><textarea rows={5} className="w-input" placeholder="Who you are, what you sell, who it's for. Waylo treats this as authoritative." value={v.companyProfile} onChange={(e) => setV({ ...v, companyProfile: e.target.value })} />
       <p className="mt-1 text-xs text-stone-500">Added to every AI answer, like a fact.</p></div>
+    <div><label className="w-label">Allowed embed origins</label><textarea rows={3} className="w-input font-mono text-xs" placeholder={"https://yoursite.com\nhttps://www.yoursite.com"} value={v.allowedOrigins || ""} onChange={(e) => setV({ ...v, allowedOrigins: e.target.value })} />
+      <p className="mt-1 text-xs text-stone-500">One per line. When set (here or via WAYLO_ALLOWED_ORIGINS), public APIs reject other sites. Empty = any origin.</p></div>
     <label className="flex items-center gap-3 text-sm"><input type="checkbox" className="h-4 w-4 accent-teal-700" checked={v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} /><span><span className="font-medium text-stone-800">Sidebar published</span><span className="block text-xs text-stone-500">When off, the widget shows a “Preview only” banner.</span></span></label>
     <div className="flex items-center gap-3"><button disabled={busy} className="w-btn">{busy ? "Saving…" : "Save changes"}</button>{msg && <span className="text-sm text-teal-700">✓ {msg}</span>}</div>
   </form>;

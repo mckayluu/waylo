@@ -123,3 +123,8 @@ Console-style shell (`src/app/admin/layout.tsx` + `AdminNav.tsx`): dark teal-bla
 4. **CRM sync**: implement a `CrmProvider` (HubSpot first) — upsert contact, log signals as properties/timeline events.
 5. **AI**: LLM-based signal classification, knowledge base from customer docs, lead summaries.
 6. **Billing** (Stripe) and deploy (Vercel).
+
+## Security
+
+- **Rate limits** (per IP, per minute): chat 20, track 120, feedback 30, handoff 10, leads 10, login 10 (plus 5-failure lockout). Exceeding returns `429 {"error": ...}` with `Retry-After`. Limits are in-memory (`src/lib/guard.ts`) — fine for one instance; running multiple instances needs a shared store such as Redis / Render Key Value.
+- **Embed origins:** set `WAYLO_ALLOWED_ORIGINS` (comma-separated) or Settings → General → *Allowed embed origins*. When set, public APIs return `403` for other `Origin`s; same-site and no-Origin (server) requests are allowed. When unset, any origin is accepted and a warning is logged once.

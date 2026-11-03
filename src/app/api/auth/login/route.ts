@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { COOKIE, MAX_AGE, sign, authEnabled } from "@/lib/session";
 import { findMember } from "@/lib/store";
 import { checkPassword, safeEqual } from "@/lib/auth";
+import { guard } from "@/lib/guard";
 export const dynamic = "force-dynamic";
 const fails = new Map<string, { n: number; until: number }>();
 export async function POST(req: Request) {
+  { const g = await guard(req, "login"); if (g) return g; }
   if (!authEnabled()) return NextResponse.json({ ok: true, open: true });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "local"; const f = fails.get(ip);
   if (f && f.until > Date.now()) return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
