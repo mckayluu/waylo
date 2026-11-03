@@ -128,3 +128,10 @@ Console-style shell (`src/app/admin/layout.tsx` + `AdminNav.tsx`): dark teal-bla
 
 - **Rate limits** (per IP, per minute): chat 20, track 120, feedback 30, handoff 10, leads 10, login 10 (plus 5-failure lockout). Exceeding returns `429 {"error": ...}` with `Retry-After`. Limits are in-memory (`src/lib/guard.ts`) — fine for one instance; running multiple instances needs a shared store such as Redis / Render Key Value.
 - **Embed origins:** set `WAYLO_ALLOWED_ORIGINS` (comma-separated) or Settings → General → *Allowed embed origins*. When set, public APIs return `403` for other `Origin`s; same-site and no-Origin (server) requests are allowed. When unset, any origin is accepted and a warning is logged once.
+
+## Email: invites & password reset
+
+Set `RESEND_API_KEY` (and `WAYLO_FROM_EMAIL`, default `Waylo <onboarding@resend.dev>`) plus `WAYLO_PUBLIC_URL`.
+- **Invites:** creating a member emails the invite link; Copy link always works too.
+- **Password reset:** `/admin/login` → *Forgot password?* emails a 1-hour, single-use link to `/admin/reset/<token>` (rate-limited). Invited members only — the env owner changes `WAYLO_ADMIN_PASSWORD` on the host instead.
+- Without a key, nothing is sent: links are logged to the server console and the admin shows "Email not configured — copy link".

@@ -13,5 +13,6 @@ export function LoginForm({ next, askEmail }: { next: string; askEmail: boolean 
     <div><label className="w-label">Password</label><input className="w-input" type="password" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} required autoFocus /></div>
     {err && <p className="text-sm text-rose-600">{err}</p>}
     <button disabled={busy} className="w-btn w-full">{busy ? "Signing in…" : "Sign in"}</button>
+    <p className="text-center text-sm"><a href="/admin/forgot" className="text-teal-700 hover:underline">Forgot password?</a></p>
   </form>;
 }

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { addMember, findMember, listMembers, removeMember, updateMember } from "@/lib/store";
 import { EMAIL_RE } from "@/lib/signals";
+import { getSettings } from "@/lib/store";
+import { currentSession } from "@/lib/auth";
+import { publicUrl, sendInviteEmail } from "@/lib/email";
 export const dynamic = "force-dynamic";
 const ROLES = ["Viewer", "Editor", "Owner"];
 const pub = (m: Awaited<ReturnType<typeof listMembers>>[number]) => ({ id: m.id, email: m.email, role: m.role, invitedAt: m.invitedAt, joinedAt: m.joinedAt, inviteToken: m.passwordHash ? undefined : m.inviteToken });
@@ -11,7 +14,9 @@ export async function POST(req: Request) {
   if (!EMAIL_RE.test(em)) return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   if (!ROLES.includes(role)) return NextResponse.json({ error: "Bad role" }, { status: 400 });
   if ((await findMember({ email: em }))) return NextResponse.json({ error: "Already a member" }, { status: 409 });
-  return NextResponse.json(pub((await addMember(em, role))));
+  const m = await addMember(em, role);
+  const r = await sendInviteEmail(m.email, `${publicUrl()}/admin/invite/${m.inviteToken}`, { siteName: (await getSettings()).siteName, role: m.role, inviter: (await currentSession())?.email });
+  return NextResponse.json({ ...pub(m), emailSent: r.sent, emailNote: r.sent ? undefined : r.warning || r.error });
 }
 export async function PATCH(req: Request) {
   const { id, role } = await req.json().catch(() => ({}));

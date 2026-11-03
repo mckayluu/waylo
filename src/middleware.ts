@@ -15,7 +15,7 @@ function needed(path: string, method: string): Role {
 export async function middleware(req: NextRequest) {
   if (!process.env.WAYLO_ADMIN_PASSWORD) return NextResponse.next(); // open mode
   const { pathname } = req.nextUrl; const method = req.method;
-  if (pathname === "/admin/login" || pathname.startsWith("/admin/invite/")) return NextResponse.next();
+  if (pathname === "/admin/login" || pathname.startsWith("/admin/invite/") || pathname === "/admin/forgot" || pathname.startsWith("/admin/reset/")) return NextResponse.next();
   if (pathname.startsWith("/api/") && PUBLIC_API.some(([r, m]) => r.test(pathname) && m.includes(method))) return NextResponse.next();
   const s = await verify(req.cookies.get(COOKIE)?.value);
   if (pathname.startsWith("/api/")) {
