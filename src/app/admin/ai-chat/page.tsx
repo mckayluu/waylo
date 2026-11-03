@@ -1,10 +1,11 @@
+import { snippet } from "@/lib/embed";
 import Link from "next/link";
 import { stats, getBranding, getGuidance, getSettings, DEFAULT_BRANDING } from "@/lib/store";
 import { PageHeader, Card } from "../ui";
 import { PublishToggle } from "../PublishToggle";
 import { CopyButton } from "../settings/CopyButton";
 export const dynamic = "force-dynamic";
-const SNIPPET = `<script src="https://YOUR-DOMAIN/waylo.js" data-sidebar="true" async></script>`;
+const SNIPPET = snippet();
 export default async function AiChat() {
   const s = (await stats()), b = (await getBranding()), g = (await getGuidance()), st = (await getSettings());
   const steps = [

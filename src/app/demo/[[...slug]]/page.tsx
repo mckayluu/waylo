@@ -22,10 +22,10 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
         <div className="px-10 py-16">
           <h1 className="text-3xl font-bold">{p.title.replace("Acme Co — ", "")}</h1>
           <p className="mt-3 max-w-xl text-stone-600">{p.body}</p>
-          <p className="mt-8 text-xs text-stone-400">Embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-sidebar=&quot;true&quot;&gt;</code> · <a href="/admin/tracking" className="underline">Admin → Tracking</a></p>
+          <p className="mt-8 text-xs text-stone-400">Embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code> · <a href="/admin/tracking" className="underline">Admin → Tracking</a></p>
         </div>
       </div>
-      <Script src="/waylo.js" data-sidebar="true" strategy="afterInteractive" />
+      <Script src="/waylo.js" data-mode="launcher" strategy="afterInteractive" />
     </main>
   );
 }

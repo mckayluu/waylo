@@ -1,3 +1,4 @@
+import { snippet } from "@/lib/embed";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Header } from "@/components/marketing/Header";
@@ -65,7 +66,7 @@ export default function Home() {
         </Section>
         <Section id="how" eyebrow="How it works" title="Live in an afternoon" className="bg-white">
           <ol className="grid gap-8 md:grid-cols-4">{steps.map(([t, d], i) => <li key={t}><span className="grid h-9 w-9 place-items-center rounded-full bg-teal-700 text-sm font-semibold text-white">{i + 1}</span><h3 className="mt-4 font-semibold">{t}</h3><p className="mt-1 text-sm text-stone-600">{d}</p></li>)}</ol>
-          <pre className="mx-auto mt-12 max-w-2xl overflow-x-auto rounded-xl bg-stone-900 p-5 text-sm text-teal-200">{`<script src="https://YOUR-DOMAIN/waylo.js" data-sidebar="true" async></script>`}</pre>
+          <pre className="mx-auto mt-12 max-w-2xl overflow-x-auto rounded-xl bg-stone-900 p-5 text-sm text-teal-200">{snippet()}</pre>
         </Section>
         <Section id="pricing" eyebrow="Pricing" title="Simple plans while we’re in early access"><PricingCards /></Section>
         <Section id="faq" eyebrow="FAQ" title="Questions, answered" className="bg-white">

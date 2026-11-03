@@ -13,6 +13,7 @@ const NAV = [
   { href: "/admin/audiences", label: "Audiences", icon: I("M16 19v-1a4 4 0 0 0-8 0v1M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z") },
   { href: "/admin/members", label: "Members", icon: I("M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 20v-1a3 3 0 0 0-3-2.9") },
   { href: "/admin/integrations", label: "Integrations", icon: I("M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5") },
+  { href: "/admin/install", label: "Install", icon: I("M16 18l6-6-6-6M8 6l-6 6 6 6") },
   { href: "/admin/settings", label: "Settings", icon: I("M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4") },
 ];
 export function AdminNav() {
