@@ -44,11 +44,18 @@ export function MobileMenu() {
     const prev = document.body.style.overflow;
     document.addEventListener("keydown", k);
     document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", k); document.body.style.overflow = prev; };
+    const embeds = Array.from(document.querySelectorAll<HTMLElement>('button[aria-label="Chat with us"], iframe[title="Waylo chat"]'));
+    const saved = embeds.map((el) => el.style.display);
+    embeds.forEach((el) => { el.style.display = "none"; });
+    return () => {
+      document.removeEventListener("keydown", k);
+      document.body.style.overflow = prev;
+      embeds.forEach((el, i) => { el.style.display = saved[i]; });
+    };
   }, [open]);
   const close = () => setOpen(false);
   const drawer = (
-    <div className="fixed inset-0 z-[100] md:hidden" role="dialog" aria-modal="true" aria-label="Site menu">
+    <div className="fixed inset-0 z-[2147483000] md:hidden" role="dialog" aria-modal="true" aria-label="Site menu">
       <button type="button" aria-label="Close menu" tabIndex={-1} onClick={close} className="absolute inset-0 h-full w-full bg-stone-950/50 backdrop-blur-sm" />
       <div id="mobile-nav" className="absolute inset-y-0 right-0 flex h-[100dvh] w-[88%] max-w-sm flex-col bg-white shadow-2xl">
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-stone-200 px-5">
