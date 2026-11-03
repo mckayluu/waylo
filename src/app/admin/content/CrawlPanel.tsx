@@ -6,8 +6,11 @@ import type { CrawlRun } from "@/lib/store";
 export function CrawlPanel({ siteUrl, last }: { siteUrl: string; last?: CrawlRun }) {
   const [url, setUrl] = useState(siteUrl); const [max, setMax] = useState(50); const [busy, setBusy] = useState(false); const [msg, setMsg] = useState(""); const r = useRouter();
   async function go(e: React.FormEvent) {
-    e.preventDefault(); setBusy(true); setMsg("Crawling… this can take a minute.");
-    const res = await api("/api/crawl", { method: "POST", json: { url, max } }); const j = res.data; setBusy(false);
+    e.preventDefault();
+    const u = url.trim();
+    if (!u) { setMsg("Add a website URL first (or set it under Settings → General)."); return; }
+    setBusy(true); setMsg("Crawling… this can take a minute.");
+    const res = await api("/api/crawl", { method: "POST", json: { url: u, max } }); const j = res.data; setBusy(false);
     setMsg(res.ok ? `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${j.errors ? ` · ${j.errors} errors` : ""}${j.message ? ` — ${j.message}` : ""}` : `Crawl failed — ${res.error}`);
     r.refresh();
   }

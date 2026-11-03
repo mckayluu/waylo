@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHeader, Card, Checklist } from "../ui";
-import { listVisitors } from "@/lib/store";
+import { listVisitors, listConversations } from "@/lib/store";
 import { CopyButton } from "../settings/CopyButton";
 import { WAYLO_URL } from "@/lib/embed";
 import { SnippetBuilder } from "./SnippetBuilder";
@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 const Code = ({ children }: { children: string }) => <div className="relative"><pre className="overflow-x-auto rounded-xl bg-stone-900 p-4 pr-24 text-sm text-teal-200">{children}</pre><div className="absolute right-2 top-2"><CopyButton text={children} /></div></div>;
 export default async function Install() {
   const visitors = await listVisitors(); const live = visitors.length > 0;
+  const asked = (await listConversations()).some((c) => c.messages.some((m) => m.role === "visitor"));
   return (<>
     <PageHeader title="Install" sub="Add Waylo to any website with one line of HTML." />
     <div className="space-y-6">
@@ -19,7 +20,7 @@ export default async function Install() {
           { ok: live, label: "Publish your site with the snippet", desc: "Deploy or save the page where you pasted it." },
           { ok: live, label: "Open your site in a fresh tab", desc: "The Waylo chat button should appear bottom-right within a second." },
           { ok: live, label: "Check Tracking", desc: "Your visit shows up under Tracking almost immediately.", action: <Link href="/admin/tracking" className="w-btn-ghost">Tracking</Link> },
-          { ok: false, label: "Ask a question", desc: "It appears under Questions with the answer and sources.", action: <Link href="/admin/questions" className="w-btn-ghost">Questions</Link> },
+          { ok: asked, label: "Ask a question", desc: "It appears under Questions with the answer and sources.", action: <Link href="/admin/questions" className="w-btn-ghost">Questions</Link> },
         ]} />
         <p className="mt-3 text-xs text-stone-500">Nothing showing? Check the browser console for blocked scripts, confirm the snippet is on the live page (not just a draft), and that your domain is in the allowlist below if you set one.</p></Card>
       <Card title="3. Optional settings">
