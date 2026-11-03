@@ -6,8 +6,9 @@ export default async function Leads() {
   const leads = (await listLeads()); const demos = leads.filter((l) => l.intent === "demo").length;
   return (<>
     <PageHeader title="Leads" sub={`${leads.length} total · ${demos} demo requests · from the widget's Contact tab`} actions={<a href="/api/leads" className="w-btn-ghost">Export JSON</a>} />
+    {leads.length > 0 && <div className="mb-4 flex flex-wrap gap-2 text-sm">{[["Total", leads.length], ["Demo requests", demos], ["Messages", leads.length - demos]].map(([k, v]) => <span key={k} className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 shadow-sm"><span className="text-stone-500">{k}</span> <span className="ml-1 font-semibold tabular-nums text-stone-800">{v}</span></span>)}</div>}
     <Card pad={false}>
-      {leads.length === 0 ? <Empty title="No leads yet" body="When a visitor fills in the Contact tab, they land here." href="/demo" cta="Open demo" /> :
+      {leads.length === 0 ? <Empty title="No leads yet" body="When a visitor fills in the Contact tab, they land here." href="/demo" cta="Open demo" secondaryHref="/admin/install" secondaryCta="Install on your site" tip="Try submitting the Contact tab on the demo to see a lead appear." /> :
       <div className="overflow-x-auto"><table className="w-full text-sm">
         <thead className="border-b border-stone-100 bg-stone-50/60"><tr><th className="w-th">Contact</th><th className="w-th">Type</th><th className="w-th">Message</th><th className="w-th text-right">Received</th></tr></thead>
         <tbody className="divide-y divide-stone-100">{leads.map((l) => <tr key={l.id} className="align-top hover:bg-stone-50">

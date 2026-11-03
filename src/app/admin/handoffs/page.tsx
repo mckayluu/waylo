@@ -11,7 +11,7 @@ export default async function Handoffs({ searchParams }: { searchParams: { statu
     <div className="mb-4 flex w-fit gap-1 rounded-lg border border-stone-200 bg-white p-1 text-sm shadow-sm">
       {(["open", "resolved", "all"] as const).map((x) => <Link key={x} href={`?status=${x}`} className={`rounded-md px-3 py-1.5 font-medium capitalize ${st === x ? "bg-teal-700 text-white" : "text-stone-600 hover:bg-stone-100"}`}>{x} <span className="ml-1 text-xs opacity-70">{x === "all" ? all.length : all.filter((h) => h.status === x).length}</span></Link>)}
     </div>
-    <Card pad={false}>{rows.length === 0 ? <Empty title={st === "open" ? "No open handoffs" : "Nothing here"} body="When a visitor taps “Talk to a person” in the sidebar, the request lands here and in Slack (if connected)." /> :
+    <Card pad={false}>{rows.length === 0 ? <Empty title={st === "open" ? "No open handoffs" : "Nothing here"} body="When a visitor taps “Talk to a person” in the sidebar, the request lands here and in Slack (if connected)." tip="Connect Slack under Integrations to get pinged instantly." secondaryHref="/admin/integrations" secondaryCta="Integrations" /> :
       <ul className="divide-y divide-stone-100">{rows.map(async (h) => { const c = h.conversationId ? (await getConversation(h.conversationId)) : undefined; const who = h.name || h.email || c?.visitorName || c?.visitorEmail || "Anonymous visitor";
         const last = c?.messages.filter((m) => m.role === "visitor").at(-1)?.text;
         return <li key={h.id} className="flex flex-wrap items-center gap-4 px-5 py-4">

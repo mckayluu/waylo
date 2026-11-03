@@ -1,6 +1,6 @@
 import { snippet } from "@/lib/embed";
 import Link from "next/link";
-import { stats, getBranding, getGuidance, getSettings, DEFAULT_BRANDING } from "@/lib/store";
+import { stats, getBranding, getGuidance, getSettings, listVisitors, DEFAULT_BRANDING } from "@/lib/store";
 import { PageHeader, Card } from "../ui";
 import { PublishToggle } from "../PublishToggle";
 import { CopyButton } from "../settings/CopyButton";
@@ -11,7 +11,7 @@ export default async function AiChat() {
   const steps = [
     { n: 1, label: "Try it", desc: "Ask Waylo a question on the demo site.", ok: s.totalConversations > 0, action: <Link href="/demo" target="_blank" className="w-btn-ghost">Open demo ↗</Link> },
     { n: 2, label: "Preview & tune", desc: "Brand it and add guidance so answers sound like you.", ok: (b.botName !== DEFAULT_BRANDING.botName || b.accent !== DEFAULT_BRANDING.accent || b.greeting !== DEFAULT_BRANDING.greeting) || g.facts.length > 0 || !!st.companyProfile, action: <Link href="/admin/settings" className="w-btn-ghost">Settings</Link> },
-    { n: 3, label: "Install", desc: "Paste the embed snippet before </body> on your site.", ok: true, action: <CopyButton text={SNIPPET} /> },
+    { n: 3, label: "Install", desc: "Paste the embed snippet before </body> on your site.", ok: (await listVisitors()).length > 0, action: <CopyButton text={SNIPPET} /> },
     { n: 4, label: "Publish", desc: "Turn off the “Preview only” banner for visitors.", ok: st.published, action: <PublishToggle initial={st.published} /> },
   ];
   return (<>
