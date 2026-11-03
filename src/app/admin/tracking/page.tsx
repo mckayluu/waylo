@@ -27,21 +27,22 @@ export default async function Tracking({ searchParams }: { searchParams: { tier?
   const totalPv = visitors.reduce((n, v) => n + v.pageviews.filter((p) => p.path !== "(chat)").length, 0);
   return (<>
     <PageHeader title="Tracking" sub={`${visitors.length} tracked visitors · ${totalPv} pageviews. Ranked by buying signals.`} actions={<Link href="/admin/leads" className="w-btn-ghost">Contact form leads</Link>} />
-    <div className="mb-4 flex w-fit gap-1 rounded-lg border border-stone-200 bg-white p-1 text-sm shadow-sm">
-      {["", "High", "Medium", "Low"].map((x) => <Link key={x} href={x ? `?tier=${x}` : "/admin/tracking"} className={`rounded-md px-3 py-1.5 font-medium ${(t || "") === x ? "bg-teal-700 text-white" : "text-stone-600 hover:bg-stone-100"}`}>{x || "All"} <span className="ml-1 text-xs opacity-70">{x ? rows.filter((r) => r.value === x).length : rows.length}</span></Link>)}
+    <div className="w-accent-line mb-3" />
+    <div className="mb-3 flex w-fit gap-1 rounded-lg border border-stone-200 bg-white p-1 text-sm shadow-sm">
+      {["", "High", "Medium", "Low"].map((x) => <Link key={x} href={x ? `?tier=${x}` : "/admin/tracking"} className={`rounded-md px-2.5 py-1 font-medium ${(t || "") === x ? (x === "High" ? "bg-amber-600 text-white" : "bg-teal-700 text-white") : "text-stone-600 hover:bg-stone-100"}`}>{x || "All"} <span className="ml-1 text-xs opacity-70">{x ? rows.filter((r) => r.value === x).length : rows.length}</span></Link>)}
     </div>
     <Card pad={false}>{shown.length === 0 ? (t && rows.length ? <Empty title={`No ${t} value visitors`} body="Nobody in this tier yet." href="/admin/tracking" cta="Show all" /> : <Empty title="No visitors yet" body="Add waylo.js to your site (or browse /demo) — visitors appear here as soon as they load a page." href="/admin/install" cta="Install snippet" secondaryHref="/demo" secondaryCta="Open demo" />) :
       <div className="overflow-x-auto"><table className="w-full text-sm">
         <thead className="border-b border-stone-100 bg-stone-50/60"><tr><th className="w-th">Visitor</th><th className="w-th">Value</th><th className="w-th">Entry</th><th className="w-th">Last page</th><th className="w-th">Signals</th><th className="w-th text-right">Pages</th><th className="w-th text-right">Questions</th><th className="w-th text-right">Last seen</th></tr></thead>
-        <tbody className="divide-y divide-stone-100">{shown.map((r) => <tr key={r.key} className="group hover:bg-stone-50">
-          <td className="px-5 py-3"><Link href={r.href} className="flex items-center gap-3"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-stone-100 text-[11px] font-semibold text-stone-600 group-hover:bg-teal-100 group-hover:text-teal-800">{/^(Anonymous|Visitor )/.test(r.who) ? "—" : initials(r.who)}</span><span className="min-w-0"><span className="block truncate font-medium text-stone-800">{r.who}</span><span className="block truncate text-xs text-stone-500">{r.sub}</span></span></Link></td>
-          <td className="px-5 py-3"><Badge tone={r.value === "High" ? "amber" : r.value === "Medium" ? "teal" : "stone"}>{r.value}</Badge></td>
-          <td className="whitespace-nowrap px-5 py-3 text-stone-600">{r.entry}</td>
-          <td className="max-w-[10rem] truncate px-5 py-3 font-mono text-xs text-stone-500">{r.lastPath || "—"}</td>
-          <td className="px-5 py-3"><div className="flex flex-wrap gap-1">{r.signals.slice(0, 3).map((s) => <Tag key={s} s={s} />)}{!r.signals.length && <span className="text-xs text-stone-400">—</span>}</div></td>
-          <td className="px-5 py-3 text-right tabular-nums text-stone-500">{r.pv || "—"}</td>
-          <td className="px-5 py-3 text-right tabular-nums text-stone-500">{r.n}</td>
-          <td className="whitespace-nowrap px-5 py-3 text-right text-xs text-stone-500">{ago(r.at)}</td></tr>)}</tbody></table></div>}
+        <tbody className="divide-y divide-stone-100">{shown.map((r) => <tr key={r.key} className={`group hover:bg-stone-50 ${r.value === "High" ? "border-l-2 border-l-amber-500" : ""}`}>
+          <td className="px-4 py-2"><Link href={r.href} className="flex items-center gap-3"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-stone-100 text-[11px] font-semibold text-stone-600 group-hover:bg-teal-100 group-hover:text-teal-800">{/^(Anonymous|Visitor )/.test(r.who) ? "—" : initials(r.who)}</span><span className="min-w-0"><span className="block truncate font-medium text-stone-800">{r.who}</span><span className="block truncate text-xs text-stone-500">{r.sub}</span></span></Link></td>
+          <td className="px-4 py-2"><Badge tone={r.value === "High" ? "amber" : r.value === "Medium" ? "teal" : "stone"}>{r.value}</Badge></td>
+          <td className="whitespace-nowrap px-4 py-2 text-stone-600">{r.entry}</td>
+          <td className="max-w-[10rem] truncate px-4 py-2 font-mono text-xs text-stone-500">{r.lastPath || "—"}</td>
+          <td className="px-4 py-2"><div className="flex flex-wrap gap-1">{r.signals.slice(0, 3).map((s) => <Tag key={s} s={s} />)}{!r.signals.length && <span className="text-xs text-stone-400">—</span>}</div></td>
+          <td className="px-4 py-2 text-right tabular-nums text-stone-500">{r.pv || "—"}</td>
+          <td className="px-4 py-2 text-right tabular-nums text-stone-500">{r.n}</td>
+          <td className="whitespace-nowrap px-4 py-2 text-right text-xs text-stone-500">{ago(r.at)}</td></tr>)}</tbody></table></div>}
     </Card>
   </>);
 }
