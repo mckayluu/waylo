@@ -2,15 +2,16 @@ import Link from "next/link";
 import { PageHeader, Card, Checklist } from "../ui";
 import { listVisitors } from "@/lib/store";
 import { CopyButton } from "../settings/CopyButton";
-import { snippet, WAYLO_URL } from "@/lib/embed";
+import { WAYLO_URL } from "@/lib/embed";
+import { SnippetBuilder } from "./SnippetBuilder";
 export const dynamic = "force-dynamic";
 const Code = ({ children }: { children: string }) => <div className="relative"><pre className="overflow-x-auto rounded-xl bg-stone-900 p-4 pr-24 text-sm text-teal-200">{children}</pre><div className="absolute right-2 top-2"><CopyButton text={children} /></div></div>;
 export default async function Install() {
-  const s = snippet(); const visitors = await listVisitors(); const live = visitors.length > 0;
+  const visitors = await listVisitors(); const live = visitors.length > 0;
   return (<>
     <PageHeader title="Install" sub="Add Waylo to any website with one line of HTML." />
     <div className="space-y-6">
-      <Card title="1. Copy this snippet"><Code>{s}</Code>
+      <Card title="1. Copy this snippet"><SnippetBuilder url={WAYLO_URL} />
         <p className="mt-3 text-sm text-stone-600">Paste it just before the closing <code>&lt;/body&gt;</code> tag on every page (or in your site builder&apos;s &quot;custom code / footer scripts&quot; box — Webflow, WordPress, Squarespace, Wix, Shopify, GTM all work). A chat button appears bottom-right and page views show up under Tracking.</p></Card>
       <Card title="2. Verify it works" actions={live ? <span className="text-xs font-medium text-teal-700">● Receiving visitors</span> : <span className="text-xs text-stone-400">Waiting for first visit</span>}>
         {live ? <p className="mb-3 rounded-lg bg-teal-50 px-3 py-2 text-sm text-teal-800 ring-1 ring-inset ring-teal-200">✓ Waylo is live — {visitors.length} visitor{visitors.length === 1 ? "" : "s"} tracked, last seen {new Date(visitors[0].lastSeen).toLocaleString()}. <Link href="/admin/tracking" className="font-medium underline">View Tracking →</Link></p> : null}
