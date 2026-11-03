@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MarketingPage, FactsBlock, CTA } from "@/components/marketing/Page";
 import { Section } from "@/components/marketing/Section";
-import { ChatVisual, CrawlVisual, SignalsVisual, HandoffVisual, GuidanceVisual, ModesVisual, IconTile, MiniCTA } from "@/components/marketing/Visuals";
+import { ChatVisual, CrawlVisual, SignalsVisual, HandoffVisual, GuidanceVisual, ModesVisual, IconTile, MiniCTA, WorkflowStrip, PhotoBand, PHOTOS } from "@/components/marketing/Visuals";
 import { JsonLd, crumbsLd, appLd, pageMeta } from "@/lib/seo";
 export const metadata = pageMeta("/features", "Features: cited AI answers, intent signals, lead handoff", "Waylo features: AI website chat that crawls your pages and answers with cited source links, flags buying intent and visitor journeys, captures contacts and demo requests, and routes leads to Slack or your CRM.");
 type G = { id: string; tag: string; t: "teal" | "amber" | "indigo"; title: string; answer: string; visual: React.ReactNode; items: [string, string][] };
@@ -15,14 +15,16 @@ const groups: G[] = [
 export default function Features() {
   return <MarketingPage eyebrow="Features" crumb="Features" title="Everything Waylo does, from first question to booked demo" sub="One script tag adds a cited-answer chat to your site. One dashboard shows your team who’s ready to buy." answer="Waylo is an AI chat for your website that crawls your public pages, answers visitor questions with cited source links, flags buying intent and visitor journeys, and hands ready-to-talk leads to your team in Slack or your CRM.">
     <JsonLd data={[appLd, crumbsLd([["Features", "/features"]])]} />
-    <nav aria-label="Feature groups" className="mx-auto mt-10 max-w-5xl px-5 text-sm"><ul className="flex flex-wrap justify-center gap-2">{groups.map(g => <li key={g.id}><a href={`#${g.id}`} className="rounded-full border border-stone-200 bg-white px-3.5 py-1.5 font-medium text-stone-700 shadow-sm hover:border-amber-300 hover:text-amber-800">{g.tag}</a></li>)}</ul></nav>
+    <nav aria-label="Feature groups" className="mx-auto mt-6 max-w-5xl px-5 text-sm"><ul className="flex flex-wrap justify-center gap-2">{groups.map(g => <li key={g.id}><a href={`#${g.id}`} className="rounded-full border border-stone-200 bg-white px-3.5 py-1.5 font-medium text-stone-700 shadow-sm hover:border-amber-300 hover:text-amber-800">{g.tag}</a></li>)}</ul></nav>
     {groups.map((g, i) => <Section key={g.id} id={g.id} className={i % 2 ? "bg-white" : "w-mesh"}>
-      <div className={`grid items-center gap-10 lg:grid-cols-2 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
+      <div className={`grid items-center gap-8 lg:grid-cols-2 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
         <div><p className={g.t === "amber" ? "w-eyebrow-amber" : g.t === "indigo" ? "w-eyebrow-alt" : "w-eyebrow"}>{g.tag}</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">{g.title}</h2><p className="mt-4 text-lg leading-8 text-stone-700">{g.answer}</p>
           <ul className="mt-6 space-y-4">{g.items.map(([h, d], j) => <li key={h} className="flex gap-3"><IconTile t={(["teal", "amber", "indigo"] as const)[(i + j) % 3]}>{j + 1}</IconTile><div><h3 className="font-semibold text-stone-900">{h}</h3><p className="text-sm leading-6 text-stone-600">{d}</p></div></li>)}</ul></div>
         <div>{g.visual}</div>
       </div>
     </Section>)}
+    <Section eyebrow="How it fits together" title="From crawl to booked demo in four steps" className="bg-white"><WorkflowStrip /></Section>
+    <Section eyebrow="Who uses it" title="Built for marketing, sales, and support at once"><PhotoBand items={[PHOTOS.support, PHOTOS.meeting, PHOTOS.dashboard, PHOTOS.workshop]} /></Section>
     <Section id="modes" eyebrow="Embed modes" title="Fits marketing sites, docs, and measure-first rollouts" sub="Pick a mode with one attribute. Change it any time."><ModesVisual /><p className="mt-6 text-center text-sm"><Link href="/docs/embed-modes" className="font-medium text-teal-700 underline">Read the embed modes guide →</Link></p></Section>
     <Section className="bg-white"><MiniCTA title="See it on a real page" body="The live demo answers from Waylo’s own docs and shows the signals it creates." /></Section>
     <Section><FactsBlock /><p className="mx-auto mt-6 max-w-3xl text-sm text-stone-600">Next: see <Link href="/use-cases" className="text-teal-700 underline">use cases</Link>, compare <Link href="/pricing" className="text-teal-700 underline">pricing</Link>, or read the <Link href="/docs/install" className="text-teal-700 underline">install guide</Link>.</p></Section>

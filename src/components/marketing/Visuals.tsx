@@ -62,3 +62,30 @@ export function ModesVisual() {
 export function MiniCTA({ title, body }: { title: string; body: string }) {
   return <div className="w-card-lg flex flex-col items-start justify-between gap-4 border-l-4 border-l-amber-500 p-6 sm:flex-row sm:items-center"><div><p className="font-semibold text-stone-900">{title}</p><p className="mt-1 text-sm text-stone-600">{body}</p></div><div className="flex gap-2"><Link href="/demo" className="w-btn-accent">Try the demo</Link><a href="mailto:hello@waylo.ai?subject=Waylo%20early%20access" className="w-btn">Request access</a></div></div>;
 }
+/* ---- Density chunk: photo bands, workflow strip, proof bar ---- */
+export function PhotoBand({ items }: { items: { src: string; alt: string; tag: string; t: Tone; caption: string }[] }) {
+  return <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{items.map((p) => <figure key={p.src} className="w-card-lg group overflow-hidden">
+    <div className="relative aspect-[4/3] overflow-hidden"><img src={p.src} alt={p.alt} loading="lazy" decoding="async" width={600} height={450} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /><span className="absolute left-3 top-3"><Chip t={p.t}>{p.tag}</Chip></span></div>
+    <figcaption className="p-4 text-sm leading-6 text-stone-700">{p.caption}</figcaption></figure>)}</div>;
+}
+export function WorkflowStrip() {
+  const steps: [Tone, string, string, string][] = [
+    ["indigo", "Crawl", "Paste your domain", "Waylo indexes your public pages in the background — no sitemap upload."],
+    ["teal", "Answer", "Cited replies", "Visitors get answers from your content, with source links to verify."],
+    ["amber", "Signal", "Intent + journey", "Pricing, security, integration, and demo interest flagged in real time."],
+    ["indigo", "Hand off", "Slack + CRM", "Contact or demo request posts with transcript and signals attached."],
+  ];
+  return <ol className="grid gap-3 md:grid-cols-4">{steps.map(([t, k, h, d], i) => <li key={k} className="w-card-lg relative p-5">
+    <div className="flex items-center gap-3"><IconTile t={t}>{i + 1}</IconTile><div><p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{k}</p><h3 className="font-semibold text-stone-900">{h}</h3></div></div>
+    <p className="mt-3 text-sm leading-6 text-stone-600">{d}</p>{i < 3 && <span aria-hidden className="absolute -right-2.5 top-1/2 hidden h-5 w-5 -translate-y-1/2 place-items-center rounded-full bg-white text-xs text-stone-400 ring-1 ring-stone-200 md:grid">→</span>}</li>)}</ol>;
+}
+export function ProofBar() {
+  const facts: [Tone, string, string][] = [["teal", "1 script tag", "to install on any site"], ["indigo", "Every reply", "cites its source pages"], ["amber", "Real-time", "buying-intent signals"], ["teal", "Slack + CRM", "lead handoff with transcript"]];
+  return <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-stone-200 ring-1 ring-stone-200 md:grid-cols-4">{facts.map(([t, a, b]) => <div key={a} className="bg-white px-5 py-4"><p className={`text-lg font-semibold ${t === "amber" ? "text-amber-700" : t === "indigo" ? "text-indigo-700" : "text-teal-700"}`}>{a}</p><p className="text-sm text-stone-600">{b}</p></div>)}</div>;
+}
+export const PHOTOS = {
+  support: { src: "/marketing/support.webp", alt: "Team reviewing website conversations on laptops", tag: "Support deflection", t: "teal" as Tone, caption: "Repeat pre-sales questions answered from your docs, with sources — so your team handles the hard ones." },
+  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps open Slack to a lead that already asked about pricing and SSO — transcript included." },
+  dashboard: { src: "/marketing/dashboard.webp", alt: "Analytics dashboard on a laptop screen", tag: "Signals", t: "indigo" as Tone, caption: "Visitor journeys and intent signals show which pages actually start buying conversations." },
+  workshop: { src: "/marketing/workshop.webp", alt: "Marketing team collaborating at a whiteboard", tag: "Guidance", t: "teal" as Tone, caption: "Marketing owns the voice: facts, rules, and skills keep answers on-message and on-brand." },
+};

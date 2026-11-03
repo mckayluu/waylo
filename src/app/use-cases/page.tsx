@@ -1,3 +1,4 @@
+import { WorkflowStrip, PhotoBand, PHOTOS } from "@/components/marketing/Visuals";
 import Link from "next/link";
 import Image from "next/image";
 import { MarketingPage, CTA } from "@/components/marketing/Page";
@@ -28,6 +29,7 @@ export default function UseCases() {
       </div>
     </Section>)}
     <Section className="bg-white"><MiniCTA title="Not sure which setup fits?" body="Tell us about your site and we’ll set Waylo up with you during early access." /></Section>
+    <Section eyebrow="The Waylo loop" title="Crawl, answer, signal, hand off" className="bg-white"><WorkflowStrip /><div className="mt-6"><PhotoBand items={[PHOTOS.support, PHOTOS.meeting, PHOTOS.dashboard, PHOTOS.workshop]} /></div></Section>
     <Section><p className="mx-auto max-w-3xl text-center text-sm text-stone-600">Explore <Link href="/features" className="text-teal-700 underline">all features</Link>, <Link href="/pricing" className="text-teal-700 underline">pricing</Link>, or the <Link href="/faq" className="text-teal-700 underline">FAQ</Link>.</p><div className="mt-10"><CTA /></div></Section>
   </MarketingPage>;
 }

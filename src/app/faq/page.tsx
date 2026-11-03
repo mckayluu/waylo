@@ -1,3 +1,4 @@
+import { WorkflowStrip, PhotoBand, PHOTOS } from "@/components/marketing/Visuals";
 import Link from "next/link";
 import { MarketingPage, FactsBlock, CTA } from "@/components/marketing/Page";
 import { Section } from "@/components/marketing/Section";
@@ -16,6 +17,7 @@ export default function Faq() {
     </div>
       <p className="mx-auto mt-10 max-w-3xl text-center text-sm text-stone-600">More detail: <Link href="/features" className="text-teal-700 underline">features</Link> · <Link href="/pricing" className="text-teal-700 underline">pricing</Link> · <Link href="/docs/install" className="text-teal-700 underline">install guide</Link>.</p></Section>
     <Section className="bg-white"><FactsBlock /></Section>
+    <Section eyebrow="The Waylo loop" title="Crawl, answer, signal, hand off" className="bg-white"><WorkflowStrip /><div className="mt-6"><PhotoBand items={[PHOTOS.support, PHOTOS.meeting, PHOTOS.dashboard, PHOTOS.workshop]} /></div></Section>
     <Section><CTA /></Section>
   </MarketingPage>;
 }

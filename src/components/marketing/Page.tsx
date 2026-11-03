@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { Header } from "./Header"; import { Footer } from "./Footer"; import { Shell } from "./Section";
 import { FACTS } from "@/lib/seo";
+import { ProofBar } from "./Visuals";
 export function MarketingPage({ eyebrow, title, answer, crumb, sub, children }: { eyebrow: string; sub?: string; title: string; answer: string; crumb: string; children: React.ReactNode }) {
   return <Shell><Header /><main>
-    <section className="w-gradient relative overflow-hidden px-5 pb-20 pt-12 text-white sm:pt-14"><div className="w-grid-bg absolute inset-0 opacity-60" aria-hidden /><div className="relative mx-auto max-w-5xl">
+    <section className="w-gradient relative overflow-hidden px-5 pb-16 pt-10 text-white sm:pt-12"><div className="w-grid-bg absolute inset-0 opacity-60" aria-hidden /><div className="relative mx-auto max-w-5xl">
       <nav aria-label="Breadcrumb" className="text-xs text-white/70"><Link href="/" className="hover:text-white">Home</Link> / <span>{crumb}</span></nav>
       <p className="mt-5 text-xs font-semibold uppercase tracking-[0.08em] text-amber-300">{eyebrow}</p>
       <h1 className="mt-2 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>{sub && <p className="mt-4 max-w-2xl text-lg text-white/85">{sub}</p>}
     </div></section>
     <div className="relative z-10 -mt-12 px-5"><p className="w-card-lg mx-auto max-w-5xl border-l-4 border-l-amber-500 p-6 text-lg leading-8 text-stone-700"><span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-amber-700">Short answer</span>{answer}</p></div>
+    <div className="mx-auto mt-6 max-w-5xl px-5"><ProofBar /></div>
     {children}
   </main><Footer /></Shell>;
 }
