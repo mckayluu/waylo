@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 export const SITE_URL = (process.env.WAYLO_PUBLIC_URL || process.env.NEXT_PUBLIC_WAYLO_URL || "https://waylo-j5hv.onrender.com").replace(/\/$/, "");
 export const SITE_NAME = "Waylo";
 export const TAGLINE = "AI website chat that answers with cited sources and turns conversations into sales signals.";
-export const DEFINITION = "Waylo is an AI chat for B2B and SaaS websites. It learns your public pages, answers visitor questions with links to its sources, detects buying intent, and hands warm leads to your team in Slack or your CRM. It installs with one script tag.";
+export const DEFINITION = "Waylo is an AI chat for B2B and SaaS websites. It crawls your public pages, answers visitor questions with cited links to its sources, flags buying intent and visitor journeys, and hands warm leads to your team in Slack or your CRM. It installs with one script tag.";
 
 export const OG = { url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo — AI website chat that shows its sources" };
 export function pageMeta(path: string, title: string, description: string): Metadata {
@@ -40,4 +40,13 @@ export const FAQS: [string, string][] = [
   ["Which AI model does Waylo use?", "OpenAI models. Your content is sent to OpenAI only to generate replies. See the Privacy Policy."],
   ["How much does Waylo cost?", "Trial is free (500 AI messages), Starter is $79/month (3,000 messages), and Growth is $249/month (3 sites, 15,000 messages, Audiences)."],
   ["Is Waylo available now?", "Waylo is in early access. Request access and we’ll set up your site with you."],
+];
+
+export const FAQ_GROUPS: { id: string; title: string; items: [string, string][] }[] = [
+  { id: "basics", title: "The basics", items: FAQS.slice(0, 2).concat([["How is Waylo different from a generic chatbot?", "Waylo only answers from your crawled pages and the facts you add, shows numbered source links on every reply, and turns conversations into buying-intent signals and lead handoffs instead of just chat logs."], ["Is Waylo available now?", "Waylo is in early access. Request access at hello@waylo.ai and we’ll set up your site with you."]]) },
+  { id: "answers", title: "Answers & accuracy", items: [FAQS[2], FAQS[3], ["Can I control what Waylo says?", "Yes. Guidance lets you add facts, set rules for what Waylo must never say, and define skills for how to handle topics like security or custom pricing."], ["How do I keep answers up to date?", "Re-crawl your site from the dashboard after you publish changes. Facts you add in Guidance apply immediately."]] },
+  { id: "signals", title: "Signals & handoff", items: [["What is a buying-intent signal?", "A tag Waylo adds when a conversation shows interest in pricing, integrations, security, or a demo. Signals appear in the dashboard with the visitor’s page journey."], ["How do leads reach my team?", "When a visitor shares contact details or asks for a demo, Waylo posts the lead to your Slack channel and to any CRM webhook, with the transcript and signals attached."], FAQS[6], ["What are Audiences?", "On the Growth plan, Audiences group visitors by behavior and signals, such as everyone who viewed /pricing and asked about integrations."]] },
+  { id: "install", title: "Install & performance", items: [FAQS[4], FAQS[5], ["Which embed modes are there?", "Three: launcher (floating button, default), sidebar (always-open docked panel), and track (no chat UI, records page views and signals only)."], ["Can I open the chat from my own button?", "Yes. Call Waylo.open(), Waylo.close(), or Waylo.toggle() from any element, such as a “Talk to us” button."]] },
+  { id: "data", title: "Data & AI", items: [FAQS[7], ["Who on my team can see conversations?", "Anyone you invite. Members get admin, editor, or viewer roles that control who can change settings and guidance."]] },
+  { id: "pricing", title: "Pricing", items: [FAQS[8], ["Is there a contract?", "No long-term contract during early access. Online checkout isn’t live yet; we set you up and invoice directly."]] },
 ];
