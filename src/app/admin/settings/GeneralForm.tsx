@@ -10,7 +10,8 @@ export function GeneralForm({ initial }: { initial: SiteSettings }) {
     if (!res.ok) { setMsg("✗ " + res.error); return; }
     setV(res.data); setMsg("✓ Saved"); setTimeout(() => setMsg(""), 2000); r.refresh(); }
   return <form onSubmit={save} className="space-y-4">
-    <div><label className="w-label">Site name</label><input className="w-input" value={v.siteName} onChange={(e) => setV({ ...v, siteName: e.target.value })} /></div>
+    <div><label className="w-label">Workspace name</label><input className="w-input" value={v.siteName} onChange={(e) => setV({ ...v, siteName: e.target.value })} />
+      <p className="mt-1 text-xs text-stone-500">Shown in the admin header and Install. This is your customer workspace display name.</p></div>
     <div><label className="w-label">Website URL</label><input className="w-input" type="url" placeholder="https://yoursite.com" value={v.siteUrl} onChange={(e) => setV({ ...v, siteUrl: e.target.value })} />
       <p className="mt-1 text-xs text-stone-500">Where Content → Crawl starts. Waylo indexes same-site pages from here.</p></div>
     <div><label className="w-label">Company profile</label><textarea rows={5} className="w-input" placeholder="Who you are, what you sell, who it's for. Waylo treats this as authoritative." value={v.companyProfile} onChange={(e) => setV({ ...v, companyProfile: e.target.value })} />

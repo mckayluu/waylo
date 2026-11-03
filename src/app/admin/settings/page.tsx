@@ -10,7 +10,7 @@ export default async function Settings() {
   const b = (await getBranding());
   const snippet = mkSnippet();
   return (<>
-    <PageHeader title="Settings" sub="General details, sidebar branding and installation." />
+    <PageHeader title="Settings" sub="Workspace details, chat branding and install settings." />
     <div className="mb-6"><Card title="General"><GeneralForm initial={(await getSettings())} /></Card></div>
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="lg:col-span-3"><Card title="Sidebar branding"><BrandingForm initial={b} /></Card></div>

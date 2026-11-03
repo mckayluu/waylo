@@ -30,7 +30,7 @@ export default async function Home() {
     ...handoffs.map((h) => ({ at: h.createdAt, kind: "Handoff", text: h.name || h.email || h.note || "Visitor asked for a person", href: "/admin/handoffs", tone: "stone" as const })),
   ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8);
   return (<>
-    <PageHeader title="Home" sub={`How Waylo is performing on ${st.siteName}.`} actions={<Link href="/admin/ai-chat" className="w-btn-ghost">AI Chat setup</Link>} />
+    <PageHeader title="Home" sub={`Workspace performance for ${st.siteName}.`} actions={<Link href="/admin/ai-chat" className="w-btn-ghost">AI Chat setup</Link>} />
     {complete ? <div className="mb-4 flex items-center gap-2 text-sm text-teal-800"><span className="grid h-5 w-5 place-items-center rounded-full bg-teal-700 text-[10px] text-white">✓</span>Setup complete — Waylo is live on {st.siteName}.</div> :
       <div className="mb-6"><Card title={`Get Waylo live · ${done}/${steps.length}`} actions={<div className="h-1.5 w-32 overflow-hidden rounded-full bg-stone-100"><div className="h-full bg-teal-600" style={{ width: `${(done / steps.length) * 100}%` }} /></div>}><Checklist steps={steps} /></Card></div>}
     {firstRun && <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-teal-200 bg-teal-50/60 px-5 py-4"><div><p className="font-medium text-teal-900">No visitors yet</p><p className="text-sm text-teal-800/80">Install the snippet on your site, or try the demo to see conversations, leads and topics fill in.</p></div><div className="flex gap-2"><Link href="/admin/install" className="w-btn">Install snippet</Link><Link href="/demo" target="_blank" className="w-btn-ghost">Open demo ↗</Link></div></div>}
@@ -51,9 +51,10 @@ export default async function Home() {
           </div>))}</div>
         <div className="mt-2 flex justify-between text-[10px] text-stone-400"><span>{d[0].day.slice(5)}</span><span>Today</span></div></>}
       </Card></div>
-      <Card title="Site">
+      <Card title="Workspace">
         <p className="font-semibold text-stone-900">{st.siteName}</p>
         <dl className="mt-3 space-y-2 text-sm">
+          <div className="flex justify-between"><dt className="text-stone-500">Workspace id</dt><dd className="font-mono text-xs text-stone-700">default</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Status</dt><dd>{st.published ? <Badge tone="teal">Published</Badge> : <Badge tone="amber">Preview only</Badge>}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Indexed pages</dt><dd className="tabular-nums">{pages.length || `${KNOWLEDGE.length} (sample)`}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Embed</dt><dd>{visitors.length ? <Badge tone="teal">Receiving · {ago(visitors[0].lastSeen)}</Badge> : <Link href="/admin/install" className="text-amber-700 hover:underline">Not detected</Link>}</dd></div>

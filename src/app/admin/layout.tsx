@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <aside className="sticky top-0 z-20 flex shrink-0 items-center gap-4 bg-[#0d1b1e] px-3 py-2 md:h-screen md:w-60 md:flex-col md:items-stretch md:px-3 md:py-4">
         <Link href="/admin" className="flex items-center gap-2.5 px-2 md:mb-6">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-teal-600 text-[15px] font-bold text-white">W</span>
-          <span className="hidden text-[15px] font-semibold tracking-tight text-white md:inline">Waylo</span>
+          <span className="hidden min-w-0 md:flex md:flex-col"><span className="text-[15px] font-semibold leading-tight tracking-tight text-white">Waylo</span><span className="truncate text-[11px] leading-tight text-stone-400" title={st.siteName}>{st.siteName}</span></span>
         </Link>
         <AdminNav />
         <div className="mt-auto hidden space-y-1 md:block">

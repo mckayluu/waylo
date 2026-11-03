@@ -14,5 +14,6 @@ export function SnippetBuilder({ url, site = "default" }: { url: string; site?: 
       <span><b>Open chat on page load</b> — the chat panel opens automatically when visitors land (adds <code>data-open=&quot;true&quot;</code>).</span>
     </label>
     <div className="relative"><pre className="overflow-x-auto rounded-xl bg-stone-900 p-4 pr-24 text-sm text-teal-200">{s}</pre><div className="absolute right-2 top-2"><CopyButton text={s} /></div></div>
+    <p className="mt-2 text-xs text-stone-500">Bound to workspace id <code className="font-mono">{site}</code>.</p>
   </div>);
 }
