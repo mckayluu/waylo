@@ -15,11 +15,12 @@ body { @apply bg-stone-50 text-stone-900 antialiased; }
 @layer components {
   .w-eyebrow { @apply text-xs font-semibold uppercase tracking-[0.08em] text-teal-700; }
   .w-code { @apply overflow-x-auto rounded-xl bg-stone-900 p-5 font-mono text-sm text-teal-200; }
-  .w-card { @apply rounded-xl border border-stone-200 bg-white shadow-[0_1px_2px_rgba(28,25,23,0.04)]; }
+  .w-card { @apply rounded-xl border border-stone-200/90 bg-white; box-shadow: 0 1px 2px rgba(28,25,23,.05), 0 4px 14px -8px rgba(19,78,74,.14); }
   .w-card-lg { @apply rounded-2xl border border-stone-200/80 bg-white; box-shadow: var(--w-shadow); }
   .w-input { @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800 placeholder:text-stone-400 outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15; }
   .w-label { @apply mb-1 block text-xs font-medium uppercase tracking-wide text-stone-500; }
-  .w-btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-teal-700 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-teal-800 disabled:opacity-50; }
+  .w-btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-white shadow-sm transition disabled:opacity-50; background-color: var(--w-primary); }
+  .w-btn:hover { background-color: var(--w-primary-hover); }
   .w-btn-ghost { @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3.5 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-50; }
   .w-btn-grad { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110; background: var(--w-grad-cta); box-shadow: 0 6px 20px -6px rgba(217,119,6,.45), inset 0 1px 0 rgba(255,255,255,.2); }
   .w-btn-accent { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold text-stone-950 transition hover:brightness-105; background: var(--w-grad-accent); box-shadow: 0 6px 20px -6px rgba(217,119,6,.55), inset 0 1px 0 rgba(255,255,255,.35); }
@@ -36,4 +37,8 @@ body { @apply bg-stone-50 text-stone-900 antialiased; }
   .w-text-grad-light { background: linear-gradient(90deg,#99F6E4,#FDE68A 60%,#FBBF24); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .w-glow { box-shadow: var(--w-shadow-lg); }
   .w-accent-line { height: 2px; background: linear-gradient(90deg, transparent, #0D9488 20%, #4338CA 55%, #F59E0B 80%, transparent); }
+  /* Admin console chrome */
+  .w-admin-rail { background: radial-gradient(60% 35% at 0% 0%, rgba(45,212,191,.18), transparent 70%), radial-gradient(70% 40% at 100% 100%, rgba(99,102,241,.22), transparent 70%), linear-gradient(180deg,#0B3B38 0%,#123F3C 45%,#1E2A5E 100%); }
+  .w-admin-main { background: radial-gradient(40% 30% at 0% 0%, rgba(13,148,136,.07), transparent 70%), radial-gradient(35% 30% at 100% 0%, rgba(245,158,11,.06), transparent 70%), radial-gradient(45% 40% at 70% 100%, rgba(67,56,202,.05), transparent 70%), var(--w-canvas); background-attachment: fixed; }
+  .w-admin-eyebrow { @apply px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-teal-200/60; }
 }
