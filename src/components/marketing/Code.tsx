@@ -1,3 +1,3 @@
 export function Code({ children, label }: { children: string; label?: string }) {
-  return <div className="overflow-hidden rounded-xl bg-stone-900">{label && <div className="border-b border-stone-800 px-5 py-2 text-xs text-stone-400">{label}</div>}<pre className="overflow-x-auto p-5 font-mono text-sm leading-6 text-teal-200">{children}</pre></div>;
+  return <div className="w-glow overflow-hidden rounded-xl bg-stone-950 ring-1 ring-white/10"><div className="flex items-center gap-1.5 border-b border-white/10 bg-white/[0.03] px-4 py-2.5"><span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]/80" /><span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]/80" /><span className="h-2.5 w-2.5 rounded-full bg-[#28C840]/80" />{label && <span className="ml-3 text-xs text-stone-400">{label}</span>}</div><pre className="overflow-x-auto p-5 font-mono text-sm leading-6 text-teal-200">{children}</pre></div>;
 }

@@ -4,8 +4,9 @@ export const SITE_NAME = "Waylo";
 export const TAGLINE = "AI website chat that answers with cited sources and turns conversations into sales signals.";
 export const DEFINITION = "Waylo is an AI chat for B2B and SaaS websites. It learns your public pages, answers visitor questions with links to its sources, detects buying intent, and hands warm leads to your team in Slack or your CRM. It installs with one script tag.";
 
+export const OG = { url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo — AI website chat that shows its sources" };
 export function pageMeta(path: string, title: string, description: string): Metadata {
-  return { title, description, alternates: { canonical: path }, openGraph: { title: `${title} | Waylo`, description, url: path, siteName: SITE_NAME, type: "website", images: ["/brand/lockup.svg"] }, twitter: { card: "summary", title: `${title} | Waylo`, description } };
+  return { title, description, alternates: { canonical: path }, openGraph: { title: `${title} | Waylo`, description, url: path, siteName: SITE_NAME, type: "website", images: [OG] }, twitter: { card: "summary_large_image", images: ["/brand/og.png"], title: `${title} | Waylo`, description } };
 }
 export function JsonLd({ data }: { data: object | object[] }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;

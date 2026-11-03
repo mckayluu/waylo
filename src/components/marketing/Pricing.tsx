@@ -10,7 +10,7 @@ export function PricingCards() {
     <>
       <div className="grid gap-6 md:grid-cols-3">
         {plans.map((p) => (
-          <div key={p.name} className={`w-card flex flex-col p-7 ${p.featured ? "ring-2 ring-teal-700" : ""}`}>
+          <div key={p.name} className={`w-card-lg flex flex-col p-7 transition hover:-translate-y-0.5 ${p.featured ? "w-glow ring-2 ring-teal-600" : ""}`}>
             <div className="flex items-center justify-between"><h3 className="font-semibold">{p.name}</h3>{p.featured && <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-teal-800">Most popular</span>}</div>
             <p className="mt-4"><span className="text-4xl font-semibold tracking-tight">{p.price}</span> <span className="text-sm text-stone-500">{p.per}</span></p>
             <p className="mt-1 text-xs font-medium text-teal-700">Early access rate</p>
