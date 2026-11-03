@@ -57,6 +57,40 @@ Guidance in the mock responder: facts sharing a keyword with the question lead t
 - **Members** (`/admin/members`): Owners invite by email + role → copyable invite link `/admin/invite/<token>` (no email sent yet). The invitee sets a password (scrypt-hashed) and is signed in; later they log in with email + password. Change role / remove. API: `GET/POST/PATCH/DELETE /api/members`.
 - **Audiences** (`/admin/audiences`): name + match all/any + rules on signal, visited path, referrer, pageviews (≥/=), visitor type. Shows live match counts against tracked visitors. Sidebar targeting per audience is "coming". API: `GET/POST/DELETE /api/audiences`.
 
+## Production launch checklist (Render: `waylo`, https://waylo-j5hv.onrender.com)
+
+Set these in Render → Environment. Check `GET /api/health` after deploy — it reports which are set (never the values).
+
+| Var | Required | Notes |
+|---|---|---|
+| `DATABASE_URL` | **Yes** | Supabase Postgres (pooled string). Run `npm run db:migrate` once after changes. |
+| `OPENAI_API_KEY` | **Yes** for real answers | Without it the mock responder answers. Use a Waylo-owned billing account before paying customers. |
+| `OPENAI_MODEL` | No | Default `gpt-4o-mini`. |
+| `WAYLO_ADMIN_PASSWORD` | **Yes** | Locks `/admin` + admin APIs. Unset = admin is open. |
+| `WAYLO_ADMIN_EMAIL` | Yes | Owner login email (`mckayluu9@gmail.com`). |
+| `WAYLO_SESSION_SECRET` | **Yes** | Long random string (`openssl rand -hex 32`); `render.yaml` generates one. Changing it signs everyone out. |
+| `WAYLO_PUBLIC_URL` | Yes | `https://waylo-j5hv.onrender.com` (switch to custom domain later). Used in invite/reset links, notifications, canonical URLs, CORS. Defaults to the Render URL in production. |
+| `RESEND_API_KEY` | For email | Invites + password reset. Unset = admin shows copy-link fallback (works, just no email). |
+| `WAYLO_FROM_EMAIL` | For email | e.g. `Waylo <hello@yourdomain.com>` after domain verification. |
+| `WAYLO_ALLOWED_ORIGINS` | Recommended | Comma-separated customer site origins allowed to call public chat APIs. Unset = any origin. |
+
+**Health:** `GET /api/health` → `{ ok, checks: { database, openai, adminAuth, sessionSecret, publicUrl, email, allowedOrigins } }`; 503 if the DB is unreachable. Used as Render `healthCheckPath`.
+
+### Turning on email (Resend)
+1. Sign up at https://resend.com (free: 3,000 emails/mo, 100/day).
+2. API Keys → Create key (Sending access) → copy the `re_…` value into Render `RESEND_API_KEY`.
+3. Until you own a domain, leave `WAYLO_FROM_EMAIL` unset: `onboarding@resend.dev` only delivers to **your own** Resend account email.
+4. With a domain: Resend → Domains → Add → add the DNS records (SPF/DKIM) → Verify → set `WAYLO_FROM_EMAIL="Waylo <hello@yourdomain.com>"`.
+5. Test: Admin → Members → invite yourself, or "Forgot password" on login. Failures show a specific reason (bad key, unverified domain, invalid from, rate limit) and always fall back to a copyable link.
+
+### Content crawl
+`POST /api/crawl {url, max}` starts a **background** crawl and returns `202` immediately; the admin Content page polls `GET /api/crawl` for progress, so long crawls never hit Render's request timeout. Runs stuck >10 min (e.g. server restart mid-crawl) are marked interrupted. An empty result keeps the existing index. Pass `{wait:true}` to block (scripts). On Vercel it runs inline (serverless can't run background work).
+
+### Still needs an account/decision
+- **Resend** signup + key (above), and a domain for a branded sender.
+- **Stripe** account (plans/checkout not built yet — no keys in repo).
+- Separate OpenAI billing for Waylo.
+
 ## Deploy
 Env vars: see `.env.example` (`DATABASE_URL`, `OPENAI_API_KEY`, `OPENAI_MODEL`, `WAYLO_ADMIN_PASSWORD`, `WAYLO_ADMIN_EMAIL`, `WAYLO_SESSION_SECRET`, `WAYLO_PUBLIC_URL`, `WAYLO_DATA_FILE`).
 

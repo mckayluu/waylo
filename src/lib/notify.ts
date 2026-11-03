@@ -1,7 +1,8 @@
 // Outbound notifications: Slack incoming webhook + generic CRM JSON webhook.
 import { getIntegrations, getSettings, logDelivery, type Conversation, type Lead, type Handoff } from "./store";
 export type WayloEvent = "lead.created" | "conversation.high_intent" | "handoff.requested" | "test";
-const BASE = () => process.env.WAYLO_PUBLIC_URL || "http://localhost:3000";
+import { publicUrl } from "./email";
+const BASE = () => publicUrl();
 
 export function summarize(c?: Conversation) {
   if (!c) return undefined;

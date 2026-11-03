@@ -3,7 +3,7 @@
 import crypto from "crypto";
 import type { Member } from "./store-types";
 const TTL = 60 * 60 * 1000;
-const secret = () => process.env.WAYLO_SESSION_SECRET || process.env.WAYLO_ADMIN_PASSWORD || "waylo-dev";
+const secret = () => process.env.WAYLO_SESSION_SECRET || process.env.WAYLO_ADMIN_PASSWORD || (process.env.NODE_ENV === "production" ? (() => { throw new Error("Set WAYLO_SESSION_SECRET or WAYLO_ADMIN_PASSWORD") })() : "waylo-dev");
 const mac = (id: string, exp: number, hash: string) => crypto.createHmac("sha256", secret()).update(`reset|${id}|${exp}|${hash}`).digest("base64url");
 export function makeResetToken(m: Member) { const exp = Date.now() + TTL; return `${Buffer.from(m.id).toString("base64url")}.${exp}.${mac(m.id, exp, m.passwordHash || "")}`; }
 export function parseResetToken(t: string) {

@@ -6,7 +6,7 @@ services:
     region: oregon
     buildCommand: npm ci && npm run build
     startCommand: npm start
-    healthCheckPath: /
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
         value: "20"
@@ -19,6 +19,14 @@ services:
       - key: WAYLO_ADMIN_PASSWORD
         sync: false
       - key: WAYLO_PUBLIC_URL
+        value: https://waylo-j5hv.onrender.com
+      - key: WAYLO_ADMIN_EMAIL
+        sync: false
+      - key: WAYLO_ALLOWED_ORIGINS
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: WAYLO_FROM_EMAIL
         sync: false
       - key: WAYLO_SESSION_SECRET
         generateValue: true

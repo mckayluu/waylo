@@ -2,7 +2,16 @@
 // return { ok: true, sent: false, warning } so local/dev flows still work (admin UI shows "copy link").
 export type EmailResult = { ok: boolean; sent: boolean; warning?: string; error?: string };
 export const emailConfigured = () => !!process.env.RESEND_API_KEY;
-export const publicUrl = () => (process.env.WAYLO_PUBLIC_URL || "http://localhost:3000").replace(/\/$/, "");
+export const DEFAULT_PUBLIC_URL = process.env.NODE_ENV === "production" ? "https://waylo-j5hv.onrender.com" : "http://localhost:3000";
+export const publicUrl = () => (process.env.WAYLO_PUBLIC_URL || DEFAULT_PUBLIC_URL).replace(/\/$/, "");
+export function emailStatus() {
+  const key = process.env.RESEND_API_KEY || "", from = process.env.WAYLO_FROM_EMAIL || "";
+  const issues: string[] = [];
+  if (!key) issues.push("RESEND_API_KEY not set — invites/resets show a copy-link instead of emailing.");
+  else if (!key.startsWith("re_")) issues.push("RESEND_API_KEY doesn't look like a Resend key (should start with re_).");
+  if (key && (!from || /resend\.dev/.test(from))) issues.push("WAYLO_FROM_EMAIL uses onboarding@resend.dev — only delivers to your own Resend account email until you verify a domain.");
+  return { configured: !!key, from: from || "Waylo <onboarding@resend.dev>", issues };
+}
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
 function layout(title: string, body: string, cta: string, link: string) {
   return `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;padding:24px;color:#1c1917">
@@ -16,8 +25,13 @@ async function send(to: string, subject: string, html: string, text: string, lin
   if (!key) { console.warn(`[waylo:email] RESEND_API_KEY not set — not sending "${subject}" to ${to}. Link: ${link}`); return { ok: true, sent: false, warning: "Email not configured — copy the link instead." }; }
   try {
     const r = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: process.env.WAYLO_FROM_EMAIL || "Waylo <onboarding@resend.dev>", to: [to], subject, html, text }) });
-    if (!r.ok) { const e = await r.text().catch(() => ""); console.error(`[waylo:email] Resend ${r.status}: ${e}`); return { ok: false, sent: false, error: `Email failed (${r.status}) — copy the link instead.` }; }
+      signal: AbortSignal.timeout(10000), body: JSON.stringify({ from: process.env.WAYLO_FROM_EMAIL || "Waylo <onboarding@resend.dev>", to: [to], subject, html, text }) });
+    if (!r.ok) {
+      const e = await r.text().catch(() => ""); console.error(`[waylo:email] Resend ${r.status}: ${e}`);
+      const hint = r.status === 401 || r.status === 403 ? (/domain/i.test(e) ? "sender domain not verified in Resend (or onboarding@resend.dev can only send to your own account email)" : "invalid RESEND_API_KEY")
+        : r.status === 422 ? "invalid from/to address — check WAYLO_FROM_EMAIL" : r.status === 429 ? "Resend rate limit hit" : `Resend error ${r.status}`;
+      return { ok: false, sent: false, error: `Email not sent: ${hint}. Copy the link instead.` };
+    }
     return { ok: true, sent: true };
   } catch (e) { console.error("[waylo:email]", e); return { ok: false, sent: false, error: "Email failed — copy the link instead." }; }
 }

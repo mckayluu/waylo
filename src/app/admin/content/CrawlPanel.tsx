@@ -9,9 +9,17 @@ export function CrawlPanel({ siteUrl, last }: { siteUrl: string; last?: CrawlRun
     e.preventDefault();
     const u = url.trim();
     if (!u) { setMsg("Add a website URL first (or set it under Settings → General)."); return; }
-    setBusy(true); setMsg("Crawling… this can take a minute.");
-    const res = await api("/api/crawl", { method: "POST", json: { url: u, max } }); const j = res.data; setBusy(false);
-    setMsg(res.ok ? `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${j.errors ? ` · ${j.errors} errors` : ""}${j.message ? ` — ${j.message}` : ""}` : `Crawl failed — ${res.error}`);
+    setBusy(true); setMsg("Starting crawl…");
+    const res = await api("/api/crawl", { method: "POST", json: { url: u, max } });
+    if (!res.ok) { setBusy(false); setMsg(`Crawl failed — ${res.error}`); return; }
+    let j = res.data;
+    for (let i = 0; j?.status === "running" && i < 300; i++) {
+      setMsg(`Crawling… ${j.pages || 0} page${j.pages === 1 ? "" : "s"} indexed so far. You can leave this page.`);
+      await new Promise((ok) => setTimeout(ok, 2000));
+      const p = await api("/api/crawl"); if (p.ok && p.data) j = p.data;
+    }
+    setBusy(false);
+    setMsg(j?.status === "error" ? `Crawl failed — ${j.message || "unknown error"}` : j?.status === "running" ? "Still crawling in the background — check back shortly." : `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${j.errors ? ` · ${j.errors} errors` : ""}${j.message ? ` — ${j.message}` : ""}`);
     r.refresh();
   }
   return <form onSubmit={go} className="space-y-3">

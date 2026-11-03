@@ -4,7 +4,7 @@ import { COOKIE, verify, rank, type Role } from "@/lib/session";
 const PUBLIC_API: [RegExp, string[]][] = [
   [/^\/api\/chat$/, ["POST"]], [/^\/api\/track$/, ["POST", "OPTIONS"]], [/^\/api\/feedback$/, ["POST"]],
   [/^\/api\/handoff$/, ["POST"]], [/^\/api\/leads$/, ["POST"]], [/^\/api\/branding$/, ["GET"]],
-  [/^\/api\/auth\//, ["GET", "POST"]], [/^\/api\/invites\//, ["GET", "POST"]],
+  [/^\/api\/auth\//, ["GET", "POST"]], [/^\/api\/invites\//, ["GET", "POST"]], [/^\/api\/health$/, ["GET", "HEAD"]],
 ];
 // Minimum role per admin API mutation (GET needs Viewer).
 function needed(path: string, method: string): Role {
