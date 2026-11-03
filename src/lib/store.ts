@@ -47,3 +47,5 @@ export const removeMember = (...a: Parameters<typeof P.removeMember>): ReturnTyp
 export const listAudiences = (...a: Parameters<typeof P.listAudiences>): ReturnType<typeof P.listAudiences> => Promise.resolve().then(() => pick("listAudiences")(...a));
 export const addAudience = (...a: Parameters<typeof P.addAudience>): ReturnType<typeof P.addAudience> => Promise.resolve().then(() => pick("addAudience")(...a));
 export const deleteAudience = (...a: Parameters<typeof P.deleteAudience>): ReturnType<typeof P.deleteAudience> => Promise.resolve().then(() => pick("deleteAudience")(...a));
+export const getBilling = (...a: Parameters<typeof P.getBilling>): ReturnType<typeof P.getBilling> => Promise.resolve().then(() => pick("getBilling")(...a));
+export const setBilling = (...a: Parameters<typeof P.setBilling>): ReturnType<typeof P.setBilling> => Promise.resolve().then(() => pick("setBilling")(...a));

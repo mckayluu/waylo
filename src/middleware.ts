@@ -5,6 +5,7 @@ const PUBLIC_API: [RegExp, string[]][] = [
   [/^\/api\/chat$/, ["POST"]], [/^\/api\/track$/, ["POST", "OPTIONS"]], [/^\/api\/feedback$/, ["POST"]],
   [/^\/api\/handoff$/, ["POST"]], [/^\/api\/leads$/, ["POST"]], [/^\/api\/branding$/, ["GET"]],
   [/^\/api\/auth\//, ["GET", "POST"]], [/^\/api\/invites\//, ["GET", "POST"]], [/^\/api\/health$/, ["GET", "HEAD"]],
+  [/^\/api\/stripe\/webhook$/, ["POST"]], [/^\/api\/billing\/checkout$/, ["POST"]], // checkout: public for pricing page; attaches admin session when present
 ];
 // Minimum role per admin API mutation (GET needs Viewer).
 function needed(path: string, method: string): Role {

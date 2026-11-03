@@ -3,9 +3,9 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-import type { Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview } from "./store-types";
+import type { Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
-type DB = { conversations: Conversation[]; leads?: Lead[]; branding?: Branding; settings?: SiteSettings; members?: Member[]; audiences?: Audience[]; integrations?: Integrations; handoffs?: Handoff[]; deliveries?: Delivery[]; visitors?: Visitor[]; pages?: Page[]; lastCrawl?: CrawlRun; facts?: Fact[]; rules?: Rule[]; skills?: Skill[] };
+type DB = { conversations: Conversation[]; leads?: Lead[]; branding?: Branding; settings?: SiteSettings; members?: Member[]; audiences?: Audience[]; integrations?: Integrations; handoffs?: Handoff[]; deliveries?: Delivery[]; visitors?: Visitor[]; pages?: Page[]; lastCrawl?: CrawlRun; facts?: Fact[]; rules?: Rule[]; skills?: Skill[]; billing?: Billing };
 
 const FILE = path.resolve(process.env.WAYLO_DATA_FILE || "./data/db.json");
 function load(): DB {
@@ -61,6 +61,8 @@ export function deleteGuidance(kind: "facts" | "rules" | "skills", id: string) {
   const db = load(); (db as any)[kind] = ((db as any)[kind] || []).filter((x: { id: string }) => x.id !== id); save(db);
 }
 
+export function getBilling(): Billing { return { status: "none", ...(load().billing || {}) }; }
+export function setBilling(p: Partial<Billing>) { const db = load(); db.billing = { ...getBilling(), ...p }; save(db); return db.billing; }
 export function getSettings(): SiteSettings { return { ...DEFAULT_SETTINGS, ...(load().settings || {}) }; }
 export function setSettings(p: Partial<SiteSettings>) { const db = load(); db.settings = { ...getSettings(), ...p }; save(db); return db.settings; }
 

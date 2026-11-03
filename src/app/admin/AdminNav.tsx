@@ -15,6 +15,7 @@ const ALL = [
   { href: "/admin/members", label: "Members", icon: I("M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 20v-1a3 3 0 0 0-3-2.9") },
   { href: "/admin/integrations", label: "Integrations", icon: I("M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5") },
   { href: "/admin/install", label: "Install", icon: I("M16 18l6-6-6-6M8 6l-6 6 6 6") },
+  { href: "/admin/billing", label: "Billing", icon: I("M3 6h18v12H3zM3 10h18M7 15h3") },
   { href: "/admin/settings", label: "Settings", icon: I("M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4") },
 ];
 const by = (h: string) => ALL.find((n) => n.href === h)!;
@@ -22,7 +23,7 @@ const SECTIONS = [
   { title: "Overview", items: ["/admin"] },
   { title: "Engage", items: ["/admin/ai-chat", "/admin/questions", "/admin/tracking", "/admin/leads", "/admin/handoffs"] },
   { title: "Knowledge", items: ["/admin/guidance", "/admin/content"] },
-  { title: "Workspace", items: ["/admin/audiences", "/admin/members", "/admin/integrations", "/admin/install", "/admin/settings"] },
+  { title: "Workspace", items: ["/admin/audiences", "/admin/members", "/admin/integrations", "/admin/install", "/admin/billing", "/admin/settings"] },
 ].map((x) => ({ ...x, items: x.items.map(by) }));
 export function AdminNav() {
   const p = usePathname();

@@ -26,3 +26,7 @@ export type Pageview = { path: string; title?: string; referrer?: string; at: st
 export type Visitor = { id: string; firstSeen: string; lastSeen: string; pageviews: Pageview[]; userAgent?: string };
 export type Page = { id: string; url: string; title: string; text: string; updatedAt: string };
 export type CrawlRun = { startUrl: string; startedAt: string; finishedAt?: string; pages: number; errors: number; status: "running" | "done" | "error"; message?: string };
+export type Tier = "trial" | "starter" | "growth";
+export type BillingStatus = "trialing" | "active" | "past_due" | "canceled" | "none";
+export type Billing = { stripeCustomerId?: string; stripeSubscriptionId?: string; stripePriceId?: string; tier?: Tier; status: BillingStatus; currentPeriodEnd?: string; cancelAtPeriodEnd?: boolean; email?: string; lastPaymentError?: string; lastRiskEvent?: string; updatedAt?: string };
+export const DEFAULT_BILLING: Billing = { status: "none" };

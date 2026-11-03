@@ -1,7 +1,7 @@
 // Postgres backend. Used when DATABASE_URL is set. Schema: migrations/*.sql (npm run db:migrate).
 import crypto from "crypto";
 import { pool, q } from "./db";
-import type { Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Guidance, Pageview, Message } from "./store-types";
+import type { Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Guidance, Pageview, Message, Billing } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
 
 const newId = () => crypto.randomUUID();
@@ -67,6 +67,8 @@ export async function addLead(l: Omit<Lead, "id" | "createdAt">) {
 // ── Singletons
 export async function getBranding(): Promise<Branding> { return { ...DEFAULT_BRANDING, ...((await kvGet<Branding>("branding")) || {}) }; }
 export async function setBranding(b: Partial<Branding>) { const v = { ...(await getBranding()), ...b }; await kvSet("branding", v); return v; }
+export async function getBilling(): Promise<Billing> { return { status: "none", ...((await kvGet<Billing>("billing")) || {}) }; }
+export async function setBilling(p: Partial<Billing>) { const v = { ...(await getBilling()), ...p }; await kvSet("billing", v); return v; }
 export async function getSettings(): Promise<SiteSettings> { return { ...DEFAULT_SETTINGS, ...((await kvGet<SiteSettings>("settings")) || {}) }; }
 export async function setSettings(p: Partial<SiteSettings>) { const v = { ...(await getSettings()), ...p }; await kvSet("settings", v); return v; }
 export async function getIntegrations(): Promise<Integrations> { return { ...DEFAULT_INTEGRATIONS, ...((await kvGet<Integrations>("integrations")) || {}) }; }
