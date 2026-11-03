@@ -38,12 +38,15 @@ export async function syncSubscription(subOrId: string | Stripe.Subscription): P
   const sub = typeof subOrId === "string" ? await stripe().subscriptions.retrieve(subOrId) : subOrId;
   const item: any = sub.items?.data?.[0];
   const price = item?.price;
-  const end = item?.current_period_end ?? (sub as any).current_period_end;
+  let end: number | undefined = item?.current_period_end ?? (sub as any).current_period_end;
+  if (sub.status === "trialing" && sub.trial_end) end = sub.trial_end;
+  const cancelAt = (sub as any).cancel_at as number | null | undefined;
+  if (cancelAt && (!end || cancelAt <= end)) end = cancelAt;
   const tier = (sub.metadata?.tier as Tier) || (await tierForPrice(price?.id, price?.lookup_key));
   return setBilling({
     stripeCustomerId: typeof sub.customer === "string" ? sub.customer : sub.customer?.id,
     stripeSubscriptionId: sub.id, stripePriceId: price?.id, tier: tier || undefined,
-    status: mapStatus(sub.status), cancelAtPeriodEnd: !!sub.cancel_at_period_end,
+    status: mapStatus(sub.status), cancelAtPeriodEnd: !!sub.cancel_at_period_end || !!cancelAt,
     currentPeriodEnd: end ? new Date(end * 1000).toISOString() : undefined, updatedAt: new Date().toISOString(),
   });
 }

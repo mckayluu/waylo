@@ -27,7 +27,12 @@ export async function POST(req: Request) {
       ...(signedIn && billing.stripeCustomerId ? { customer: billing.stripeCustomerId } : email ? { customer_email: email } : {}),
       client_reference_id: s?.email ? s.email.slice(0, 200) : undefined,
       metadata: { tier, source: signedIn ? "admin" : "pricing", admin_email: s?.email || "" },
-      subscription_data: { metadata: { tier } },
+      ...(tier === "trial"
+        ? {
+            payment_method_collection: "if_required" as const,
+            subscription_data: { metadata: { tier }, trial_period_days: 14, trial_settings: { end_behavior: { missing_payment_method: "cancel" as const } } },
+          }
+        : { subscription_data: { metadata: { tier } } }),
       allow_promotion_codes: true,
       success_url: `${publicUrl()}${signedIn ? "/admin/billing" : "/pricing"}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${publicUrl()}${signedIn ? "/admin/billing" : "/pricing"}?checkout=canceled`,

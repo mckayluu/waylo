@@ -17,7 +17,7 @@ export default async function BillingPage({ searchParams }: { searchParams: { ch
         <dl className="divide-y divide-stone-100 text-sm">
           <div className="flex items-center justify-between py-2 first:pt-0 last:pb-0"><dt className="text-stone-500">Plan</dt><dd className="font-medium">{b.tier ? NAMES[b.tier] : "No plan"}</dd></div>
           <div className="flex items-center justify-between py-2 first:pt-0 last:pb-0"><dt className="text-stone-500">Status</dt><dd className="flex items-center gap-1.5"><Badge tone={live ? "teal" : b.status === "past_due" ? "rose" : b.status === "canceled" ? "amber" : "stone"}>{b.status}</Badge>{b.cancelAtPeriodEnd && <span className="text-xs text-amber-700">cancels at period end</span>}</dd></div>
-          {b.currentPeriodEnd && <div className="flex items-center justify-between py-2 first:pt-0 last:pb-0"><dt className="text-stone-500">{b.cancelAtPeriodEnd ? "Ends" : "Renews"}</dt><dd>{new Date(b.currentPeriodEnd).toLocaleDateString()}</dd></div>}
+          {b.currentPeriodEnd && <div className="flex items-center justify-between py-2 first:pt-0 last:pb-0"><dt className="text-stone-500">{b.status === "trialing" || b.cancelAtPeriodEnd ? "Ends" : "Renews"}</dt><dd>{new Date(b.currentPeriodEnd).toLocaleDateString()}</dd></div>}
           {b.email && <div className="flex items-center justify-between py-2 first:pt-0 last:pb-0"><dt className="text-stone-500">Billing email</dt><dd>{b.email}</dd></div>}
         </dl>
         {!live && configured && <p className="mt-3 rounded-lg bg-amber-50/60 px-2.5 py-1.5 text-xs text-amber-800">Publishing the sidebar on your site requires an active plan or trial.</p>}
