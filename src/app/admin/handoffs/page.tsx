@@ -14,7 +14,7 @@ export default async function Handoffs({ searchParams }: { searchParams: { statu
     <Card pad={false}>{rows.length === 0 ? <Empty title={st === "open" ? "No open handoffs" : "Nothing here"} body="When a visitor taps “Talk to a person” in the sidebar, the request lands here and in Slack (if connected)." tip="Connect Slack under Integrations to get pinged instantly." secondaryHref="/admin/integrations" secondaryCta="Integrations" /> :
       <ul className="divide-y divide-stone-100">{rows.map(async (h) => { const c = h.conversationId ? (await getConversation(h.conversationId)) : undefined; const who = h.name || h.email || c?.visitorName || c?.visitorEmail || "Anonymous visitor";
         const last = c?.messages.filter((m) => m.role === "visitor").at(-1)?.text;
-        return <li key={h.id} className="flex flex-wrap items-center gap-4 px-5 py-4">
+        return <li key={h.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-50 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">{who.startsWith("Anonymous") ? "?" : initials(who)}</span>
           <div className="min-w-0 flex-1">
             <p className="font-medium text-stone-800">{who} {h.email && h.email !== who && <span className="font-normal text-stone-500">· {h.email}</span>} <span className="ml-1"><Badge tone={h.status === "open" ? "amber" : "stone"}>{h.status}</Badge></span></p>

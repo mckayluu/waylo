@@ -19,9 +19,9 @@ export default async function Questions({ searchParams }: { searchParams: { q?: 
       <button className="w-btn">Filter</button>{(q || sig) && <Link href="/admin/questions" className="w-btn-ghost">Clear</Link>}
     </form>
     {rows.length === 0 ? <Card>{all.length === 0 ? <Empty title="No questions yet" body="Every question visitors ask Waylo shows up here with the answer and sources." href="/demo" cta="Ask on the demo" secondaryHref="/admin/install" secondaryCta="Install on your site" /> : <Empty title="No questions match" body="Nothing matches this search or topic." href="/admin/questions" cta="Clear filters" />}</Card> :
-    <div className="grid gap-6 lg:grid-cols-5">
+    <div className="grid gap-4 lg:grid-cols-5">
       <div className="lg:col-span-2"><Card pad={false}><ul className="max-h-[70vh] divide-y divide-stone-100 overflow-y-auto">{rows.map((x) => (
-        <li key={x.m.id}><Link href={qs({ id: x.m.id })} className={`block px-4 py-3 text-sm transition ${sel?.m.id === x.m.id ? "bg-teal-50/70 shadow-[inset_3px_0_0_#0f766e]" : "hover:bg-stone-50"}`}>
+        <li key={x.m.id}><Link href={qs({ id: x.m.id })} className={`block px-4 py-2.5 text-sm transition ${sel?.m.id === x.m.id ? "bg-teal-50/70 shadow-[inset_3px_0_0_#0f766e]" : "hover:bg-stone-50"}`}>
           <p className="line-clamp-2 font-medium text-stone-800">{x.m.text}</p>
           <p className="mt-1 flex items-center gap-2 text-xs text-stone-500"><span className="truncate">{x.c.visitorName || x.c.visitorEmail || "Anonymous"}</span>·<span>{ago(x.m.at)}</span>{x.answer?.feedback && <span>{x.answer.feedback === "up" ? "👍" : "👎"}</span>}</p>
         </Link></li>))}</ul></Card></div>

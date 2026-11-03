@@ -9,7 +9,7 @@ export function GeneralForm({ initial }: { initial: SiteSettings }) {
     const res = await api<SiteSettings>("/api/settings", { method: "PUT", json: v }); setBusy(false);
     if (!res.ok) { setMsg("✗ " + res.error); return; }
     setV(res.data); setMsg("✓ Saved"); setTimeout(() => setMsg(""), 2000); r.refresh(); }
-  return <form onSubmit={save} className="space-y-4">
+  return <form onSubmit={save} className="space-y-3">
     <div><label className="w-label">Workspace name</label><input className="w-input" value={v.siteName} onChange={(e) => setV({ ...v, siteName: e.target.value })} />
       <p className="mt-1 text-xs text-stone-500">Shown in the admin header and Install. This is your customer workspace display name.</p></div>
     <div><label className="w-label">Website URL</label><input className="w-input" type="url" placeholder="https://yoursite.com" value={v.siteUrl} onChange={(e) => setV({ ...v, siteUrl: e.target.value })} />

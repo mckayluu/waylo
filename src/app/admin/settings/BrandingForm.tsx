@@ -11,8 +11,8 @@ export function BrandingForm({ initial }: { initial: Branding }) {
     if (!res.ok) { setMsg("✗ " + res.error); return; }
     setB({ ...b, ...res.data }); setMsg("✓ Saved"); setTimeout(() => setMsg(""), 2000); router.refresh();
   }
-  return (<form onSubmit={save} className="grid gap-6 md:grid-cols-2">
-    <div className="space-y-4">
+  return (<form onSubmit={save} className="grid gap-4 md:grid-cols-2">
+    <div className="space-y-3">
       <div><label className="w-label">Assistant name</label><input className="w-input" value={b.botName} onChange={(e) => setB({ ...b, botName: e.target.value })} /></div>
       <div><label className="w-label">Accent color</label>
         <div className="flex items-center gap-2">{SWATCH.map((c) => <button type="button" key={c} onClick={() => setB({ ...b, accent: c })} className={`h-7 w-7 rounded-full ring-offset-2 ${(b.accent || "").toLowerCase() === c ? "ring-2 ring-stone-400" : ""}`} style={{ background: c }} aria-label={c} />)}

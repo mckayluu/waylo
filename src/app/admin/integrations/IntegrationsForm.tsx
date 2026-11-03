@@ -25,7 +25,7 @@ export function IntegrationsForm({ initial }: { initial: Integrations }) {
       <p className={`mt-1.5 text-xs ${msg[t]?.startsWith("✗") ? "text-rose-600" : msg[t] ? "text-teal-700" : "text-stone-500"}`}>{msg[t] || help}</p>
     </div>;
   };
-  return <div className="space-y-4">
+  return <div className="space-y-3">
     {Block({ k: "slackWebhook", title: "Slack", desc: "Post alerts to a channel with an incoming webhook.", ph: "https://hooks.slack.com/services/…", help: <>Create one in Slack → Apps → Incoming Webhooks. Payload: <code>{"{ text }"}</code>.</> })}
     {Block({ k: "crmWebhook", title: "CRM / outbound webhook", desc: "POST a JSON summary to any CRM, Zapier, Make or your own endpoint.", ph: "https://your-crm.example.com/waylo", help: <>Payload: <code>{"{ event, site, sentAt, data: { lead, handoff, conversation } }"}</code>.</> })}
     <div className="w-card p-5"><p className="font-semibold text-stone-900">Send notifications for</p>
