@@ -3,7 +3,7 @@ import { PageHeader, Card, Badge } from "../ui";
 import { BillingActions } from "./BillingActions";
 export const dynamic = "force-dynamic";
 const NAMES = { trial: "Trial", starter: "Starter", growth: "Growth" } as const;
-export default async function BillingPage({ searchParams }: { searchParams: { checkout?: string; billing?: string } }) {
+export default async function BillingPage({ searchParams }: { searchParams: { checkout?: string; billing?: string; plan?: string } }) {
   const configured = stripeConfigured();
   let b = await getBilling();
   // Re-sync from Stripe on load so cancel_at / trial_end / status are current; fall back to last known state.
@@ -26,7 +26,7 @@ export default async function BillingPage({ searchParams }: { searchParams: { ch
         </dl>
         {!live && configured && <p className="mt-3 rounded-lg bg-amber-50/60 px-2.5 py-1.5 text-xs text-amber-800">Publishing the sidebar on your site requires an active plan or trial.</p>}
       </Card>
-      <Card title={live ? "Manage" : "Choose a plan"}><BillingActions hasCustomer={!!b.stripeCustomerId} live={live} configured={configured} /></Card>
+      <Card title={live ? "Manage" : "Choose a plan"}><BillingActions hasCustomer={!!b.stripeCustomerId} live={live} configured={configured} plan={searchParams.plan} /></Card>
     </div>
   </>);
 }

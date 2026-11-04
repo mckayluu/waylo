@@ -188,6 +188,6 @@ export async function createWorkspace(w: { id: string; name: string; ownerEmail?
 export async function deleteWorkspace(id: string) { if (id !== "default") { await q("DELETE FROM kv WHERE key LIKE $1", [`${id}:%`]); await q("DELETE FROM workspaces WHERE id=$1", [id]); } }
 /** Workspace whose billing record links this Stripe customer/subscription (webhooks run without a session). */
 export async function findWorkspaceByStripe(customerId?: string, subscriptionId?: string) {
-  const r = await q("SELECT split_part(key, ':', 1) AS ws FROM kv WHERE key LIKE '%:billing' AND ((value->>'stripeCustomerId')=$1 OR (value->>'stripeSubscriptionId')=$2) LIMIT 1", [customerId ?? null, subscriptionId ?? null]);
+  const r = await q("SELECT split_part(key, ':', 1) AS ws FROM kv WHERE key LIKE '%:billing' AND ((value->>'stripeCustomerId')=$1 OR (value->>'stripeSubscriptionId')=$2) ORDER BY ((value->>'stripeSubscriptionId')=$2) DESC NULLS LAST LIMIT 1", [customerId ?? null, subscriptionId ?? null]);
   return r[0]?.ws as string | undefined;
 }

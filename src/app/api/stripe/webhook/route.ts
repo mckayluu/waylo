@@ -26,7 +26,9 @@ async function workspaceFor(o: any): Promise<string | undefined> {
   let meta = o.metadata?.workspace || o.parent?.subscription_details?.metadata?.workspace || (o.object === "checkout.session" ? o.client_reference_id : undefined);
   if (!meta && subId && o.object !== "subscription") { try { meta = (await stripe().subscriptions.retrieve(subId)).metadata?.workspace; } catch {} }
   if (meta && (await getWorkspace(meta))) return meta;
-  return (await findWorkspaceByStripe(id(o.customer), subId)) || "default"; // pre-workspace subscriptions belong to the original install
+  // Pre-workspace subs (no metadata) are found via the billing record that links them (backfilled into "default").
+  // No blind fallback: an unlinked event must not overwrite some workspace's billing.
+  return findWorkspaceByStripe(id(o.customer), subId);
 }
 async function handle(event: Stripe.Event, o: any) {
   try {
@@ -43,7 +45,10 @@ async function handle(event: Stripe.Event, o: any) {
       case "customer.subscription.deleted": {
         const cur = await getBilling();
         // Per workspace: follow the newest subscription, ignore stale ones for other subs once linked.
-        if (!cur.stripeSubscriptionId || cur.stripeSubscriptionId === o.id || event.type !== "customer.subscription.deleted") await syncSubscription(o as Stripe.Subscription);
+        const curLive = cur.status === "active" || cur.status === "trialing";
+        const incomingLive = o.status === "active" || o.status === "trialing";
+        // Follow the linked sub; switch to a different sub only if it's live or ours isn't (stale/duplicate subs can't clobber a live plan).
+        if (!cur.stripeSubscriptionId || cur.stripeSubscriptionId === o.id || incomingLive || !curLive) await syncSubscription(o as Stripe.Subscription);
         break; }
       case "invoice.paid":
       case "invoice.payment_failed": {

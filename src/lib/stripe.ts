@@ -1,6 +1,6 @@
 // Server-only Stripe client + billing helpers. Keys come from env; never import in client components.
 import Stripe from "stripe";
-import { getBilling, setBilling, type Billing, type BillingStatus, type Tier } from "@/lib/store";
+import { getBilling, setBilling, currentWs, type Billing, type BillingStatus, type Tier } from "@/lib/store";
 
 const g = globalThis as unknown as { __wayloStripe?: Stripe };
 export const stripeConfigured = () => !!process.env.STRIPE_SECRET_KEY;
@@ -36,6 +36,9 @@ const mapStatus = (s: string): BillingStatus =>
 /** Sync local billing state from a Stripe subscription (source of truth). */
 export async function syncSubscription(subOrId: string | Stripe.Subscription): Promise<Billing> {
   const sub = typeof subOrId === "string" ? await stripe().subscriptions.retrieve(subOrId) : subOrId;
+  // Never write another workspace's subscription into this workspace's billing record.
+  const owner = sub.metadata?.workspace; const ws = await currentWs();
+  if (owner && owner !== ws) throw new Error(`subscription ${sub.id} belongs to workspace ${owner}, not ${ws}`);
   const item: any = sub.items?.data?.[0];
   const price = item?.price;
   let end: number | undefined = item?.current_period_end ?? (sub as any).current_period_end;
