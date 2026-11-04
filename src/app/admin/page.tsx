@@ -3,6 +3,8 @@ import { listConversations, stats, listLeads, getSettings, listPages, listVisito
 import { KNOWLEDGE } from "@/lib/knowledge";
 import { daily, tier } from "@/lib/analytics";
 import { PageHeader, MetricCard, Card, Badge, Checklist, ago } from "./ui";
+import { PublishToggle } from "./PublishToggle";
+import { billingAllowsPublish, getBilling, stripeConfigured } from "@/lib/stripe";
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const s = (await stats()); const convs = (await listConversations()); const leads = (await listLeads()); const st = (await getSettings());
@@ -12,6 +14,7 @@ export default async function Home() {
   const topics = new Map<string, number>(); convs.forEach((c) => c.themes.forEach((t) => topics.set(t, (topics.get(t) || 0) + 1)));
   const top = [...topics].sort((a, b) => b[1] - a[1]).slice(0, 5);
   const pages = await listPages(); const visitors = await listVisitors(); const handoffs = await listHandoffs(); const b = await getBranding(); const g = await getGuidance();
+  const bill = await getBilling(); const stripeOn = stripeConfigured(); const canPublish = await billingAllowsPublish();
   const branded = b.botName !== DEFAULT_BRANDING.botName || b.accent !== DEFAULT_BRANDING.accent || b.greeting !== DEFAULT_BRANDING.greeting;
   const go = (href: string, label: string) => <Link href={href} className="w-btn-ghost whitespace-nowrap">{label}</Link>;
   const steps = [
@@ -19,7 +22,7 @@ export default async function Home() {
     { ok: pages.length > 0, label: "Index your site", desc: "Crawl your pages so answers cite your content.", action: go("/admin/content", "Content") },
     { ok: branded || !!st.companyProfile || g.facts.length + g.rules.length + g.skills.length > 0, label: "Brand or guide answers", desc: "Set name, color and greeting, or add facts and rules.", action: <span className="flex gap-2">{go("/admin/settings", "Branding")}{go("/admin/guidance", "Guidance")}</span> },
     { ok: visitors.length > 0, label: "Install on your site", desc: "Paste one line of HTML — done when your first visitor loads it.", action: go("/admin/install", "Install") },
-    { ok: st.published, label: "Publish", desc: "Remove the “Preview only” banner for visitors.", action: go("/admin/ai-chat", "AI Chat") },
+    { ok: st.published && canPublish, label: "Publish", desc: canPublish ? "Remove the “Preview only” banner for visitors." : "Choose a plan in Billing first — publishing needs an active plan or trial.", action: canPublish ? <PublishToggle initial={st.published} /> : go("/admin/billing", "Billing") },
   ];
   const done = steps.filter((x) => x.ok).length; const complete = done === steps.length;
   const firstRun = visitors.length === 0 && s.totalConversations === 0;
@@ -32,7 +35,7 @@ export default async function Home() {
   return (<>
     <PageHeader title="Home" sub={`Workspace performance for ${st.siteName}.`} actions={<><Link href="/admin/install" className="w-btn-ghost">Install</Link><Link href="/admin/ai-chat" className="w-btn">AI Chat setup</Link></>} />
     <div className="w-accent-line mb-4" />
-    {complete ? <div className="mb-4 flex items-center gap-2 text-sm text-teal-800"><span className="grid h-5 w-5 place-items-center rounded-full bg-teal-700 text-[10px] text-white">✓</span>Setup complete — Waylo is live on {st.siteName}.</div> :
+    {complete && canPublish ? <div className="mb-4 flex items-center gap-2 text-sm text-teal-800"><span className="grid h-5 w-5 place-items-center rounded-full bg-teal-700 text-[10px] text-white">✓</span>Setup complete — Waylo is live on {st.siteName}.</div> : complete && !canPublish ? <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">Setup steps are done, but publishing needs an active plan or trial. <Link href="/admin/billing" className="font-semibold underline">Open Billing</Link></div> :
       <div className="mb-4"><Card title={`Get Waylo live · ${done}/${steps.length}`} actions={<div className="h-1.5 w-32 overflow-hidden rounded-full bg-stone-100"><div className="h-full bg-teal-600" style={{ width: `${(done / steps.length) * 100}%` }} /></div>}><Checklist steps={steps} /></Card></div>}
     {firstRun && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-teal-200 border-l-4 border-l-amber-500 bg-gradient-to-r from-teal-50 to-indigo-50/40 px-4 py-3"><div><p className="flex items-center gap-2 font-semibold text-teal-900"><span className="w-badge-accent">First run</span>No visitors yet</p><p className="text-sm text-teal-800/80">Install the snippet on your site, or try the demo to see conversations, leads and topics fill in.</p></div><div className="flex gap-2"><Link href="/admin/install" className="w-btn-grad">Install snippet</Link><Link href="/demo" target="_blank" className="w-btn-ghost">Open demo ↗</Link></div></div>}
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -56,7 +59,8 @@ export default async function Home() {
         <p className="text-base font-bold tracking-tight text-stone-900">{st.siteName}</p>
         <dl className="mt-2 divide-y divide-stone-100 text-sm [&>div]:py-1.5">
           <div className="flex justify-between"><dt className="text-stone-500">Workspace id</dt><dd className="rounded bg-indigo-50 px-1.5 py-0.5 font-mono text-xs text-indigo-700 ring-1 ring-inset ring-indigo-100">default</dd></div>
-          <div className="flex justify-between"><dt className="text-stone-500">Status</dt><dd>{st.published ? <Badge tone="teal">Published</Badge> : <Badge tone="amber">Preview only</Badge>}</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-stone-500">Status</dt><dd className="flex flex-wrap items-center justify-end gap-1.5 text-right">{st.published ? <Badge tone="teal">Published</Badge> : <Badge tone="amber">Preview only</Badge>}{stripeOn && !canPublish && <Badge tone="amber">No active plan</Badge>}{st.published && (!st.siteUrl?.trim() || pages.length === 0) && <Badge tone="stone">Setup incomplete</Badge>}</dd></div>
+          {stripeOn && <div className="flex justify-between"><dt className="text-stone-500">Plan</dt><dd className="text-stone-700">{bill.tier ? bill.tier[0]!.toUpperCase() + bill.tier.slice(1) : "No plan"}{bill.status && bill.status !== "none" ? <span className="text-stone-400"> · {bill.status}</span> : null}</dd></div>}
           <div className="flex justify-between"><dt className="text-stone-500">Indexed pages</dt><dd className="tabular-nums">{pages.length || `${KNOWLEDGE.length} (sample)`}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Embed</dt><dd>{visitors.length ? <Badge tone="teal">Receiving · {ago(visitors[0].lastSeen)}</Badge> : <Link href="/admin/install" className="text-amber-700 hover:underline">Not detected</Link>}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Company profile</dt><dd className="text-stone-700">{st.companyProfile ? "Set" : "—"}</dd></div>

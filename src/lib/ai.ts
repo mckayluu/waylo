@@ -3,7 +3,13 @@ import { getGuidance, getSettings, type Citation, type Message, type Fact } from
 import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl } from "./retrieve";
 
 export type Answer = { text: string; citations: Citation[] };
-const cite = (ps: { title: string; url: string }[]) => ps.map(({ title, url }) => ({ title, url }));
+function absUrl(url: string) {
+  if (!url || /^https?:\/\//i.test(url) || url.startsWith("mailto:")) return url;
+  const base = (process.env.WAYLO_PUBLIC_URL || "").replace(/\/$/, "");
+  if (!base) return url;
+  return url.startsWith("/") ? base + url : base + "/" + url;
+}
+const cite = (ps: { title: string; url: string }[]) => ps.map(({ title, url }) => ({ title, url: absUrl(url) }));
 
 const STOP = new Set("the a an is are was what how do does can i you we our your to of and or for in on it with be my me about".split(" "));
 const words = (s: string) => (s.toLowerCase().match(/[a-z0-9$]+/g) || []).filter((w) => w.length > 2 && !STOP.has(w));
@@ -41,7 +47,7 @@ async function mock(text: string, signals: string[], hasEmail: boolean): Promise
   if (/^(hi|hello|hey)\b/i.test(text.trim()) && rel.length === 0)
     return { text: "Hi! I can help with:\n- **Pricing** and plans\n- **Installing** the sidebar\n- **Booking a demo**\n\nWhat would you like to know?", citations: [] };
   if (rel.length === 0)
-    return { text: "I couldn't find that on this site yet. Could you tell me a bit more — or leave a message in the **Contact** tab and the team will follow up?", citations: [] };
+    return { text: "I couldn't find that in our knowledge yet. Tell me a bit more, or use the **Contact** tab and the team will follow up.", citations: [] };
   let out = (await hasCrawl()) ? rel.map((k, i) => `${k.summary} [${i + 1}]`).join("\n\n") : rel.map((k) => k.summary).join("\n\n");
   if (signals.includes("demo") || signals.includes("pricing"))
     out += hasEmail ? "\n\nThanks — the team will follow up shortly." : "\n\nWant a tailored walkthrough? Use **Contact → Book a demo**.";
@@ -54,7 +60,7 @@ async function simulate(text: string, onDelta: OnDelta) {
   for (const tok of text.match(/\s*\S+/g) || []) { await onDelta(tok); await sleep(18 + Math.random() * 22); }
 }
 async function systemPrompt(src: { title: string; url: string; summary: string }[]) {
-  return `You are Waylo's concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance; if unsure, suggest the Contact tab. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
+  return `You are Waylo's concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly and point the visitor to the **Contact** tab — never invent a "check the website" or generic "contact us" filler without that Contact tab CTA. Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
 }
 function parse(raw: string, src: { title: string; url: string }[]): Answer {
   const m = raw.match(/\n?SOURCES:\s*([^\n]*)\s*$/i);
