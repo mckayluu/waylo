@@ -14,6 +14,7 @@ export const NAV: NavGroup[] = [
     { label: "Marketing teams", href: "/solutions/marketing", desc: "See which questions come before a demo", icon: "📣", t: "teal" },
     { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts on pricing and demo interest", icon: "🎯", t: "amber" },
     { label: "SaaS & docs", href: "/solutions/saas", desc: "Cited answers from docs and pricing", icon: "🧪", t: "indigo" },
+    { label: "SaaS pre-sales → Slack", href: "/use-cases/saas-presales-slack", desc: "Cited answers, then a rep in Slack", icon: "#", t: "amber" },
     { label: "Agencies", href: "/solutions/agencies", desc: "Cited chat across client sites", icon: "🏢", t: "teal" },
     { label: "All use cases", href: "/use-cases", desc: "Compare every team side by side", icon: "↗", t: "amber" },
   ], feature: { title: "Sales handoff in minutes", body: "Reps open Slack to a lead that already asked about pricing — transcript included.", href: "/solutions/sales", cta: "See how", img: "/marketing/meeting.webp" } },

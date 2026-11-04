@@ -15,6 +15,18 @@ export default function Install() {
     <h1 className="mt-2">Install Waylo</h1>
     <p className="text-lg text-stone-600">One line of HTML adds a cited-answer chat to every page, starts recording visitor journeys, and begins flagging buying intent. No build step, no SDK.</p>
     <ol className="not-prose mt-6 grid gap-3 sm:grid-cols-3">{([["Add the snippet", "#snippet", "teal"], ["Allow your domain", "#allowlist", "indigo"], ["Verify", "#verify", "amber"]] as const).map(([t, h, c], i) => <li key={h}><a href={h} className="w-card flex items-center gap-3 p-4 !no-underline hover:border-amber-300"><IconTile t={c}>{i + 1}</IconTile><span className="font-semibold text-stone-900">{t}</span></a></li>)}</ol>
+    <h2 id="checklist">Install checklist</h2>
+    <p>Work through these in order. Each one takes a few minutes.</p>
+    <ol className="not-prose mt-4 divide-y divide-stone-200 border-y border-stone-200 text-sm">{([
+      ["Add the script tag", <>Paste the snippet before <code>&lt;/body&gt;</code> on every page, or as a GTM Custom HTML tag on All Pages.</>],
+      ["Set data-site", <>Use the workspace id from Admin → Install. A wrong id loads the widget but logs nothing.</>],
+      ["Pick data-mode", <><code>launcher</code> for marketing pages, <code>sidebar</code> for docs, <code>track</code> to collect journeys and signals without chat.</>],
+      ["Allow your domains", <>Add the root domain, <code>www</code>, and staging to the embed allowlist.</>],
+      ["Verify the crawl", <>In Admin, confirm pricing, docs, and integrations pages are in the crawled list. Re-crawl after big site changes.</>],
+      ["Ask a test question", <>Ask something only your pricing page answers. The reply should link that page. Then ask something not on your site: it should say it doesn’t know.</>],
+      ["Connect Slack", <>Create a Slack incoming webhook for your leads channel, paste it in Admin → Integrations, and run a test handoff (Starter and up).</>],
+    ] as const).map(([h, d], i) => <li key={h} className="grid gap-1 py-3 sm:grid-cols-[28px_180px_1fr]"><span className="font-mono text-teal-700">{i + 1}</span><span className="font-semibold text-stone-900">{h}</span><span className="text-stone-600">{d}</span></li>)}</ol>
+    <p className="text-sm text-stone-500">During early access we’ll do this with you. Email <a href="mailto:hello@waylo.ai">hello@waylo.ai</a>.</p>
     <h2 id="snippet">1. Add the snippet</h2>
     <p>Paste this just before the closing <code>&lt;/body&gt;</code> tag on every page, or in your site builder’s footer-scripts box.</p>
     <Code>{s}</Code>

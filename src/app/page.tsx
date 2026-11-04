@@ -78,6 +78,22 @@ export default function Home() {
         </section>
         <div className="relative z-10 -mt-10 px-5"><div className="mx-auto max-w-6xl shadow-xl shadow-indigo-950/10"><ProofBar /></div></div>
         <div className="px-5 pt-6"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-7 gap-y-2"><p className="text-xs font-semibold uppercase tracking-wider text-stone-400">Built for marketing &amp; sales teams in</p>{proof.map(t => <span key={t} className="text-sm font-semibold tracking-tight text-stone-500">{t}</span>)}</div></div>
+        <Section id="early-access" eyebrow="Early access" title="Waylo is new. The first installs are done with you." sub="Right now it runs on a small free-tier stack and billing is in test mode until the first paying sites go live. In exchange, McKay sets up your first site with you." className="bg-white">
+          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
+            <ol className="border-l-2 border-teal-600 pl-5">{([["30-minute call", "We look at your site together and pick which pages Waylo should answer from."], ["Crawl + guidance", "Waylo crawls your public pages. We add the facts it shouldn’t guess at — pricing rules, what you don’t support, who to hand off to."], ["Install", "One script tag before </body>, or a GTM tag. Launcher, sidebar, or track-only."], ["Slack handoff", "Pricing, demo, and security questions post to the channel you pick, with the transcript."], ["First week review", "We read the real conversations, fix the answers it got wrong, and fill gaps where it said “I don’t know.”"]] as const).map(([h, d], i) => <li key={h} className="relative pb-5 last:pb-0"><span className="absolute -left-[29px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-700 text-[10px] font-semibold text-white">{i + 1}</span><p className="font-semibold text-stone-900">{h}</p><p className="mt-0.5 text-sm text-stone-600">{d}</p></li>)}</ol>
+            <div className="rounded-xl border border-stone-200 bg-stone-50 p-5 text-sm text-stone-700">
+              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">What to expect</p>
+              <ul className="mt-3 space-y-2">
+                <li className="flex gap-2"><span className="text-teal-700">✓</span>Free Trial: 500 AI messages, no card.</li>
+                <li className="flex gap-2"><span className="text-teal-700">✓</span>Starter $79/mo and Growth $249/mo when you’re ready.</li>
+                <li className="flex gap-2"><span className="text-teal-700">✓</span>Direct line to the person building it.</li>
+                <li className="flex gap-2"><span className="text-amber-600">–</span>No custom domain or status page yet. Some rough edges.</li>
+                <li className="flex gap-2"><span className="text-amber-600">–</span>No customer logos yet. Customer stories will come after the first installs.</li>
+              </ul>
+              <a href={ACCESS} className="w-btn-accent mt-5 inline-block px-4 py-2">Book a setup slot</a>
+            </div>
+          </div>
+        </Section>
         <Section className="w-mesh">
           <div className="grid gap-y-5 border-y border-stone-200 py-6 md:grid-cols-[1.3fr_1fr_1fr] md:divide-x md:divide-stone-200">{outcomes.map(([a, b], i) => <div key={a} className={i ? "md:pl-6" : "md:pr-6"}><p className={i ? "font-semibold text-stone-900" : "text-xl font-semibold tracking-tight text-stone-900"}>{a}</p><p className="mt-1 text-sm leading-6 text-stone-600">{b}</p></div>)}</div>
           <div className="mt-8"><WorkflowStrip /></div>
