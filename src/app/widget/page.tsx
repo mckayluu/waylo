@@ -53,7 +53,7 @@ export default function Widget() {
     setMsgs((m) => [...m, { role: "visitor", text }, { role: "bot", text: "", streaming: true }]);
     const patch = (p: Partial<M>) => setMsgs((m) => { const c = [...m]; c[c.length - 1] = { ...c[c.length - 1], ...p }; return c; });
     try {
-      const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, text, visitorId: vid, stream: true }) });
+      const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, text, visitorId: vid, stream: true, site: new URLSearchParams(location.search).get("site") || undefined }) });
       if (!r.ok || !r.body) throw new Error();
       const reader = r.body.getReader(); const dec = new TextDecoder(); let buf = "", acc = "";
       for (;;) {

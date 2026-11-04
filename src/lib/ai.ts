@@ -1,6 +1,7 @@
 // Responder: uses OpenAI if OPENAI_API_KEY is set, otherwise a mock grounded responder.
 import { getGuidance, getSettings, type Citation, type Message, type Fact } from "./store";
 import { findRelevant } from "./knowledge";
+import { ACME, findAcme } from "./demoKnowledge";
 import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl } from "./retrieve";
 
 export type Answer = { text: string; citations: Citation[] };
@@ -82,7 +83,8 @@ function parse(raw: string, src: { title: string; url: string }[]): Answer {
 }
 
 /** Answer a visitor. If onDelta is given, text is streamed (real OpenAI streaming, or simulated for the mock). */
-export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta): Promise<Answer> {
+export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta, site?: string): Promise<Answer> {
+  if (site === "acme-demo") return respondDemo(history, text, onDelta);
   const key = process.env.OPENAI_API_KEY;
   const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); const f = finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta) await simulate(a.text, onDelta); return a; };
   if (!key) return fallback();
@@ -121,4 +123,26 @@ export async function respond(history: Message[], text: string, signals: string[
     if (emitted === 0) return fallback();
     return { text: "", citations: [] };
   }
+}
+
+/** /demo Acme Co site: answer only from ACME knowledge (never Waylo plans, crawl, or workspace guidance). */
+async function respondDemo(history: Message[], text: string, onDelta?: OnDelta): Promise<Answer> {
+  const rel = findAcme(text);
+  const mockDemo = async (): Promise<Answer> => {
+    const a: Answer = rel.length ? { text: rel.map((k) => k.summary).join("\n\n"), citations: cite(rel) }
+      : /^(hi|hello|hey)\b/i.test(text.trim()) ? { text: "Hi! I can help with Acme **pricing**, **features**, **customers**, or how to **contact sales**.", citations: [] }
+      : { text: "I couldn't find that on the Acme site. Try asking about pricing, features, or customers — or use the **Contact** tab.", citations: [] };
+    if (onDelta) await simulate(a.text, onDelta); return a;
+  };
+  const key = process.env.OPENAI_API_KEY; if (!key) return mockDemo();
+  const src = ACME;
+  const sys = `You are the concise website assistant for Acme Co (field service scheduling software). Answer ONLY from the SOURCES below (pages of the Acme website). You are not Waylo; never mention Waylo plans or prices. Give exact numbers from SOURCES. If the answer isn't in SOURCES, say so briefly and point to the **Contact** tab; otherwise answer and stop without filler. Use short markdown. After the answer, on a final line write SOURCES: followed by the numbers used, comma separated, or SOURCES: none.\n\nSOURCES:\n${src.map((k, i) => `[${i + 1}] ${k.title} (${k.url}): ${k.summary}`).join("\n")}`;
+  try {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4o-mini", messages: [{ role: "system", content: sys }, ...history.slice(-10).map((m) => ({ role: m.role === "visitor" ? "user" : "assistant", content: m.text }))] }) });
+    if (!r.ok) throw new Error(String(r.status));
+    const raw = (await r.json()).choices?.[0]?.message?.content; if (!raw) return mockDemo();
+    const a = parse(raw, src); if (!a.citations.length && rel.length) a.citations = cite(rel);
+    if (onDelta) await simulate(a.text, onDelta); return a;
+  } catch { return mockDemo(); }
 }

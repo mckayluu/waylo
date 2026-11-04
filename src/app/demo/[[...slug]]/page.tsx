@@ -113,7 +113,7 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
         <span className="ml-auto shrink-0"><Btn href="/demo/contact">Book a walkthrough</Btn></span></nav></header>
       <main>{<View />}</main>
       <footer className="border-t border-slate-200 px-5 py-8 pb-24 text-xs text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3"><span>© 2026 Acme Co (fictional). Chat by Waylo, embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code>.</span><a href="/demo/pricing" className="hover:text-slate-800">Pricing</a></div></footer>
-      <Script src="/waylo.js" data-mode="launcher" strategy="afterInteractive" />
+      <Script src="/waylo.js" data-site="acme-demo" data-mode="launcher" strategy="afterInteractive" />
     </div>
   );
 }

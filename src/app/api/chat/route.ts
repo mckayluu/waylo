@@ -10,8 +10,9 @@ const VID = /^[a-zA-Z0-9_-]{6,64}$/;
 
 export async function POST(req: Request) {
   { const g = await guard(req, "chat"); if (g) return g; }
-  const { conversationId, text, visitorId, stream } = await req.json().catch(() => ({}));
+  const { conversationId, text, visitorId, stream, site: rawSite } = await req.json().catch(() => ({}));
   if (!text || typeof text !== "string") return NextResponse.json({ error: "text required" }, { status: 400 });
+  const site = rawSite === "acme-demo" ? "acme-demo" : undefined;
   const now = new Date().toISOString();
   const c: Conversation = (conversationId && (await getConversation(conversationId))) || {
     id: newId(), themes: [], signals: [], messages: [], createdAt: now, updatedAt: now,
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
   };
 
   if (!stream) {
-    const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail);
+    const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail, undefined, site);
     finish(ans);
     return NextResponse.json({ conversationId: c.id, messageId: botId, reply: ans.text, citations: ans.citations });
   }
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
       send("meta", { conversationId: c.id, messageId: botId });
       let streamed = "";
       try {
-        const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail, (t) => { streamed += t; send("delta", { t }); });
+        const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail, (t) => { streamed += t; send("delta", { t }); }, site);
         if (!ans.text) ans.text = streamed || "Sorry, something went wrong.";
         finish(ans);
         send("done", { reply: ans.text, citations: ans.citations });
