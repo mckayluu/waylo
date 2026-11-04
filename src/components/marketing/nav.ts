@@ -2,7 +2,7 @@ export type Tone = "teal" | "amber" | "indigo";
 export type NavItem = { label: string; href: string; desc: string; icon: string; t: Tone };
 export type NavGroup = { id: string; label: string; href: string; blurb: string; items: NavItem[]; feature?: { title: string; body: string; href: string; cta: string; img: string } };
 export const NAV: NavGroup[] = [
-  { id: "product", label: "Product", href: "/features", blurb: "AI website chat that cites its sources and turns conversations into pipeline.", items: [
+  { id: "product", label: "Product", href: "/features", blurb: "Website chat that links its sources and sends serious leads to sales.", items: [
     { label: "Cited answers", href: "/features#answers", desc: "Every reply links the pages it used", icon: "💬", t: "teal" },
     { label: "Knowledge & crawl", href: "/features#knowledge", desc: "Crawl your site, add facts and rules", icon: "🗂", t: "indigo" },
     { label: "Intent signals", href: "/features#signals", desc: "Pricing, demo, security, integration intent", icon: "📈", t: "amber" },
@@ -10,9 +10,9 @@ export const NAV: NavGroup[] = [
     { label: "Control & guidance", href: "/features#control", desc: "Voice, skills, roles, brand color", icon: "🎛", t: "indigo" },
     { label: "Embed modes", href: "/docs/embed-modes", desc: "Launcher, sidebar, or track-only", icon: "🧩", t: "amber" },
   ], feature: { title: "Try the live demo", body: "Ask a real question and watch the cited answer and signal appear.", href: "/demo", cta: "Open demo", img: "/marketing/laptop.webp" } },
-  { id: "solutions", label: "Solutions", href: "/use-cases", blurb: "How each team uses Waylo to answer visitors and act on intent.", items: [
-    { label: "Marketing teams", href: "/solutions/marketing", desc: "Turn traffic into qualified conversations", icon: "📣", t: "teal" },
-    { label: "Sales teams", href: "/solutions/sales", desc: "Get alerted the moment intent appears", icon: "🎯", t: "amber" },
+  { id: "solutions", label: "Solutions", href: "/use-cases", blurb: "How marketing, sales, SaaS, and agency teams set Waylo up.", items: [
+    { label: "Marketing teams", href: "/solutions/marketing", desc: "See which questions come before a demo", icon: "📣", t: "teal" },
+    { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts on pricing and demo interest", icon: "🎯", t: "amber" },
     { label: "SaaS & docs", href: "/solutions/saas", desc: "Cited answers from docs and pricing", icon: "🧪", t: "indigo" },
     { label: "Agencies", href: "/solutions/agencies", desc: "Cited chat across client sites", icon: "🏢", t: "teal" },
     { label: "All use cases", href: "/use-cases", desc: "Compare every team side by side", icon: "↗", t: "amber" },

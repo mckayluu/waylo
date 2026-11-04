@@ -26,7 +26,7 @@ export default function SolutionPage({ params }: { params: { slug: string } }) {
           <div className="w-card-lg p-5 sm:col-span-2"><p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">A real conversation, start to finish</p><ol className="mt-3 divide-y divide-stone-100">{s.scenario.map(([who, what], j) => <li key={who} className="flex gap-3 py-3"><IconTile t={tones[j]}>{j + 1}</IconTile><div><p className="text-sm font-semibold text-stone-900">{who}</p><p className="text-sm text-stone-600">{what}</p></div></li>)}</ol></div></div>
       </div>
     </Section>
-    <Section className="bg-white" eyebrow="Rollout" title="Live in an afternoon" sub="The same four steps every team follows — no engineering sprint required.">
+    <Section className="bg-white" eyebrow="Rollout" title="Live in an afternoon" sub="Setup is the same for every team. Most sites are live the same afternoon.">
       <ol className="grid gap-4 md:grid-cols-4">{s.setup.map(([h, d], i) => <li key={h} className="w-card p-5"><IconTile t={tones[i % 3]}>{i + 1}</IconTile><p className="mt-3 font-semibold text-stone-900">{h}</p><p className="mt-1 text-sm leading-6 text-stone-600">{d}</p></li>)}</ol>
       <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">Features used: {s.features.map((f, j) => <Chip key={f} t={tones[j % 3]}>{f}</Chip>)} <Link href="/features" className="ml-2 font-medium text-teal-700 underline">See all features →</Link></div>
     </Section>
@@ -35,7 +35,7 @@ export default function SolutionPage({ params }: { params: { slug: string } }) {
       <div className="mx-auto grid max-w-4xl gap-3">{s.faqs.map(([q, a]) => <details key={q} className="w-card group p-5" open><summary className="cursor-pointer font-semibold text-stone-900">{q}</summary><p className="mt-2 text-sm leading-6 text-stone-600">{a}</p></details>)}</div>
       <p className="mt-6 text-center text-sm text-stone-600">More answers in the <Link href="/faq" className="text-teal-700 underline">FAQ</Link> and the <Link href="/docs/install" className="text-teal-700 underline">install guide</Link>.</p>
     </Section>
-    <Section eyebrow="Other teams" title="Waylo for every team that owns the site">
+    <Section eyebrow="Other teams" title="Other teams using Waylo">
       <div className="grid gap-4 md:grid-cols-3">{others.map(o => <Link key={o.id} href={`/solutions/${o.id}`} className="w-card-lg block p-5 transition hover:-translate-y-0.5 hover:border-amber-300"><Chip t={o.t}>{o.who}</Chip><p className="mt-3 font-semibold text-stone-900">{o.short}</p><p className="mt-1 text-sm text-stone-600">{o.wins[0]}</p></Link>)}</div>
       <div className="mt-10"><MiniCTA title={`Set Waylo up for your ${s.id === "agencies" ? "clients" : "team"}`} body="Start on the free trial or see plans for Starter and Growth." /></div>
       <div className="mt-10"><CTA /></div>

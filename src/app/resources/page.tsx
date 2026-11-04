@@ -5,7 +5,7 @@ import { Section } from "@/components/marketing/Section";
 import { Chip, IconTile, PhotoBand, PHOTOS } from "@/components/marketing/Visuals";
 import { JsonLd, crumbsLd, faqLd, pageMeta } from "@/lib/seo";
 import { SOLUTIONS } from "@/lib/solutions";
-export const metadata = pageMeta("/resources", "Resources: docs, install guide, embed modes, and FAQ", "Everything you need to evaluate, install, and run Waylo: documentation, the one-line install guide, embed modes, the JavaScript API, FAQ, and guides by team.");
+export const metadata = pageMeta("/resources", "Resources: docs, install guide, embed modes, and FAQ", "Docs, guides, and answers: documentation, the one-line install guide, embed modes, the JavaScript API, FAQ, and guides by team.");
 type R = { h: string; d: string; href: string; t: "teal" | "amber" | "indigo"; i: string; tag: string };
 const res: R[] = [
   { h: "Documentation", d: "How Waylo crawls, answers, signals, and hands off — with setup for every feature.", href: "/docs", t: "teal", i: "📘", tag: "Docs" },
@@ -24,7 +24,7 @@ const qa: [string, string][] = [
   ["Can I try Waylo before installing?", "Yes. The live demo page runs Waylo on a real page so you can see cited answers and signals before adding it to your site."],
 ];
 export default function Resources() {
-  return <MarketingPage eyebrow="Resources" crumb="Resources" title="Everything you need to evaluate, install, and run Waylo" sub="Docs, setup guides, answers, and playbooks by team — all in one place." answer="Waylo resources include product documentation, a one-line install guide, embed mode reference, the JavaScript API, an FAQ, pricing details, a live demo, and solution guides for marketing, sales, SaaS, and agency teams.">
+  return <MarketingPage eyebrow="Resources" crumb="Resources" title="Docs, guides, and answers" sub="Install steps, embed reference, the JavaScript API, troubleshooting, and the FAQ." answer="Waylo resources include product documentation, a one-line install guide, embed mode reference, the JavaScript API, an FAQ, pricing details, a live demo, and solution guides for marketing, sales, SaaS, and agency teams.">
     <JsonLd data={[crumbsLd([["Resources", "/resources"]]), faqLd(qa)]} />
     <Section className="w-mesh" eyebrow="Library" title="Start where you are">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{res.map(r => <Link key={r.h} href={r.href} className="w-card-lg group block p-5 transition hover:-translate-y-0.5 hover:border-amber-300"><div className="flex items-center justify-between"><IconTile t={r.t}>{r.i}</IconTile><Chip t={r.t}>{r.tag}</Chip></div><p className="mt-4 font-semibold text-stone-900 group-hover:text-teal-800">{r.h}</p><p className="mt-1 text-sm leading-6 text-stone-600">{r.d}</p><span className="mt-3 inline-block text-sm font-medium text-teal-700">Open →</span></Link>)}</div>
