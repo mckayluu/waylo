@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { stripe, stripeConfigured, priceForTier, publicUrl, TIERS, getBilling } from "@/lib/stripe";
+import { stripe, stripeConfigured, priceForTier, publicUrl, TIERS, getBilling, syncSubscription } from "@/lib/stripe";
 import { COOKIE, verify } from "@/lib/session";
 import { rateLimit } from "@/lib/guard";
 import type { Tier } from "@/lib/store";
@@ -18,7 +18,16 @@ export async function POST(req: Request) {
   try {
     const price = await priceForTier(tier);
     const s = await verify(cookies().get(COOKIE)?.value);
-    const billing = await getBilling();
+    let billing = await getBilling();
+    if (billing.stripeSubscriptionId && (billing.status === "active" || billing.status === "trialing")) {
+      try { billing = await syncSubscription(billing.stripeSubscriptionId); } catch (e: any) { console.error("[billing] checkout sync", e?.message); }
+    }
+    // One billing record per install: never open a second subscription Checkout while a plan is live.
+    if (billing.stripeSubscriptionId && (billing.status === "active" || billing.status === "trialing")) {
+      const msg = "You already have an active plan — manage it in Billing";
+      if (isForm) return NextResponse.redirect(s ? `${publicUrl()}/admin/billing?billing=${encodeURIComponent(msg)}` : `${publicUrl()}/pricing?billing=${encodeURIComponent(msg)}`, 303);
+      return NextResponse.json({ error: msg, manage: `${publicUrl()}/admin/billing` }, { status: 409 });
+    }
     const signedIn = !!s;
     const email = typeof b.email === "string" && b.email.includes("@") ? b.email.trim() : s?.email;
     const session = await stripe().checkout.sessions.create({

@@ -1,15 +1,19 @@
-import { getBilling, stripeConfigured } from "@/lib/stripe";
+import { getBilling, stripeConfigured, syncSubscription } from "@/lib/stripe";
 import { PageHeader, Card, Badge } from "../ui";
 import { BillingActions } from "./BillingActions";
 export const dynamic = "force-dynamic";
 const NAMES = { trial: "Trial", starter: "Starter", growth: "Growth" } as const;
-export default async function BillingPage({ searchParams }: { searchParams: { checkout?: string } }) {
-  const b = await getBilling(); const configured = stripeConfigured();
+export default async function BillingPage({ searchParams }: { searchParams: { checkout?: string; billing?: string } }) {
+  const configured = stripeConfigured();
+  let b = await getBilling();
+  // Re-sync from Stripe on load so cancel_at / trial_end / status are current; fall back to last known state.
+  if (configured && b.stripeSubscriptionId) { try { b = await syncSubscription(b.stripeSubscriptionId); } catch (e: any) { console.error("[billing] page sync", e?.message); } }
   const live = b.status === "active" || b.status === "trialing";
   return (<>
     <PageHeader title="Billing" sub="Your Waylo plan, payment method and invoices." />
     <div className="-mt-3 mb-5 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-600 via-indigo-600 to-amber-500" />
     {searchParams.checkout === "success" && <div className="mb-4 rounded-xl bg-teal-50 px-3.5 py-2.5 text-sm text-teal-800 ring-1 ring-teal-200">Thanks! Checkout complete — your plan updates here as soon as Stripe confirms (usually a few seconds; refresh if needed).</div>}
+    {searchParams.billing && <div className="mb-4 rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800 ring-1 ring-amber-200">{searchParams.billing}</div>}
     {searchParams.checkout === "canceled" && <div className="mb-4 rounded-xl bg-stone-50 px-3.5 py-2.5 text-sm text-stone-700 ring-1 ring-stone-200">Checkout canceled — no charge was made.</div>}
     {!configured && <div className="mb-4 rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800 ring-1 ring-amber-200">Stripe isn’t configured on this server (STRIPE_SECRET_KEY missing). Billing is disabled and publishing is not gated.</div>}
     <div className="grid gap-4 lg:grid-cols-2">
