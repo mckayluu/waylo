@@ -16,3 +16,12 @@ export const ACME: KPage[] = [
     summary: "Sales: sales@acme.example · (555) 010-2290. Support: Mon–Fri, 6am–6pm PT · support@acme.example. Office: 1200 Market St, Suite 400, Denver, CO. Walkthroughs are 30 minutes, on your own job list." },
 ];
 export const findAcme = (text: string, max = 3) => ACME.filter((k) => k.keywords.test(text)).slice(0, max);
+
+/** Widget chrome for /demo — never use Waylo default branding. */
+export const DEMO_BRANDING = {
+  botName: "Acme",
+  accent: "#1d4ed8",
+  greeting: "Hi! Ask me anything about Acme — pricing, features, or how shops use us.",
+  published: true,
+  siteName: "Acme Co",
+};

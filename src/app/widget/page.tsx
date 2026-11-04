@@ -154,7 +154,7 @@ export default function Widget() {
               <button disabled={fstate === "sending"} onClick={() => submit("demo")} className="flex-1 rounded-xl px-3 py-2 font-medium text-white" style={{ background: a }}>Book a demo</button>
             </div></>}
         </div>)}
-      <p className="pb-3 text-center text-[11px] tracking-wide text-stone-400">waylo · answers from this site</p>
+      <p className="pb-3 text-center text-[11px] tracking-wide text-stone-400">{SITE() === "acme-demo" ? "Acme · answers from this site" : "waylo · answers from this site"}</p>
     </div>
   );
 }
