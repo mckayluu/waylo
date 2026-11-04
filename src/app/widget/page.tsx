@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 type C = { title: string; url: string };
-const citeHref = (u: string) => (/^https?:\/\//i.test(u) || u.startsWith("mailto:") ? u : u.startsWith("/") ? u : `/${u}`);
 type M = { id?: string; role: "visitor" | "bot"; text: string; citations?: C[]; feedback?: "up" | "down"; streaming?: boolean };
 type B = { botName: string; accent: string; greeting: string; published?: boolean };
 
@@ -117,7 +116,7 @@ export default function Widget() {
             <div key={i} className="border-l-2 pl-3 text-sm leading-relaxed" style={{ borderColor: a }}>
               {m.text ? <Md text={m.text} /> : <p className="animate-pulse text-xs text-stone-500">Looking up answers…</p>}{m.streaming && m.text && <span className="ml-0.5 inline-block h-3.5 w-1.5 animate-pulse align-middle" style={{ background: a }} />}
               {!!m.citations?.length && <div className="mt-2 flex flex-wrap gap-1.5">{m.citations.map((c, j) =>
-                <a key={j} href={citeHref(c.url)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border border-stone-300 bg-white px-2 py-0.5 text-xs hover:border-stone-500">
+                <a key={j} href={c.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border border-stone-300 bg-white px-2 py-0.5 text-xs hover:border-stone-500">
                   <span className="font-mono text-[10px] font-semibold" style={{ color: a }}>{j + 1}</span>{c.title}</a>)}</div>}
               {m.id && !m.streaming && <div className="mt-1.5 flex gap-1 text-xs text-stone-400">{(["up", "down"] as const).map((v) =>
                 <button key={v} onClick={() => rate(i, v)} aria-label={v} className={`rounded px-1.5 py-0.5 hover:bg-stone-200 ${m.feedback === v ? "bg-stone-200 text-stone-700" : ""}`}>{v === "up" ? "👍" : "👎"}</button>)}</div>}
