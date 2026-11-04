@@ -16,7 +16,8 @@ export async function POST(req: Request) {
   if ((await findMember({ email: em }))) return NextResponse.json({ error: "Already a member" }, { status: 409 });
   const m = await addMember(em, role);
   const r = await sendInviteEmail(m.email, `${publicUrl()}/admin/invite/${m.inviteToken}`, { siteName: (await getSettings()).siteName, role: m.role, inviter: (await currentSession())?.email });
-  return NextResponse.json({ ...pub(m), emailSent: r.sent, emailNote: r.sent ? undefined : r.warning || r.error });
+  // Always surface inviteToken on create so the UI can show a copyable link even when email fails.
+  return NextResponse.json({ ...pub(m), inviteToken: m.inviteToken, emailSent: r.sent, emailNote: r.sent ? undefined : r.warning || r.error || "Email not sent — copy the link instead." });
 }
 export async function PATCH(req: Request) {
   const { id, role } = await req.json().catch(() => ({}));

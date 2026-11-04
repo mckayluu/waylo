@@ -1,13 +1,20 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { AdminNav } from "./AdminNav";
 import { getSettings } from "@/lib/store";
 import { currentSession } from "@/lib/auth";
 import { authEnabled } from "@/lib/session";
 export const dynamic = "force-dynamic";
-// TODO(auth): gate /admin behind login before any real deployment.
+
+function isAuthShell(pathname: string) {
+  return pathname === "/admin/login" || pathname === "/admin/forgot" || pathname.startsWith("/admin/invite/") || pathname.startsWith("/admin/reset/");
+}
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const st = (await getSettings()); const auth = authEnabled(); const s = await currentSession();
-  if (auth && !s) return <>{children}</>; // login / invite pages render bare (middleware guards the rest)
+  const pathname = headers().get("x-waylo-pathname") || "";
+  // Login / forgot / invite / reset always render bare — even when a session cookie is present.
+  if (isAuthShell(pathname) || (auth && !s)) return <>{children}</>;
   const who = s?.email || "Owner"; const ini = who.split(/[@.\s]/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toUpperCase()).join("");
   return (
     <div className="w-admin-main min-h-screen text-stone-800 md:flex">
