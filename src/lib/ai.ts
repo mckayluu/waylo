@@ -1,5 +1,6 @@
 // Responder: uses OpenAI if OPENAI_API_KEY is set, otherwise a mock grounded responder.
 import { getGuidance, getSettings, type Citation, type Message, type Fact } from "./store";
+import { findRelevant } from "./knowledge";
 import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl } from "./retrieve";
 
 export type Answer = { text: string; citations: Citation[] };
@@ -11,6 +12,16 @@ function absUrl(url: string) {
 // Strip generic "check the website / contact us" filler from known answers.
 const FILLER = /\s*(?:[,;—-]\s*|\.\s*)?(?:(?:for more (?:info(?:rmation)?|details)[^.!?]*?)?(?:please |feel free to |you can |you may |or )*(?:check|visit|see|refer to) (?:our|the) website[^.!?\n]*|(?:please |feel free to |you can )?(?:contact|reach out to) us directly[^.!?\n]*)[.!?]?/gi;
 export function stripFiller(t: string) { return t.replace(FILLER, (m) => (/^\s*\./.test(m) ? "." : "")).replace(/[,;]?\s+(?:so|and|or|but|then)\s*(?=[.!?]|\n|$)/gi, "").replace(/[ \t]+\n/g, "\n").replace(/([^.!?\n*)])\s*$/, "$1.").trim(); }
+// On known answers, drop closers that push the Contact tab (e.g. "For custom plans..., please reach out through the Contact tab.").
+const CONTACT_CLOSER = /(?:^|(?<=[.!?\n]))\s*[^.!?\n]*\b(?:contact tab|reach out|get in touch|contact (?:us|the team|our team|sales))\b[^.!?\n]*[.!?]?\s*$/i;
+export function stripContactCloser(t: string) { let prev; do { prev = t; t = t.replace(CONTACT_CLOSER, "").trim(); } while (t !== prev && t.length); return t || prev; }
+/** Ensure known answers carry a citation chip from built-in knowledge (e.g. Pricing & Plans) and no Contact closer. */
+function finalize(a: Answer, question: string): Answer {
+  let citations = a.citations;
+  if (!citations.length) citations = cite(findRelevant(question, 2));
+  const unknown = /couldn'?t find|don'?t have (that|this)|not sure|can'?t quote/i.test(a.text);
+  return { text: citations.length && !unknown ? stripContactCloser(a.text) : a.text, citations: unknown ? a.citations : citations };
+}
 const cite = (ps: { title: string; url: string }[]) => ps.map(({ title, url }) => ({ title, url: absUrl(url) }));
 
 const STOP = new Set("the a an is are was what how do does can i you we our your to of and or for in on it with be my me about".split(" "));
@@ -73,7 +84,7 @@ function parse(raw: string, src: { title: string; url: string }[]): Answer {
 /** Answer a visitor. If onDelta is given, text is streamed (real OpenAI streaming, or simulated for the mock). */
 export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta): Promise<Answer> {
   const key = process.env.OPENAI_API_KEY;
-  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); if (onDelta) await simulate(a.text, onDelta); return a; };
+  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); const f = finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta) await simulate(a.text, onDelta); return a; };
   if (!key) return fallback();
   const src = (await retrieveForLLM(text));
   let emitted = 0;
@@ -87,7 +98,7 @@ export async function respond(history: Message[], text: string, signals: string[
       }),
     });
     if (!r.ok) throw new Error(`OpenAI ${r.status}`);
-    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; return raw ? parse(raw, src) : (await fallback()); }
+    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; return raw ? finalize(parse(raw, src), text) : (await fallback()); }
     // Stream, holding back anything that might be the trailing "SOURCES:" line.
     const reader = r.body!.getReader(); const dec = new TextDecoder(); let buf = "", raw = "";
     for (;;) {
@@ -103,7 +114,7 @@ export async function respond(history: Message[], text: string, signals: string[
       if (upto > emitted) { await onDelta(raw.slice(emitted, upto)); emitted = upto; }
     }
     if (!raw) return fallback();
-    const a = parse(raw, src);
+    const a = finalize(parse(raw, src), text);
     if (a.text.length > emitted) await onDelta(a.text.slice(emitted));
     return a;
   } catch {
