@@ -1,9 +1,9 @@
-import { WorkflowStrip, PhotoBand, PHOTOS } from "@/components/marketing/Visuals";
+import { WorkflowStrip } from "@/components/marketing/Visuals";
 import Link from "next/link";
 import Image from "next/image";
 import { MarketingPage, CTA } from "@/components/marketing/Page";
 import { Section } from "@/components/marketing/Section";
-import { Chip, IconTile, MiniCTA } from "@/components/marketing/Visuals";
+import { Chip, MiniCTA } from "@/components/marketing/Visuals";
 import { JsonLd, crumbsLd, faqLd, pageMeta } from "@/lib/seo";
 export const metadata = pageMeta("/use-cases", "Use cases for marketing, sales, SaaS, and agencies", "How marketing teams, sales teams, SaaS companies, and agencies use Waylo to answer website visitors with cited sources, capture buying intent, and route warm leads to Slack or the CRM.");
 type C = { id: string; who: string; t: "teal" | "amber" | "indigo"; img: string; answer: string; pains: string[]; scenario: [string, string][]; wins: string[]; features: string[] };
@@ -17,20 +17,20 @@ const qa: [string, string][] = cases.map(c => [`How do ${c.who.toLowerCase()} us
 export default function UseCases() {
   return <MarketingPage eyebrow="Use cases" crumb="Use cases" title="Who uses Waylo, and for what" sub="Four common setups, with the problem each one solves and what it looks like in practice." answer="Waylo is used by marketing and sales teams at B2B and SaaS companies, and by agencies, to answer website visitors with cited answers from their own pages, detect buying intent, and route warm leads to sales in Slack or the CRM.">
     <JsonLd data={[crumbsLd([["Use cases", "/use-cases"]]), faqLd(qa)]} />
-    <div className="mx-auto mt-10 grid max-w-5xl gap-3 px-5 sm:grid-cols-4">{cases.map(c => <a key={c.id} href={`#${c.id}`} className="w-card-lg p-4 transition hover:-translate-y-0.5 hover:border-amber-300"><Chip t={c.t}>{c.who}</Chip><p className="mt-2 text-sm text-stone-600">{c.wins[0]}</p></a>)}</div>
+    <nav aria-label="Use cases" className="mx-auto mt-8 max-w-5xl px-5"><ul className="grid border-y border-stone-200 sm:grid-cols-4 sm:divide-x sm:divide-stone-200">{cases.map(c => <li key={c.id}><a href={`#${c.id}`} className="block px-1 py-3 hover:text-teal-800 sm:px-4"><span className="text-sm font-semibold text-stone-900">{c.who}</span><span className="mt-0.5 block text-xs text-stone-500">{c.wins[0]}</span></a></li>)}</ul></nav>
     {cases.map((c, i) => <Section key={c.id} id={c.id} className={i % 2 ? "bg-white" : "w-mesh"}>
-      <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
+      <div className={`grid gap-10 ${i % 2 ? "lg:grid-cols-[1fr_1.25fr] lg:[&>*:first-child]:order-2" : "lg:grid-cols-[1.25fr_1fr]"}`}>
         <div><p className={c.t === "amber" ? "w-eyebrow-amber" : c.t === "indigo" ? "w-eyebrow-alt" : "w-eyebrow"}>{c.who}</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">Waylo for {c.who.toLowerCase()}</h2><p className="mt-4 text-lg leading-8 text-stone-700">{c.answer}</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2"><div className="w-card p-5"><p className="text-xs font-semibold uppercase tracking-wider text-stone-500">The problem</p><ul className="mt-3 space-y-2 text-sm text-stone-700">{c.pains.map(p => <li key={p} className="flex gap-2"><span className="text-stone-400">—</span>{p}</li>)}</ul></div>
-            <div className="w-card p-5"><p className="text-xs font-semibold uppercase tracking-wider text-amber-700">With Waylo</p><ul className="mt-3 space-y-2 text-sm text-stone-700">{c.wins.map(p => <li key={p} className="flex gap-2"><span className="text-teal-700">✓</span>{p}</li>)}</ul></div></div>
+          <div className="mt-6 grid gap-6 border-t border-stone-200 pt-5 sm:grid-cols-2"><div><p className="text-xs font-semibold uppercase tracking-wider text-stone-500">The problem</p><ul className="mt-3 space-y-2 text-sm text-stone-700">{c.pains.map(p => <li key={p} className="flex gap-2"><span className="text-stone-400">—</span>{p}</li>)}</ul></div>
+            <div><p className="text-xs font-semibold uppercase tracking-wider text-amber-700">With Waylo</p><ul className="mt-3 space-y-2 text-sm text-stone-700">{c.wins.map(p => <li key={p} className="flex gap-2"><span className="text-teal-700">✓</span>{p}</li>)}</ul></div></div>
           <Link href={`/solutions/${c.id}`} className="mt-5 inline-block text-sm font-semibold text-teal-700 hover:underline">Full guide for {c.who.toLowerCase()} →</Link>
           <div className="mt-5 flex flex-wrap gap-1.5">{c.features.map((f, j) => <Chip key={f} t={(["teal", "indigo", "amber"] as const)[j % 3]}>{f}</Chip>)}</div></div>
         <div><div className="relative overflow-hidden rounded-2xl w-glow"><Image src={c.img} alt={`${c.who} using Waylo`} width={1400} height={934} sizes="(min-width:1024px) 480px, 100vw" className="h-48 w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-tr from-stone-950/60 via-indigo-950/10 to-amber-500/10" /></div>
-          <ol className="w-card-lg mt-4 divide-y divide-stone-100">{c.scenario.map(([who, what], j) => <li key={who} className="flex gap-3 p-4"><IconTile t={(["teal", "indigo", "amber"] as const)[j]}>{j + 1}</IconTile><div><p className="text-sm font-semibold text-stone-900">{who}</p><p className="text-sm text-stone-600">{what}</p></div></li>)}</ol></div>
+          <ol className="mt-4 border-l-2 border-amber-300 pl-4">{c.scenario.map(([who, what]) => <li key={who} className="py-2"><div><p className="text-sm font-semibold text-stone-900">{who}</p><p className="text-sm text-stone-600">{what}</p></div></li>)}</ol></div>
       </div>
     </Section>)}
     <Section className="bg-white"><MiniCTA title="Not sure which setup fits?" body="Tell us about your site and we’ll set Waylo up with you during early access." /></Section>
-    <Section eyebrow="The Waylo loop" title="Crawl, answer, signal, hand off" className="bg-white"><WorkflowStrip /><div className="mt-6"><PhotoBand items={[PHOTOS.support, PHOTOS.meeting, PHOTOS.dashboard, PHOTOS.workshop]} /></div></Section>
+    <Section eyebrow="The Waylo loop" title="Crawl, answer, signal, hand off" className="bg-white"><WorkflowStrip /></Section>
     <Section><p className="mx-auto max-w-3xl text-center text-sm text-stone-600">Explore <Link href="/features" className="text-teal-700 underline">all features</Link>, <Link href="/pricing" className="text-teal-700 underline">pricing</Link>, or the <Link href="/faq" className="text-teal-700 underline">FAQ</Link>.</p><div className="mt-10"><CTA /></div></Section>
   </MarketingPage>;
 }

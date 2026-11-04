@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MarketingPage, CTA, FactsBlock } from "@/components/marketing/Page";
 import { Section } from "@/components/marketing/Section";
-import { Chip, IconTile, PhotoBand, PHOTOS } from "@/components/marketing/Visuals";
+import { Chip } from "@/components/marketing/Visuals";
 import { JsonLd, crumbsLd, faqLd, pageMeta } from "@/lib/seo";
 import { SOLUTIONS } from "@/lib/solutions";
 export const metadata = pageMeta("/resources", "Resources: docs, install guide, embed modes, and FAQ", "Docs, guides, and answers: documentation, the one-line install guide, embed modes, the JavaScript API, FAQ, and guides by team.");
@@ -27,14 +27,18 @@ export default function Resources() {
   return <MarketingPage eyebrow="Resources" crumb="Resources" title="Docs, guides, and answers" sub="Install steps, embed reference, the JavaScript API, troubleshooting, and the FAQ." answer="Waylo resources include product documentation, a one-line install guide, embed mode reference, the JavaScript API, an FAQ, pricing details, a live demo, and solution guides for marketing, sales, SaaS, and agency teams.">
     <JsonLd data={[crumbsLd([["Resources", "/resources"]]), faqLd(qa)]} />
     <Section className="w-mesh" eyebrow="Library" title="Start where you are">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{res.map(r => <Link key={r.h} href={r.href} className="w-card-lg group block p-5 transition hover:-translate-y-0.5 hover:border-amber-300"><div className="flex items-center justify-between"><IconTile t={r.t}>{r.i}</IconTile><Chip t={r.t}>{r.tag}</Chip></div><p className="mt-4 font-semibold text-stone-900 group-hover:text-teal-800">{r.h}</p><p className="mt-1 text-sm leading-6 text-stone-600">{r.d}</p><span className="mt-3 inline-block text-sm font-medium text-teal-700">Open →</span></Link>)}</div>
+      <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+        <div><Link href={res[1].href} className="group grid overflow-hidden rounded-2xl bg-stone-950 text-white sm:grid-cols-[1fr_200px]"><div className="p-6"><p className="text-xs font-semibold uppercase tracking-[0.08em] text-amber-300">Start here</p><p className="mt-1.5 text-2xl font-semibold tracking-tight">{res[1].h}</p><p className="mt-2 text-sm leading-6 text-stone-300">{res[1].d}</p><span className="mt-4 inline-block text-sm font-medium text-amber-300 group-hover:underline">Open the guide →</span></div><Image src="/marketing/laptop.webp" alt="" width={1400} height={934} sizes="200px" className="hidden h-full w-full object-cover opacity-80 sm:block" /></Link>
+          <ul className="mt-6 divide-y divide-stone-200 border-y border-stone-200">{res.filter((r, i) => i !== 1 && ["Docs", "Setup", "Developers", "Support"].includes(r.tag)).map(r => <li key={r.h}><Link href={r.href} className="grid gap-1 py-3.5 hover:text-teal-800 sm:grid-cols-[180px_1fr] sm:gap-6"><span className="font-semibold text-stone-900">{r.h}</span><span className="text-sm text-stone-600">{r.d}</span></Link></li>)}</ul></div>
+        <div><p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Evaluating Waylo</p><ul className="mt-3 space-y-4">{res.filter(r => r.tag === "Evaluate").map(r => <li key={r.h}><Link href={r.href} className="group block"><span className="font-semibold text-stone-900 group-hover:text-teal-800">{r.h} →</span><span className="mt-0.5 block text-sm leading-6 text-stone-600">{r.d}</span></Link></li>)}</ul></div>
+      </div>
     </Section>
     <Section className="bg-white" eyebrow="Playbooks by team" title="How teams roll out Waylo">
       <div className="grid gap-4 md:grid-cols-2">{SOLUTIONS.map(s => <Link key={s.id} href={`/solutions/${s.id}`} className="w-card-lg group flex overflow-hidden transition hover:border-amber-300"><Image src={s.img} alt="" width={1400} height={934} sizes="160px" className="h-auto w-36 shrink-0 object-cover" /><div className="p-5"><Chip t={s.t}>{s.who}</Chip><p className="mt-2 font-semibold text-stone-900">{s.short}</p><p className="mt-1 text-sm text-stone-600">{s.setup.map(x => x[0]).join(" → ")}</p></div></Link>)}</div>
     </Section>
     <Section className="w-mesh"><FactsBlock /></Section>
-    <Section className="bg-white" eyebrow="In practice" title="What Waylo looks like day to day"><PhotoBand items={[PHOTOS.support, PHOTOS.meeting, PHOTOS.dashboard, PHOTOS.workshop]} />
-      <div className="mx-auto mt-10 grid max-w-4xl gap-3">{qa.map(([q, a]) => <div key={q} className="w-card p-5"><h3 className="font-semibold text-stone-900">{q}</h3><p className="mt-2 text-sm leading-6 text-stone-600">{a}</p></div>)}</div>
+    <Section className="bg-white" eyebrow="Common questions" title="Before you install">
+      <div className="max-w-4xl divide-y divide-stone-200 border-y border-stone-200">{qa.map(([q, a]) => <div key={q} className="py-4"><h3 className="font-semibold text-stone-900">{q}</h3><p className="mt-2 text-sm leading-6 text-stone-600">{a}</p></div>)}</div>
     </Section>
     <Section><CTA /></Section>
   </MarketingPage>;
