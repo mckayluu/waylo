@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { crawl } from "@/lib/crawler";
-import { getLastCrawl, getSettings, setLastCrawl, setSettings, upsertPages, clearPages, type CrawlRun } from "@/lib/store";
+import { currentWs, runIn, getLastCrawl, getSettings, setLastCrawl, setSettings, upsertPages, clearPages, type CrawlRun } from "@/lib/store";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 const STALE_MS = 10 * 60_000;
@@ -39,7 +39,8 @@ export async function POST(req: Request) {
   const max = Math.min(Math.max(Number(b.max) || 50, 1), 100);
   const base: CrawlRun = { startUrl: url, startedAt: new Date().toISOString(), pages: 0, errors: 0, status: "running" };
   await setLastCrawl(base);
-  const job = run(url, max, b.replace !== false, base);
+  const ws = await currentWs(); // keep the background crawl bound to this workspace after the response returns
+  const job = runIn(ws, () => run(url, max, b.replace !== false, base));
   if (b.wait || process.env.VERCEL) { const r = await job; return NextResponse.json(r, { status: r.status === "error" ? 500 : 200 }); }
   return NextResponse.json(base, { status: 202 });
 }

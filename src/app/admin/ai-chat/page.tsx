@@ -1,12 +1,12 @@
 import { snippet } from "@/lib/embed";
 import Link from "next/link";
-import { stats, getBranding, getGuidance, getSettings, listVisitors, DEFAULT_BRANDING } from "@/lib/store";
+import { stats, getBranding, getGuidance, getSettings, listVisitors, DEFAULT_BRANDING, currentWs } from "@/lib/store";
 import { PageHeader, Card } from "../ui";
 import { PublishToggle } from "../PublishToggle";
 import { CopyButton } from "../settings/CopyButton";
 export const dynamic = "force-dynamic";
-const SNIPPET = snippet();
 export default async function AiChat() {
+  const WS = await currentWs(); const SNIPPET = snippet(WS);
   const s = (await stats()), b = (await getBranding()), g = (await getGuidance()), st = (await getSettings());
   const steps = [
     { n: 1, label: "Try it", desc: "Ask Waylo a question on the demo site.", ok: s.totalConversations > 0, action: <Link href="/demo" target="_blank" className="w-btn-ghost">Open demo ↗</Link> },
@@ -23,8 +23,8 @@ export default async function AiChat() {
           <div className="min-w-0 flex-1"><p className="font-medium text-stone-800">{x.label}</p><p className="text-sm text-stone-500">{x.desc}</p></div>{x.action}</div>)}
         <Card title="Embed snippet"><pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-lg bg-[#0d1b1e] p-4 text-[11px] leading-relaxed text-teal-100">{SNIPPET}</pre></Card>
       </div>
-      <div className="lg:col-span-2"><Card title="Live preview" pad={false} actions={<Link href="/widget" target="_blank" className="text-xs font-medium text-teal-700 hover:underline">Open ↗</Link>}>
-        <iframe src="/widget" title="Waylo preview" className="h-[620px] w-full rounded-b-xl border-0" /></Card></div>
+      <div className="lg:col-span-2"><Card title="Live preview" pad={false} actions={<Link href={`/widget?site=${WS}`} target="_blank" className="text-xs font-medium text-teal-700 hover:underline">Open ↗</Link>}>
+        <iframe src={`/widget?site=${WS}`} title="Waylo preview" className="h-[620px] w-full rounded-b-xl border-0" /></Card></div>
     </div>
   </>);
 }

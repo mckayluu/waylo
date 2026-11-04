@@ -18,6 +18,10 @@ function Md({ text }: { text: string }) {
   })}</>;
 }
 
+const SITE = () => (typeof location !== "undefined" && new URLSearchParams(location.search).get("site")) || "default";
+const api = (path: string) => `${path}?site=${encodeURIComponent(SITE())}`;
+const LS = (k: string) => `${k}:${SITE()}`; // per-site so chats never cross workspaces in the shared widget origin
+
 export default function Widget() {
   const [b, setB] = useState<B>({ botName: "Waylo", accent: "#0f766e", greeting: "Hi! Ask me anything." });
   const [tab, setTab] = useState<"chat" | "contact">("chat");
@@ -28,24 +32,24 @@ export default function Widget() {
   async function requestHuman(e?: React.FormEvent) {
     e?.preventDefault(); setHo("sending");
     try {
-      const r = await fetch("/api/handoff", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, visitorId: vid, email: hoEmail || undefined, note: hoNote || undefined }) });
-      if (!r.ok) throw new Error(); setHo("sent"); localStorage.setItem("waylo_handoff", "1");
+      const r = await fetch(api("/api/handoff"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, visitorId: vid, email: hoEmail || undefined, note: hoNote || undefined }) });
+      if (!r.ok) throw new Error(); setHo("sent"); localStorage.setItem(LS("waylo_handoff"), "1");
     } catch { setHo("ask"); }
   }
   const [form, setForm] = useState({ name: "", email: "", message: "", consent: false });
   const [fstate, setFstate] = useState<"" | "sending" | "sent" | string>("");
 
   useEffect(() => {
-    fetch("/api/branding").then((r) => r.json()).then(setB).catch(() => {});
-    setCid(localStorage.getItem("waylo_cid"));
+    fetch(api("/api/branding")).then((r) => r.json()).then(setB).catch(() => {});
+    setCid(localStorage.getItem(LS("waylo_cid")));
     const fromUrl = new URLSearchParams(location.search).get("vid");
-    let v = fromUrl || localStorage.getItem("waylo_vid");
+    let v = fromUrl || localStorage.getItem(LS("waylo_vid"));
     if (!v) v = "v_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-    localStorage.setItem("waylo_vid", v); setVid(v);
-    if (localStorage.getItem("waylo_handoff")) setHo("sent");
-    try { setMsgs((JSON.parse(localStorage.getItem("waylo_msgs") || "[]") as M[]).filter((m) => m.text).map((m) => ({ ...m, streaming: false }))); } catch {}
+    localStorage.setItem(LS("waylo_vid"), v); setVid(v);
+    if (localStorage.getItem(LS("waylo_handoff"))) setHo("sent");
+    try { setMsgs((JSON.parse(localStorage.getItem(LS("waylo_msgs")) || "[]") as M[]).filter((m) => m.text).map((m) => ({ ...m, streaming: false }))); } catch {}
   }, []);
-  useEffect(() => { localStorage.setItem("waylo_msgs", JSON.stringify(msgs)); end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy]);
+  useEffect(() => { localStorage.setItem(LS("waylo_msgs"), JSON.stringify(msgs)); end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy]);
 
   async function ask(text: string) {
     if (!text || busy) return;
@@ -53,7 +57,7 @@ export default function Widget() {
     setMsgs((m) => [...m, { role: "visitor", text }, { role: "bot", text: "", streaming: true }]);
     const patch = (p: Partial<M>) => setMsgs((m) => { const c = [...m]; c[c.length - 1] = { ...c[c.length - 1], ...p }; return c; });
     try {
-      const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, text, visitorId: vid, stream: true, site: new URLSearchParams(location.search).get("site") || undefined }) });
+      const r = await fetch(api("/api/chat"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, text, visitorId: vid, stream: true }) });
       if (!r.ok || !r.body) throw new Error();
       const reader = r.body.getReader(); const dec = new TextDecoder(); let buf = "", acc = "";
       for (;;) {
@@ -61,7 +65,7 @@ export default function Widget() {
         buf += dec.decode(value, { stream: true }); const evs = buf.split("\n\n"); buf = evs.pop()!;
         for (const ev of evs) {
           const name = ev.match(/^event: (.+)$/m)?.[1]; const data = JSON.parse(ev.match(/^data: (.+)$/m)?.[1] || "{}");
-          if (name === "meta") { setCid(data.conversationId); localStorage.setItem("waylo_cid", data.conversationId); patch({ id: data.messageId }); }
+          if (name === "meta") { setCid(data.conversationId); localStorage.setItem(LS("waylo_cid"), data.conversationId); patch({ id: data.messageId }); }
           else if (name === "delta") { acc += data.t; patch({ text: acc }); }
           else if (name === "done") patch({ text: data.reply, citations: data.citations, streaming: false });
         }
@@ -73,14 +77,14 @@ export default function Widget() {
   async function rate(i: number, v: "up" | "down") {
     const m = msgs[i]; if (!m.id || !cid) return; const next = m.feedback === v ? null : v;
     setMsgs((all) => all.map((x, j) => j === i ? { ...x, feedback: next ?? undefined } : x));
-    fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, messageId: m.id, feedback: next }) });
+    fetch(api("/api/feedback"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, messageId: m.id, feedback: next }) });
   }
-  function clear() { localStorage.removeItem("waylo_handoff"); setHo(""); setMsgs([]); setCid(null); localStorage.removeItem("waylo_cid"); localStorage.removeItem("waylo_msgs"); setMenu(false); }
+  function clear() { localStorage.removeItem(LS("waylo_handoff")); setHo(""); setMsgs([]); setCid(null); localStorage.removeItem(LS("waylo_cid")); localStorage.removeItem(LS("waylo_msgs")); setMenu(false); }
   async function submit(intent: "message" | "demo") {
     if (!form.name || !form.email || !form.message) return setFstate("Please fill in all required fields.");
     if (!form.consent) return setFstate("Please accept the privacy notice.");
     setFstate("sending");
-    const r = await fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, intent, conversationId: cid }) });
+    const r = await fetch(api("/api/leads"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, intent, conversationId: cid }) });
     if (r.ok) { setFstate("sent"); setForm({ name: "", email: "", message: "", consent: false }); } else setFstate((await r.json()).error || "Could not send.");
   }
   const a = b.accent;

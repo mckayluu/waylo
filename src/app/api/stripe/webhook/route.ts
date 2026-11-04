@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe, syncSubscription } from "@/lib/stripe";
-import { setBilling, getBilling } from "@/lib/store";
+import { setBilling, getBilling, runIn, findWorkspaceByStripe, getWorkspace } from "@/lib/store";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
@@ -14,8 +14,22 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
   try { event = stripe().webhooks.constructEvent(raw, sig, secret); }
   catch (e: any) { console.warn("[stripe] bad signature", e?.message); return NextResponse.json({ error: "Invalid signature" }, { status: 400 }); }
+  const o: any = event.data.object;
+  const ws = await workspaceFor(o);
+  if (!ws) { console.warn("[stripe] no workspace for", event.type, o.id); return NextResponse.json({ received: true, ignored: true }); }
+  return runIn(ws, () => handle(event, o));
+}
+const id = (x: any) => (typeof x === "string" ? x : x?.id) as string | undefined;
+// Which workspace an event belongs to: our metadata/client_reference_id first, then the linked customer/subscription.
+async function workspaceFor(o: any): Promise<string | undefined> {
+  const subId = o.object === "subscription" ? o.id : id(o.subscription) || id(o.parent?.subscription_details?.subscription);
+  let meta = o.metadata?.workspace || o.parent?.subscription_details?.metadata?.workspace || (o.object === "checkout.session" ? o.client_reference_id : undefined);
+  if (!meta && subId && o.object !== "subscription") { try { meta = (await stripe().subscriptions.retrieve(subId)).metadata?.workspace; } catch {} }
+  if (meta && (await getWorkspace(meta))) return meta;
+  return (await findWorkspaceByStripe(id(o.customer), subId)) || "default"; // pre-workspace subscriptions belong to the original install
+}
+async function handle(event: Stripe.Event, o: any) {
   try {
-    const o: any = event.data.object;
     switch (event.type) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded":
@@ -28,7 +42,7 @@ export async function POST(req: Request) {
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         const cur = await getBilling();
-        // Single-install app: follow the newest subscription, ignore stale ones for other subs once linked.
+        // Per workspace: follow the newest subscription, ignore stale ones for other subs once linked.
         if (!cur.stripeSubscriptionId || cur.stripeSubscriptionId === o.id || event.type !== "customer.subscription.deleted") await syncSubscription(o as Stripe.Subscription);
         break; }
       case "invoice.paid":

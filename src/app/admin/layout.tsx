@@ -7,7 +7,7 @@ import { authEnabled } from "@/lib/session";
 export const dynamic = "force-dynamic";
 
 function isAuthShell(pathname: string) {
-  return pathname === "/admin/login" || pathname === "/admin/forgot" || pathname.startsWith("/admin/invite/") || pathname.startsWith("/admin/reset/");
+  return pathname === "/admin/login" || pathname === "/admin/signup" || pathname === "/admin/forgot" || pathname.startsWith("/admin/invite/") || pathname.startsWith("/admin/reset/");
 }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -19,6 +19,6 @@ export function LoginForm({ next, askEmail }: { next: string; askEmail: boolean 
     </div>
     {err && <p id="waylo-login-error" role="alert" className="text-sm text-rose-600">{err}</p>}
     <button disabled={busy} className="w-btn w-full" aria-busy={busy}>{busy ? "Signing in…" : "Sign in"}</button>
-    <p className="text-center text-sm"><a href="/admin/forgot" className="text-teal-700 hover:underline">Forgot password?</a></p>
+    <p className="text-center text-sm"><a href="/admin/forgot" className="text-teal-700 hover:underline">Forgot password?</a><span className="mx-2 text-stone-300">·</span><a href="/admin/signup" className="text-teal-700 hover:underline">Create a workspace</a></p>
   </form>;
 }

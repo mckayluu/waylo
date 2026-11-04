@@ -2,7 +2,7 @@
 import { getGuidance, getSettings, type Citation, type Message, type Fact } from "./store";
 import { findRelevant } from "./knowledge";
 import { ACME, findAcme } from "./demoKnowledge";
-import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl } from "./retrieve";
+import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl, isWayloWs } from "./retrieve";
 
 export type Answer = { text: string; citations: Citation[] };
 function absUrl(url: string) {
@@ -17,9 +17,9 @@ export function stripFiller(t: string) { return t.replace(FILLER, (m) => (/^\s*\
 const CONTACT_CLOSER = /(?:^|(?<=[.!?\n]))\s*[^.!?\n]*\b(?:contact tab|reach out|get in touch|contact (?:us|the team|our team|sales))\b[^.!?\n]*[.!?]?\s*$/i;
 export function stripContactCloser(t: string) { let prev; do { prev = t; t = t.replace(CONTACT_CLOSER, "").trim(); } while (t !== prev && t.length); return t || prev; }
 /** Ensure known answers carry a citation chip from built-in knowledge (e.g. Pricing & Plans) and no Contact closer. */
-function finalize(a: Answer, question: string): Answer {
+async function finalize(a: Answer, question: string): Promise<Answer> {
   let citations = a.citations;
-  if (!citations.length) citations = cite(findRelevant(question, 2));
+  if (!citations.length && (await isWayloWs())) citations = cite(findRelevant(question, 2));
   const unknown = /couldn'?t find|don'?t have (that|this)|not sure|can'?t quote/i.test(a.text);
   return { text: citations.length && !unknown ? stripContactCloser(a.text) : a.text, citations: unknown ? a.citations : citations };
 }
@@ -74,7 +74,9 @@ async function simulate(text: string, onDelta: OnDelta) {
   for (const tok of text.match(/\s*\S+/g) || []) { await onDelta(tok); await sleep(18 + Math.random() * 22); }
 }
 async function systemPrompt(src: { title: string; url: string; summary: string }[]) {
-  return `You are Waylo's concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly and point the visitor to the **Contact** tab — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. Only mention the **Contact** tab when the answer is genuinely missing from SOURCES. For pricing, the only current plans are Trial ($0, 14 days, 500 AI messages), Starter ($79/mo, 3,000 messages), and Growth ($249/mo, 3 sites, 15,000 messages); never mention a Free tier, $49 plan, or Enterprise tier. Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
+  const waylo = await isWayloWs(); const name = waylo ? "Waylo" : (await getSettings()).siteName || "this company";
+  const pricing = waylo ? " For pricing, the only current plans are Trial ($0, 14 days, 500 AI messages), Starter ($79/mo, 3,000 messages), and Growth ($249/mo, 3 sites, 15,000 messages); never mention a Free tier, $49 plan, or Enterprise tier." : " Never quote prices, plans or facts that are not in SOURCES or the guidance; you are not Waylo and must not describe Waylo's product. Always write at least one sentence before the SOURCES line, even when the answer is not available.";
+  return `You are ${name}'s concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly and point the visitor to the **Contact** tab — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. Only mention the **Contact** tab when the answer is genuinely missing from SOURCES.${pricing} Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
 }
 function parse(raw: string, src: { title: string; url: string }[]): Answer {
   const m = raw.match(/\n?SOURCES:\s*([^\n]*)\s*$/i);
@@ -86,7 +88,7 @@ function parse(raw: string, src: { title: string; url: string }[]): Answer {
 export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta, site?: string): Promise<Answer> {
   if (site === "acme-demo") return respondDemo(history, text, onDelta);
   const key = process.env.OPENAI_API_KEY;
-  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); const f = finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta) await simulate(a.text, onDelta); return a; };
+  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); const f = await finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta) await simulate(a.text, onDelta); return a; };
   if (!key) return fallback();
   const src = (await retrieveForLLM(text));
   let emitted = 0;
@@ -100,7 +102,7 @@ export async function respond(history: Message[], text: string, signals: string[
       }),
     });
     if (!r.ok) throw new Error(`OpenAI ${r.status}`);
-    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; return raw ? finalize(parse(raw, src), text) : (await fallback()); }
+    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; const a = raw ? await finalize(parse(raw, src), text) : undefined; return a?.text ? a : (await fallback()); }
     // Stream, holding back anything that might be the trailing "SOURCES:" line.
     const reader = r.body!.getReader(); const dec = new TextDecoder(); let buf = "", raw = "";
     for (;;) {
@@ -116,7 +118,8 @@ export async function respond(history: Message[], text: string, signals: string[
       if (upto > emitted) { await onDelta(raw.slice(emitted, upto)); emitted = upto; }
     }
     if (!raw) return fallback();
-    const a = finalize(parse(raw, src), text);
+    const a = await finalize(parse(raw, src), text);
+    if (!a.text && emitted === 0) return fallback();
     if (a.text.length > emitted) await onDelta(a.text.slice(emitted));
     return a;
   } catch {

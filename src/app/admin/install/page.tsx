@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { PageHeader, Card, Checklist } from "../ui";
-import { listVisitors, listConversations, getSettings } from "@/lib/store";
+import { listVisitors, listConversations, getSettings, currentWs } from "@/lib/store";
 import { CopyButton } from "../settings/CopyButton";
 import { WAYLO_URL } from "@/lib/embed";
 import { SnippetBuilder } from "./SnippetBuilder";
 export const dynamic = "force-dynamic";
 const Code = ({ children }: { children: string }) => <div className="relative"><pre className="overflow-x-auto rounded-xl bg-stone-900 p-4 pr-24 text-sm text-teal-200">{children}</pre><div className="absolute right-2 top-2"><CopyButton text={children} /></div></div>;
 export default async function Install() {
-  const st = await getSettings(); const WS = "default"; const origins = (st.allowedOrigins || "").split(/\s+/).filter(Boolean);
+  const st = await getSettings(); const WS = await currentWs(); const origins = (st.allowedOrigins || "").split(/\s+/).filter(Boolean);
   const visitors = await listVisitors(); const live = visitors.length > 0;
   const asked = (await listConversations()).some((c) => c.messages.some((m) => m.role === "visitor"));
   return (<>
@@ -39,7 +39,7 @@ export default async function Install() {
           <li><code>data-position=&quot;left&quot;</code>, <code>data-color=&quot;#0f766e&quot;</code>, <code>data-open=&quot;true&quot;</code> (open on load).</li>
           <li>JS API: <code>Waylo.open()</code>, <code>Waylo.close()</code>, <code>Waylo.toggle()</code> — e.g. on a &quot;Talk to us&quot; button.</li>
         </ul>
-        <div className="mt-3"><Code>{`<script src="${WAYLO_URL}/waylo.js" data-site="default" data-color="#1d4ed8" data-position="left" async></script>`}</Code></div></Card>
+        <div className="mt-3"><Code>{`<script src="${WAYLO_URL}/waylo.js" data-site="${WS}" data-color="#1d4ed8" data-position="left" async></script>`}</Code></div></Card>
       <Card title="4. Allow your domain"><p className="text-sm text-stone-600">If you set an embed origin allowlist, add your site&apos;s domain under <Link href="/admin/settings" className="font-medium text-teal-700 hover:underline">Settings</Link> so chat requests are accepted.</p></Card>
     </div>
   </>);

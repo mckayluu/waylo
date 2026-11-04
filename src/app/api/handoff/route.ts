@@ -3,10 +3,15 @@ import { addHandoff, getConversation, listHandoffs, updateConversation } from "@
 import { EMAIL_RE } from "@/lib/signals";
 import { notify } from "@/lib/notify";
 import { guard } from "@/lib/guard";
+import { withSite, siteParam, isDemo } from "@/lib/site";
 export const dynamic = "force-dynamic";
 // Visitor-facing: request a human.
 export async function POST(req: Request) {
-  { const g = await guard(req, "handoff"); if (g) return g; }
+  const site = siteParam(req);
+  if (isDemo(site)) return NextResponse.json({ ok: true, demo: true }); // /demo: nothing stored
+  return withSite(site, async () => { const g = await guard(req, "handoff"); return g || post(req); });
+}
+async function post(req: Request) {
   const b = await req.json().catch(() => ({}));
   const conversationId = typeof b.conversationId === "string" ? b.conversationId : undefined;
   const c = conversationId ? (await getConversation(conversationId)) : undefined;

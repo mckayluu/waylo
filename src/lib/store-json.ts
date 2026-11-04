@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-import type { Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing } from "./store-types";
+import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
 type DB = { conversations: Conversation[]; leads?: Lead[]; branding?: Branding; settings?: SiteSettings; members?: Member[]; audiences?: Audience[]; integrations?: Integrations; handoffs?: Handoff[]; deliveries?: Delivery[]; visitors?: Visitor[]; pages?: Page[]; lastCrawl?: CrawlRun; facts?: Fact[]; rules?: Rule[]; skills?: Skill[]; billing?: Billing };
 
@@ -109,11 +109,12 @@ export function logDelivery(d: Omit<Delivery, "id" | "at">) {
 export function listDeliveries() { return load().deliveries || []; }
 
 export function listMembers() { return (load().members || []).sort((a, b) => a.invitedAt.localeCompare(b.invitedAt)); }
-export function findMember(q: { email?: string; token?: string }) {
-  return (load().members || []).find((m) => (q.email && m.email.toLowerCase() === q.email.toLowerCase()) || (q.token && m.inviteToken === q.token));
+export function findMember(q: { email?: string; token?: string; id?: string }) {
+  return (load().members || []).find((m) => (q.email && m.email.toLowerCase() === q.email.toLowerCase()) || (q.token && m.inviteToken === q.token) || (q.id && m.id === q.id));
 }
-export function addMember(email: string, role: Member["role"]) {
-  const db = load(); const m: Member = { id: newId(), email: email.toLowerCase(), role, invitedAt: new Date().toISOString(), inviteToken: crypto.randomBytes(18).toString("base64url") };
+export function addMember(email: string, role: Member["role"], passwordHash?: string) {
+  const db = load(); const now = new Date().toISOString();
+  const m: Member = passwordHash ? { id: newId(), email: email.toLowerCase(), role, invitedAt: now, passwordHash, joinedAt: now } : { id: newId(), email: email.toLowerCase(), role, invitedAt: now, inviteToken: crypto.randomBytes(18).toString("base64url") };
   db.members = [...(db.members || []), m]; save(db); return m;
 }
 export function updateMember(id: string, p: Partial<Member>) {
@@ -125,3 +126,9 @@ export function removeMember(id: string) { const db = load(); db.members = (db.m
 export function listAudiences() { return load().audiences || []; }
 export function addAudience(a: Omit<Audience, "id" | "createdAt">) { const db = load(); const x = { ...a, id: newId(), createdAt: new Date().toISOString() }; db.audiences = [...(db.audiences || []), x]; save(db); return x; }
 export function deleteAudience(id: string) { const db = load(); db.audiences = (db.audiences || []).filter((a) => a.id !== id); save(db); }
+
+// JSON backend is single-tenant: only the "default" workspace exists (signup needs Postgres).
+export function getWorkspace(id: string): Workspace | undefined { return id === "default" ? { id, name: "Waylo", createdAt: new Date(0).toISOString() } : undefined; }
+export function createWorkspace(_w: { id: string; name: string; ownerEmail?: string }): Workspace | undefined { return undefined; }
+export function deleteWorkspace(_id: string) {}
+export function findWorkspaceByStripe(_c?: string, _s?: string): string | undefined { return "default"; }

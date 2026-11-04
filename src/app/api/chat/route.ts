@@ -1,23 +1,35 @@
 import { NextResponse } from "next/server";
-import { getConversation, newId, upsertConversation, getVisitor, trackPageview, type Conversation } from "@/lib/store";
+import { getConversation as getConv, newId, upsertConversation as upsertConv, getVisitor, trackPageview, type Conversation } from "@/lib/store";
 import { detectSignals, mergeSignals, inferVisitorType, EMAIL_RE } from "@/lib/signals";
 import { respond } from "@/lib/ai";
 import { syncConversation } from "@/lib/crm";
 import { notify } from "@/lib/notify";
-import { guard } from "@/lib/guard";
+import { guard, rateLimit } from "@/lib/guard";
+import { withSite, siteParam, isDemo } from "@/lib/site";
 export const dynamic = "force-dynamic";
 const VID = /^[a-zA-Z0-9_-]{6,64}$/;
 
+// /demo (site=acme-demo) is a marketing mini-site: answered from Acme knowledge and kept in memory only,
+// so demo chats never land in any customer workspace inbox.
+const g = globalThis as unknown as { __wayloDemo?: Map<string, Conversation> };
+const demoConvs = (g.__wayloDemo ||= new Map());
 export async function POST(req: Request) {
-  { const g = await guard(req, "chat"); if (g) return g; }
-  const { conversationId, text, visitorId, stream, site: rawSite } = await req.json().catch(() => ({}));
+  const b = await req.json().catch(() => ({}));
+  const rawSite = b.site ?? siteParam(req);
+  if (isDemo(rawSite)) { const l = rateLimit(req, "chat"); return l || handle(req, b, true); }
+  return withSite(rawSite, async () => { const g = await guard(req, "chat"); return g || handle(req, b, false); });
+}
+async function handle(req: Request, b: any, demo: boolean) {
+  const { conversationId, text, visitorId, stream } = b;
   if (!text || typeof text !== "string") return NextResponse.json({ error: "text required" }, { status: 400 });
-  const site = rawSite === "acme-demo" ? "acme-demo" : undefined;
+  const site = demo ? "acme-demo" : undefined;
+  const getConversation = demo ? async (id: string) => demoConvs.get(id) : getConv;
+  const upsertConversation = demo ? async (c: Conversation) => { demoConvs.delete(c.id); demoConvs.set(c.id, c); if (demoConvs.size > 500) demoConvs.delete(demoConvs.keys().next().value!); return c; } : upsertConv;
   const now = new Date().toISOString();
   const c: Conversation = (conversationId && (await getConversation(conversationId))) || {
     id: newId(), themes: [], signals: [], messages: [], createdAt: now, updatedAt: now,
   };
-  if (typeof visitorId === "string" && VID.test(visitorId)) {
+  if (!demo && typeof visitorId === "string" && VID.test(visitorId)) {
     c.visitorId = visitorId;
     if (!(await getVisitor(visitorId))) (await trackPageview(visitorId, { path: "(chat)", title: "Started chat" }, req.headers.get("user-agent") || undefined));
   }
@@ -32,7 +44,7 @@ export async function POST(req: Request) {
   const botId = newId();
   const finish = async (ans: { text: string; citations: { title: string; url: string }[] }) => {
     c.messages.push({ id: botId, role: "bot", text: ans.text, citations: ans.citations, at: new Date().toISOString() });
-    c.updatedAt = new Date().toISOString(); (await upsertConversation(c)); syncConversation(c).catch(() => {});
+    c.updatedAt = new Date().toISOString(); (await upsertConversation(c)); if (demo) return; syncConversation(c).catch(() => {});
     if (!wasHot && c.signals.includes("high-intent")) notify("conversation.high_intent", { conversation: c }).catch(() => {});
   };
 

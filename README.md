@@ -169,3 +169,11 @@ Set `RESEND_API_KEY` (and `WAYLO_FROM_EMAIL`, default `Waylo <onboarding@resend.
 - **Invites:** creating a member emails the invite link; Copy link always works too.
 - **Password reset:** `/admin/login` → *Forgot password?* emails a 1-hour, single-use link to `/admin/reset/<token>` (rate-limited). Invited members only — the env owner changes `WAYLO_ADMIN_PASSWORD` on the host instead.
 - Without a key, nothing is sent: links are logged to the server console and the admin shows "Email not configured — copy link".
+
+## Workspaces (multi-tenant)
+Every customer is a workspace (`workspaces` table; data rows carry `workspace_id`, kv keys are `<workspace>:<key>`).
+- **Admin**: the session cookie carries `ws`; all store calls are scoped to it (`src/lib/tenant.ts`). Sessions without `ws` (env owner) use `default`.
+- **Embed**: `data-site` → workspace id (`waylo` is an alias for `default`). Unknown sites get 404. `acme-demo` is the in-memory /demo mini-site and is never stored.
+- **Signup**: `/signup` → `/admin/signup` creates a workspace + Owner (Postgres only).
+- **Billing**: Stripe Checkout carries `metadata.workspace`; webhooks route by metadata, then by linked customer/subscription.
+- **Migrate**: `npm start` runs `scripts/db-migrate.mjs` first (applies `migrations/002_workspaces.sql`, backfills `default`).

@@ -13,7 +13,7 @@ function needed(path: string, method: string): Role {
   return "Editor";
 }
 function isAuthShell(pathname: string) {
-  return pathname === "/admin/login" || pathname === "/admin/forgot" || pathname.startsWith("/admin/invite/") || pathname.startsWith("/admin/reset/");
+  return pathname === "/admin/login" || pathname === "/admin/signup" || pathname === "/admin/forgot" || pathname.startsWith("/admin/invite/") || pathname.startsWith("/admin/reset/");
 }
 function withPath(req: NextRequest, res: NextResponse) {
   res.headers.set("x-waylo-pathname", req.nextUrl.pathname);

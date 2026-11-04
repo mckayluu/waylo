@@ -49,3 +49,8 @@ export const addAudience = (...a: Parameters<typeof P.addAudience>): ReturnType<
 export const deleteAudience = (...a: Parameters<typeof P.deleteAudience>): ReturnType<typeof P.deleteAudience> => Promise.resolve().then(() => pick("deleteAudience")(...a));
 export const getBilling = (...a: Parameters<typeof P.getBilling>): ReturnType<typeof P.getBilling> => Promise.resolve().then(() => pick("getBilling")(...a));
 export const setBilling = (...a: Parameters<typeof P.setBilling>): ReturnType<typeof P.setBilling> => Promise.resolve().then(() => pick("setBilling")(...a));
+export const getWorkspace = (...a: Parameters<typeof P.getWorkspace>): ReturnType<typeof P.getWorkspace> => Promise.resolve().then(() => pick("getWorkspace")(...a));
+export const createWorkspace = (...a: Parameters<typeof P.createWorkspace>): ReturnType<typeof P.createWorkspace> => Promise.resolve().then(() => pick("createWorkspace")(...a));
+export const deleteWorkspace = (...a: Parameters<typeof P.deleteWorkspace>): ReturnType<typeof P.deleteWorkspace> => Promise.resolve().then(() => pick("deleteWorkspace")(...a));
+export const findWorkspaceByStripe = (...a: Parameters<typeof P.findWorkspaceByStripe>): ReturnType<typeof P.findWorkspaceByStripe> => Promise.resolve().then(() => pick("findWorkspaceByStripe")(...a));
+export { runIn, currentWs, DEFAULT_WS } from "./tenant";

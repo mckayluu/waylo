@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/db-migrate.mjs && next start",
     "db:migrate": "node scripts/db-migrate.mjs",
     "db:import-json": "tsx scripts/db-import-json.ts"
   },

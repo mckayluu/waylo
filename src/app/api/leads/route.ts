@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { guard } from "@/lib/guard";
+import { withSite, siteParam, isDemo } from "@/lib/site";
 import { addLead, listLeads, updateConversation, getConversation } from "@/lib/store";
 import { notify } from "@/lib/notify";
 import { EMAIL_RE } from "@/lib/signals";
 export async function POST(req: Request) {
-  { const g = await guard(req, "leads"); if (g) return g; }
+  const site = siteParam(req);
+  if (isDemo(site)) return NextResponse.json({ ok: true, demo: true }); // /demo: nothing stored
+  return withSite(site, async () => { const g = await guard(req, "leads"); return g || post(req); });
+}
+async function post(req: Request) {
   const b = await req.json().catch(() => ({}));
   const name = String(b.name || "").trim(), email = String(b.email || "").trim(), message = String(b.message || "").trim();
   if (!name || !EMAIL_RE.test(email) || !message) return NextResponse.json({ error: "name, valid email and message required" }, { status: 400 });

@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { getBranding, setBranding, getSettings } from "@/lib/store";
 export const dynamic = "force-dynamic";
-export async function GET() { const st = (await getSettings()); return NextResponse.json({ ...(await getBranding()), published: st.published, siteName: st.siteName }); }
+import { withSite, siteParam, isDemo } from "@/lib/site";
+import { currentSession } from "@/lib/auth";
+// Public (widget) reads branding for ?site=; admin (no site param) reads the signed-in workspace.
+export async function GET(req: Request) { const s = siteParam(req); if (s == null && (await currentSession())) return get(); return withSite(isDemo(s) ? "default" : s, get); }
+async function get() { const st = (await getSettings()); return NextResponse.json({ ...(await getBranding()), published: st.published, siteName: st.siteName }); }
 export async function PUT(req: Request) {
   const b = await req.json().catch(() => ({}));
   const patch: Record<string, string> = {};

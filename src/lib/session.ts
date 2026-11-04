@@ -1,6 +1,6 @@
 // Signed session cookie using Web Crypto (works in Edge middleware and Node routes).
 export type Role = "Viewer" | "Editor" | "Owner";
-export type Session = { email: string; role: Role; exp: number };
+export type Session = { email: string; role: Role; ws?: string; exp: number };
 export const COOKIE = "waylo_session";
 export const MAX_AGE = 60 * 60 * 24 * 14; // 14 days
 export const authEnabled = () => !!process.env.WAYLO_ADMIN_PASSWORD;

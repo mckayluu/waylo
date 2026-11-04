@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const em = String(email).trim().toLowerCase();
   if (!EMAIL_RE.test(em)) return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   if (!ROLES.includes(role)) return NextResponse.json({ error: "Bad role" }, { status: 400 });
-  if ((await findMember({ email: em }))) return NextResponse.json({ error: "Already a member" }, { status: 409 });
+  if ((await findMember({ email: em }))) return NextResponse.json({ error: "That email already has a Waylo account" }, { status: 409 });
   const m = await addMember(em, role);
   const r = await sendInviteEmail(m.email, `${publicUrl()}/admin/invite/${m.inviteToken}`, { siteName: (await getSettings()).siteName, role: m.role, inviter: (await currentSession())?.email });
   // Always surface inviteToken on create so the UI can show a copyable link even when email fails.
