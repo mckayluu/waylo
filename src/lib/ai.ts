@@ -5,10 +5,12 @@ import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl } from "./retrieve";
 export type Answer = { text: string; citations: Citation[] };
 function absUrl(url: string) {
   if (!url || /^https?:\/\//i.test(url) || url.startsWith("mailto:")) return url;
-  const base = (process.env.WAYLO_PUBLIC_URL || "").replace(/\/$/, "");
-  if (!base) return url;
+  const base = (process.env.WAYLO_PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://waylo-j5hv.onrender.com").replace(/\/$/, "");
   return url.startsWith("/") ? base + url : base + "/" + url;
 }
+// Strip generic "check the website / contact us" filler from known answers.
+const FILLER = /\s*(?:[,;—-]\s*|\.\s*)?(?:(?:for more (?:info(?:rmation)?|details)[^.!?]*?)?(?:please |feel free to |you can |you may |or )*(?:check|visit|see|refer to) (?:our|the) website[^.!?\n]*|(?:please |feel free to |you can )?(?:contact|reach out to) us directly[^.!?\n]*)[.!?]?/gi;
+export function stripFiller(t: string) { return t.replace(FILLER, (m) => (/^\s*\./.test(m) ? "." : "")).replace(/[,;]?\s+(?:so|and|or|but|then)\s*(?=[.!?]|\n|$)/gi, "").replace(/[ \t]+\n/g, "\n").replace(/([^.!?\n*)])\s*$/, "$1.").trim(); }
 const cite = (ps: { title: string; url: string }[]) => ps.map(({ title, url }) => ({ title, url: absUrl(url) }));
 
 const STOP = new Set("the a an is are was what how do does can i you we our your to of and or for in on it with be my me about".split(" "));
@@ -50,7 +52,7 @@ async function mock(text: string, signals: string[], hasEmail: boolean): Promise
     return { text: "I couldn't find that in our knowledge yet. Tell me a bit more, or use the **Contact** tab and the team will follow up.", citations: [] };
   let out = (await hasCrawl()) ? rel.map((k, i) => `${k.summary} [${i + 1}]`).join("\n\n") : rel.map((k) => k.summary).join("\n\n");
   if (signals.includes("demo") || signals.includes("pricing"))
-    out += hasEmail ? "\n\nThanks — the team will follow up shortly." : "\n\nWant a tailored walkthrough? Use **Contact → Book a demo**.";
+    out += hasEmail ? "\n\nThanks — the team will follow up shortly." : "";
   return { text: out + tail, citations: cite(rel) };
 }
 
@@ -60,18 +62,18 @@ async function simulate(text: string, onDelta: OnDelta) {
   for (const tok of text.match(/\s*\S+/g) || []) { await onDelta(tok); await sleep(18 + Math.random() * 22); }
 }
 async function systemPrompt(src: { title: string; url: string; summary: string }[]) {
-  return `You are Waylo's concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly and point the visitor to the **Contact** tab — never invent a "check the website" or generic "contact us" filler without that Contact tab CTA. Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
+  return `You are Waylo's concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly and point the visitor to the **Contact** tab — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. Only mention the **Contact** tab when the answer is genuinely missing from SOURCES. For pricing, the only current plans are Trial ($0, 14 days, 500 AI messages), Starter ($79/mo, 3,000 messages), and Growth ($249/mo, 3 sites, 15,000 messages); never mention a Free tier, $49 plan, or Enterprise tier. Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
 }
 function parse(raw: string, src: { title: string; url: string }[]): Answer {
   const m = raw.match(/\n?SOURCES:\s*([^\n]*)\s*$/i);
   const nums = m ? (m[1].match(/\d+/g) || []).map(Number) : [];
-  return { text: (m ? raw.slice(0, m.index) : raw).trim(), citations: cite(nums.map((n) => src[n - 1]).filter(Boolean).slice(0, 3)) };
+  return { text: stripFiller((m ? raw.slice(0, m.index) : raw).trim()), citations: cite(nums.map((n) => src[n - 1]).filter(Boolean).slice(0, 3)) };
 }
 
 /** Answer a visitor. If onDelta is given, text is streamed (real OpenAI streaming, or simulated for the mock). */
 export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta): Promise<Answer> {
   const key = process.env.OPENAI_API_KEY;
-  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); if (onDelta) await simulate(a.text, onDelta); return a; };
+  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); if (onDelta) await simulate(a.text, onDelta); return a; };
   if (!key) return fallback();
   const src = (await retrieveForLLM(text));
   let emitted = 0;

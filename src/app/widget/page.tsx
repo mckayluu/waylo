@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 type C = { title: string; url: string };
-const citeHref = (u: string) => (/^https?:\/\//i.test(u) || u.startsWith("mailto:") ? u : u.startsWith("/") ? u : `/${u}`);
+const citeHref = (u: string) => { if (/^https?:\/\//i.test(u) || u.startsWith("mailto:")) return u; const base = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || "https://waylo-j5hv.onrender.com"); try { return new URL(u.startsWith("/") ? u : `/${u}`, base).href; } catch { return u; } };
 type M = { id?: string; role: "visitor" | "bot"; text: string; citations?: C[]; feedback?: "up" | "down"; streaming?: boolean };
 type B = { botName: string; accent: string; greeting: string; published?: boolean };
 
