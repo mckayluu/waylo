@@ -14,16 +14,48 @@
   var KEY = "waylo_vid", vid;
   try { vid = localStorage.getItem(KEY); } catch (e) {}
   if (!vid) { vid = "v_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); try { localStorage.setItem(KEY, vid); } catch (e) {} }
-  var last = "";
-  function track() {
-    var path = location.pathname + location.search;
-    if (path === last) return; last = path;
-    var body = JSON.stringify({ visitorId: vid, site: site, path: path, title: document.title, referrer: document.referrer || undefined });
+  var last = "", pv = null;
+  function send(o) {
+    var body = JSON.stringify(o);
     try {
-      if (navigator.sendBeacon) navigator.sendBeacon(origin + "/api/track", new Blob([body], { type: "text/plain" }));
-      else fetch(origin + "/api/track", { method: "POST", body: body, keepalive: true, headers: { "Content-Type": "text/plain" } });
+      if (navigator.sendBeacon && navigator.sendBeacon(origin + "/api/track", new Blob([body], { type: "text/plain" }))) return;
+      fetch(origin + "/api/track", { method: "POST", body: body, keepalive: true, headers: { "Content-Type": "text/plain" } });
     } catch (e) {}
   }
+  function now() { return Date.now(); }
+  // Engagement for the current pageview: visible time, max scroll depth, key clicks. Flushed on hide / exit / SPA nav.
+  function flush() {
+    if (!pv) return; if (pv.since) { pv.ms += now() - pv.since; pv.since = document.visibilityState === "visible" ? now() : 0; }
+    var sig = pv.ms + ":" + pv.scroll + ":" + pv.clicks.length; if (sig === pv.sent) return; pv.sent = sig;
+    send({ type: "engage", visitorId: vid, site: site, pv: pv.id, duration: pv.ms, scroll: pv.scroll, clicks: pv.clicks });
+  }
+  function depth() {
+    if (!pv) return; var d = document.documentElement, b = document.body || d;
+    var h = Math.max(d.scrollHeight, b.scrollHeight) - window.innerHeight; var y = window.scrollY || d.scrollTop || 0;
+    var p = h <= 0 ? 100 : Math.min(100, Math.round(((y + 0) / h) * 100)); if (p > pv.scroll) pv.scroll = p;
+  }
+  function track() {
+    var path = location.pathname + location.search;
+    if (path === last) return; last = path; flush();
+    pv = { id: "p" + Math.random().toString(36).slice(2, 10) + now().toString(36), ms: 0, since: document.visibilityState === "visible" ? now() : 0, scroll: 0, clicks: [], start: now(), sent: "" };
+    var q = new URLSearchParams(location.search), utm = { source: q.get("utm_source") || undefined, medium: q.get("utm_medium") || undefined, campaign: q.get("utm_campaign") || undefined };
+    send({ visitorId: vid, site: site, path: path, title: document.title, referrer: document.referrer || undefined, pv: pv.id, host: location.hostname, utm: utm });
+    setTimeout(depth, 300);
+  }
+  var KEYRE = /pric|plan|demo|trial|sign ?up|get started|start|contact|talk|book|buy|subscribe|quote|download|register|request/i;
+  document.addEventListener("click", function (e) {
+    if (!pv || pv.clicks.length >= 20) return;
+    var el = e.target && e.target.closest ? e.target.closest("[data-waylo-track],a,button,input[type=submit],[role=button]") : null; if (!el) return;
+    if (el.closest("#waylo-root,[data-waylo-ui]")) return;
+    var href = el.getAttribute("href") || "", label = (el.getAttribute("data-waylo-track") || el.getAttribute("aria-label") || el.innerText || el.value || el.title || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    var key = el.hasAttribute("data-waylo-track") || /^(mailto|tel):/i.test(href) || el.tagName !== "A" || KEYRE.test(label) || KEYRE.test(href);
+    if (!key) return;
+    pv.clicks.push({ label: label || href || el.tagName.toLowerCase(), href: href ? href.slice(0, 300) : undefined, at: now() - pv.start });
+    if (/^(mailto|tel):/i.test(href) || (el.tagName === "A" && el.host && el.host !== location.host)) flush();
+  }, true);
+  var st; window.addEventListener("scroll", function () { if (st) return; st = setTimeout(function () { st = 0; depth(); }, 250); }, { passive: true });
+  document.addEventListener("visibilitychange", function () { if (!pv) return; if (document.visibilityState === "hidden") flush(); else pv.since = now(); });
+  window.addEventListener("pagehide", flush);
   ["pushState", "replaceState"].forEach(function (k) { var o = history[k]; history[k] = function () { var r = o.apply(this, arguments); setTimeout(track, 0); return r; }; });
   window.addEventListener("popstate", track);
   if (document.readyState === "complete") track(); else window.addEventListener("load", track);
@@ -40,7 +72,7 @@
     }
     var open = false, loaded = false;
     f.style.cssText = "position:fixed;bottom:92px;" + side + ":20px;width:400px;max-width:calc(100vw - 24px);height:640px;max-height:calc(100vh - 116px);border:0;border-radius:16px;box-shadow:0 20px 50px rgba(28,25,23,.25);z-index:2147483646;background:#fafaf9;display:none";
-    var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Chat with us");
+    var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Chat with us"); b.setAttribute("data-waylo-ui", "");
     b.style.cssText = "position:fixed;bottom:20px;" + side + ":20px;width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:" + color + ";color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:2147483647;display:flex;align-items:center;justify-content:center;transition:transform .15s";
     var chat = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
     var x = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';

@@ -2,7 +2,7 @@
 import crypto from "crypto";
 import { pool, q } from "./db";
 import { currentWs } from "./tenant";
-import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Guidance, Pageview, Message, Billing, InstallSeen } from "./store-types";
+import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Guidance, Pageview, Message, Billing, InstallSeen, Engagement } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
 
 const newId = () => crypto.randomUUID();
@@ -111,7 +111,7 @@ const MAX_PV = 300;
 async function loadVisitors(rows: any[]): Promise<Visitor[]> {
   if (!rows.length) return [];
   const pv = await q("SELECT * FROM pageviews WHERE workspace_id=$2 AND visitor_id = ANY($1) ORDER BY at, id", [rows.map((r) => r.id), await W()]);
-  const by = new Map<string, Pageview[]>(); for (const p of pv) { if (!by.has(p.visitor_id)) by.set(p.visitor_id, []); by.get(p.visitor_id)!.push(strip({ path: p.path, title: u(p.title), referrer: u(p.referrer), at: iso(p.at)! })); }
+  const by = new Map<string, Pageview[]>(); for (const p of pv) { if (!by.has(p.visitor_id)) by.set(p.visitor_id, []); by.get(p.visitor_id)!.push(strip({ path: p.path, title: u(p.title), referrer: u(p.referrer), at: iso(p.at)!, pvKey: u(p.pv_key), channel: u(p.channel), source: u(p.source), utmSource: u(p.utm_source), utmMedium: u(p.utm_medium), utmCampaign: u(p.utm_campaign), durationMs: u(p.duration_ms), scrollPct: u(p.scroll_pct), clicks: u(p.clicks) })); }
   return rows.map((r) => strip({ id: r.id, firstSeen: iso(r.first_seen)!, lastSeen: iso(r.last_seen)!, userAgent: u(r.user_agent), pageviews: by.get(r.id) || [] }));
 }
 export async function listVisitors() { return loadVisitors(await q("SELECT * FROM visitors WHERE workspace_id=$1 ORDER BY last_seen DESC", [await W()])); }
@@ -121,12 +121,18 @@ export async function trackPageview(visitorId: string, pv: Omit<Pageview, "at">,
   await q("INSERT INTO visitors(id,first_seen,last_seen,user_agent,workspace_id) VALUES($1,$2,$2,$3,$4) ON CONFLICT(workspace_id,id) DO UPDATE SET last_seen=EXCLUDED.last_seen", [visitorId, now, userAgent ?? null, ws]);
   const [last] = await q("SELECT path, at FROM pageviews WHERE workspace_id=$2 AND visitor_id=$1 ORDER BY at DESC, id DESC LIMIT 1", [visitorId, ws]);
   if (!(last && last.path === pv.path && Date.now() - +new Date(last.at) < 3000)) {
-    await q("INSERT INTO pageviews(visitor_id,path,title,referrer,at,workspace_id) VALUES($1,$2,$3,$4,$5,$6)", [visitorId, pv.path, pv.title ?? null, pv.referrer ?? null, now, ws]);
+    await q("INSERT INTO pageviews(visitor_id,path,title,referrer,at,workspace_id,pv_key,channel,source,utm_source,utm_medium,utm_campaign) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)", [visitorId, pv.path, pv.title ?? null, pv.referrer ?? null, now, ws, pv.pvKey ?? null, pv.channel ?? null, pv.source ?? null, pv.utmSource ?? null, pv.utmMedium ?? null, pv.utmCampaign ?? null]);
     await q("DELETE FROM pageviews WHERE workspace_id=$3 AND visitor_id=$1 AND id NOT IN (SELECT id FROM pageviews WHERE workspace_id=$3 AND visitor_id=$1 ORDER BY at DESC, id DESC LIMIT $2)", [visitorId, MAX_PV, ws]);
   }
   return (await getVisitor(visitorId))!;
 }
 export async function touchVisitor(visitorId: string) { await q("UPDATE visitors SET last_seen=now() WHERE id=$1 AND workspace_id=$2", [visitorId, await W()]); }
+/** Engagement beacon for one pageview (by client pv key). Values only grow; clicks are the client's cumulative list. */
+export async function engagePageview(visitorId: string, pvKey: string, e: Engagement) {
+  const r = await q("UPDATE pageviews SET duration_ms=GREATEST(COALESCE(duration_ms,0),$4), scroll_pct=GREATEST(COALESCE(scroll_pct,0),$5), clicks=CASE WHEN $6::jsonb IS NULL THEN clicks WHEN jsonb_array_length($6::jsonb) >= COALESCE(jsonb_array_length(clicks),0) THEN $6::jsonb ELSE clicks END WHERE workspace_id=$1 AND visitor_id=$2 AND pv_key=$3 RETURNING id", [await W(), visitorId, pvKey, e.durationMs ?? 0, e.scrollPct ?? 0, e.clicks?.length ? JSON.stringify(e.clicks) : null]);
+  if (r.length) await q("UPDATE visitors SET last_seen=now() WHERE id=$1 AND workspace_id=$2", [visitorId, await W()]);
+  return r.length > 0;
+}
 
 // ── Handoffs & deliveries
 const toHandoff = (r: any): Handoff => strip({ id: r.id, conversationId: u(r.conversation_id), visitorId: u(r.visitor_id), name: u(r.name), email: u(r.email), note: u(r.note), status: r.status, createdAt: iso(r.created_at)!, resolvedAt: iso(r.resolved_at) });

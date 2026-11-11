@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing, InstallSeen } from "./store-types";
+import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing, InstallSeen, Engagement } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
 type DB = { conversations: Conversation[]; leads?: Lead[]; branding?: Branding; settings?: SiteSettings; members?: Member[]; audiences?: Audience[]; integrations?: Integrations; handoffs?: Handoff[]; deliveries?: Delivery[]; visitors?: Visitor[]; pages?: Page[]; lastCrawl?: CrawlRun; facts?: Fact[]; rules?: Rule[]; skills?: Skill[]; billing?: Billing };
 
@@ -91,6 +91,11 @@ export function trackPageview(visitorId: string, pv: Omit<Pageview, "at">, userA
   if (!(last && last.path === pv.path && Date.now() - +new Date(last.at) < 3000)) v.pageviews.push({ ...pv, at: now });
   if (v.pageviews.length > MAX_PV) v.pageviews = v.pageviews.slice(-MAX_PV);
   v.lastSeen = now; save(db); return v;
+}
+export function engagePageview(visitorId: string, pvKey: string, e: Engagement) {
+  const db = load(); const v = (db.visitors || []).find((x) => x.id === visitorId); const p = v?.pageviews.find((x) => x.pvKey === pvKey); if (!v || !p) return false;
+  p.durationMs = Math.max(p.durationMs || 0, e.durationMs || 0); p.scrollPct = Math.max(p.scrollPct || 0, e.scrollPct || 0);
+  if (e.clicks && e.clicks.length >= (p.clicks?.length || 0)) p.clicks = e.clicks; v.lastSeen = new Date().toISOString(); save(db); return true;
 }
 export function touchVisitor(visitorId: string) { const db = load(); const v = (db.visitors || []).find((x) => x.id === visitorId); if (v) { v.lastSeen = new Date().toISOString(); save(db); } }
 
