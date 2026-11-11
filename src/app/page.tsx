@@ -14,7 +14,7 @@ import { tourSteps } from "@/lib/tour";
 import { MSG } from "@/lib/messaging";
 import { JsonLd, orgLd, appLd, faqLd, FAQS, DEFINITION } from "@/lib/seo";
 
-export const metadata: Metadata = { title: { absolute: "Waylo — website chat that shows its receipts" }, description: "Waylo is AI website chat that crawls your site, answers visitors with cited source links, flags buying intent, and posts warm leads to Slack or a CRM webhook with a link to the full conversation. One-line install.", alternates: { canonical: "/" } };
+export const metadata: Metadata = { title: { absolute: "Waylo — AI website chat that shows its sources" }, description: "Waylo is AI website chat that crawls your site, answers visitors with cited source links, flags buying intent, and posts warm leads to Slack or a CRM webhook with a link to the full conversation. One-line install.", alternates: { canonical: "/" } };
 
 const features = [
   ["Cited source chips", "Every reply links the exact pages it used, so buyers can verify it and your team can audit it."],
@@ -57,8 +57,8 @@ export default function Home() {
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#F59E0B]" />Early access · AI website chat with cited answers</p>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">{MSG.headline[0]} <span className="w-text-grad-light">{MSG.headline[1]}</span></h1>
-              <p className="mt-5 max-w-xl text-lg text-white/90">{MSG.sub}</p>
+              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">Answer every visitor. <span className="w-text-grad-light">Catch every buyer.</span></h1>
+              <p className="mt-5 max-w-xl text-lg text-white/90">Waylo is AI chat for your website. It learns your public pages, answers visitors with links to the exact source, spots pricing, integration, and demo intent, and posts warm leads to Slack with the question and a link to the full transcript.</p>
               <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass px-5 py-3 text-base">See how it works</Link></div><p className="mt-3 text-xs text-white/70">500 AI messages free · no card · early access</p>
               <dl className="mt-8 grid max-w-lg grid-cols-4 gap-3 border-t border-white/15 pt-6">{stats.map(([v, l]) => <div key={l}><dt className="text-xl font-semibold">{v}</dt><dd className="text-xs text-white/70">{l}</dd></div>)}</dl>
             </div>
