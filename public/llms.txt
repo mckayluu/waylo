@@ -12,7 +12,8 @@ Site: https://waylo-j5hv.onrender.com · Contact: https://waylo-j5hv.onrender.co
 - Install: `<script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="YOUR_SITE" async></script>` before </body>. Works with Webflow, WordPress, Shopify, Squarespace, Wix, Google Tag Manager.
 - Embed modes: launcher (default), sidebar, track (analytics only).
 - Pricing: Trial $0 (1 site, 500 AI messages); Starter $79/mo (3,000 messages, webhooks, handoff); Growth $249/mo (3 sites, 15,000 messages, Audiences).
-- AI model: OpenAI.
+- AI model: OpenAI API (gpt-4o-mini by default).
+- Not available today: SSO/SAML, SOC 2 report, native CRM apps, live agent chat, white-label, JavaScript-rendered page or PDF indexing.
 
 ## Pages
 - [Home](https://waylo-j5hv.onrender.com/)
@@ -28,3 +29,28 @@ Site: https://waylo-j5hv.onrender.com · Contact: https://waylo-j5hv.onrender.co
 - [Waylo for sales teams](https://waylo-j5hv.onrender.com/solutions/sales)
 - [Waylo for SaaS websites & docs](https://waylo-j5hv.onrender.com/solutions/saas)
 - [Waylo for agencies](https://waylo-j5hv.onrender.com/solutions/agencies)
+- [How it works](https://waylo-j5hv.onrender.com/how-it-works)
+- [AI chat trained on your site](https://waylo-j5hv.onrender.com/product/ai-chat)
+- [Citations & source chips](https://waylo-j5hv.onrender.com/product/citations)
+- [Lead capture & handoff](https://waylo-j5hv.onrender.com/product/lead-capture)
+- [Slack routing](https://waylo-j5hv.onrender.com/product/slack-routing)
+- [Analytics & signals](https://waylo-j5hv.onrender.com/product/analytics)
+- [Branding & customization](https://waylo-j5hv.onrender.com/product/branding)
+- [Install](https://waylo-j5hv.onrender.com/product/install)
+- [Integrations](https://waylo-j5hv.onrender.com/integrations)
+- [Security & data](https://waylo-j5hv.onrender.com/security)
+- [SaaS pre-sales → Slack](https://waylo-j5hv.onrender.com/use-cases/saas-presales-slack)
+- [Agencies](https://waylo-j5hv.onrender.com/use-cases/agencies)
+- [E-commerce](https://waylo-j5hv.onrender.com/use-cases/ecommerce)
+- [B2B services](https://waylo-j5hv.onrender.com/use-cases/b2b-services)
+- [Support deflection](https://waylo-j5hv.onrender.com/use-cases/support-deflection)
+- [Compare](https://waylo-j5hv.onrender.com/compare)
+- [Waylo vs generic AI chatbots](https://waylo-j5hv.onrender.com/compare/generic-chatbots)
+- [Waylo vs live chat](https://waylo-j5hv.onrender.com/compare/live-chat)
+- [About](https://waylo-j5hv.onrender.com/about)
+- [Changelog](https://waylo-j5hv.onrender.com/changelog)
+- [Guide: make a website chatbot cite sources](https://waylo-j5hv.onrender.com/resources/make-a-website-chatbot-cite-sources)
+- [Guide: pre-sales question audit](https://waylo-j5hv.onrender.com/resources/pre-sales-question-audit)
+- [Guide: pricing pages that answer questions](https://waylo-j5hv.onrender.com/resources/pricing-pages-that-answer-questions)
+- [Guide: route website leads to Slack](https://waylo-j5hv.onrender.com/resources/route-website-leads-to-slack)
+- [Contact](https://waylo-j5hv.onrender.com/contact)
