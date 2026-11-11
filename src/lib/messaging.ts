@@ -3,10 +3,10 @@
 // "unlimited seats" (seats are 1 / 5 / unlimited today). Add them to `later` slots when live.
 export const MSG = {
   headline: ["Website chat", "that shows its receipts."] as const,
-  sub: "Waylo reads your public pages, answers every visitor with a link to the page it used, and tells you who’s ready to buy. Start free and set it up yourself — no sales call.",
+  sub: "Waylo reads your public pages, answers every visitor with a link to the page it used, and tells you who’s ready to buy. Start free and set it up yourself.",
   props: [
-    { k: "Answers you can check", t: "teal" as const, d: "Every reply links the page it came from. When your pages don’t cover a question, it says so instead of guessing.", href: "/product/citations" },
-    { k: "Know who’s warm", t: "amber" as const, d: "Questions, page journeys, and buying signals in one admin. High-intent visitors post to Slack with a link to the conversation.", href: "/product/analytics" },
-    { k: "Self-serve, priced in public", t: "indigo" as const, d: "Free Trial with no card, then flat monthly plans with no overage fees. Sign up, crawl, paste one tag, upgrade from Billing.", href: "/pricing" },
+    { k: "Answers you can check", t: "teal" as const, d: "Every reply links the page it came from. When your pages don’t cover a question, the chat says so.", href: "/product/citations" },
+    { k: "Know who is warm", t: "amber" as const, d: "Questions, the pages people read, and buying signals sit in one admin. On Starter and up, serious visitors post to Slack.", href: "/product/analytics" },
+    { k: "Prices on the page", t: "indigo" as const, d: "Start on the free Trial. Paid plans are a flat monthly price with no overage fees. You upgrade from Billing.", href: "/pricing" },
   ],
 };

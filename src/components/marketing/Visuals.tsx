@@ -33,7 +33,7 @@ export function CrawlVisual() {
 }
 export function SignalsVisual() {
   const rows: [string, string, Tone][] = [["Pricing interest", "/pricing → /pricing#compare", "amber"], ["Integration question", "/integrations → chat", "indigo"], ["Demo request", "/ → /demo → chat", "amber"], ["Security review", "/docs/sso → chat", "indigo"]];
-  return <Frame title="Admin · Signals & journeys">
+  return <Frame title="Admin · Signals and journeys">
     <ul className="space-y-2.5">{rows.map(([s, j, t]) => <li key={s} className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-white px-3 py-2"><div><p className="font-medium text-stone-900">{s}</p><p className="text-xs text-stone-500">{j}</p></div><Chip t={t}>{t === "amber" ? "Hot" : "Warm"}</Chip></li>)}</ul>
   </Frame>;
 }
@@ -47,7 +47,7 @@ export function HandoffVisual() {
   </Frame>;
 }
 export function GuidanceVisual() {
-  const g: [string, string, Tone][] = [["Fact", "Annual plans get 2 months free.", "teal"], ["Rule", "Never quote custom enterprise pricing.", "amber"], ["Skill", "For security questions, link /docs/sso and offer a call.", "indigo"]];
+  const g: [string, string, Tone][] = [["Fact", "Annual plans get 2 months free.", "teal"], ["Rule", "Never quote custom enterprise pricing.", "amber"], ["Skill", "For security questions, link the security page.", "indigo"]];
   return <Frame title="Admin · Guidance">
     <ul className="space-y-2.5">{g.map(([k, v, t]) => <li key={k} className="flex items-start gap-3 rounded-lg border border-stone-200 px-3 py-2"><Chip t={t}>{k}</Chip><p className="text-stone-700">{v}</p></li>)}</ul>
   </Frame>;
@@ -70,24 +70,24 @@ export function PhotoBand({ items }: { items: { src: string; alt: string; tag: s
 }
 export function WorkflowStrip() {
   const steps: [Tone, string, string, string][] = [
-    ["indigo", "Crawl", "Paste your domain", "Waylo indexes your public pages in the background — no sitemap upload."],
-    ["teal", "Answer", "Cited replies", "Visitors get answers from your content, with source links to verify."],
-    ["amber", "Signal", "Intent + journey", "Pricing, security, integration, and demo interest flagged in real time."],
-    ["indigo", "Hand off", "Slack + webhook", "Contact or demo request posts to Slack with signals and a transcript link."],
+    ["indigo", "Crawl", "Paste your domain", "Waylo reads your public pages in the background. You don’t upload a sitemap."],
+    ["teal", "Answer", "Cited replies", "Visitors get answers from your pages, with links they can check."],
+    ["amber", "Signal", "Intent and journey", "Questions about pricing, security, integrations, and demos are flagged as they happen."],
+    ["indigo", "Hand off", "Slack and webhook", "On Starter and up, contact and demo requests post to Slack with signals and a link to the conversation."],
   ];
   return <ol className="grid gap-3 md:grid-cols-4">{steps.map(([t, k, h, d], i) => <li key={k} className="w-card-lg relative p-5">
     <div className="flex items-center gap-3"><IconTile t={t}>{i + 1}</IconTile><div><p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{k}</p><h3 className="font-semibold text-stone-900">{h}</h3></div></div>
     <p className="mt-3 text-sm leading-6 text-stone-600">{d}</p>{i < 3 && <span aria-hidden className="absolute -right-2.5 top-1/2 hidden h-5 w-5 -translate-y-1/2 place-items-center rounded-full bg-white text-xs text-stone-400 ring-1 ring-stone-200 md:grid">→</span>}</li>)}</ol>;
 }
 export function ProofBar() {
-  const facts: [Tone, string, string][] = [["teal", "1 script tag", "to install on any site"], ["indigo", "Every reply", "cites its source pages"], ["amber", "Real-time", "buying-intent signals"], ["teal", "Slack + CRM", "lead alerts with a transcript link"]];
+  const facts: [Tone, string, string][] = [["teal", "1 script tag", "to install on any site"], ["indigo", "Every reply", "links its source pages"], ["amber", "Buying signals", "on every conversation"], ["teal", "Slack and CRM", "alerts on Starter and up"]];
   return <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-stone-200 ring-1 ring-stone-200 md:grid-cols-4">{facts.map(([t, a, b]) => <div key={a} className="bg-white px-5 py-4"><p className={`text-lg font-semibold ${t === "amber" ? "text-amber-700" : t === "indigo" ? "text-indigo-700" : "text-teal-700"}`}>{a}</p><p className="text-sm text-stone-600">{b}</p></div>)}</div>;
 }
 export const PHOTOS = {
-  support: { src: "/marketing/support.webp", alt: "Team reviewing website conversations on laptops", tag: "Support deflection", t: "teal" as Tone, caption: "Repeat pre-sales questions answered from your docs, with sources — so your team handles the hard ones." },
-  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps open Slack to a lead that already asked about pricing, with a link to the whole conversation." },
-  dashboard: { src: "/marketing/dashboard.webp", alt: "Analytics dashboard on a laptop screen", tag: "Signals", t: "indigo" as Tone, caption: "Visitor journeys and intent signals show which pages actually start buying conversations." },
-  workshop: { src: "/marketing/workshop.webp", alt: "Marketing team collaborating at a whiteboard", tag: "Guidance", t: "teal" as Tone, caption: "Marketing owns the voice: facts, rules, and skills keep answers on-message and on-brand." },
+  support: { src: "/marketing/support.webp", alt: "Team reviewing website conversations on laptops", tag: "Support deflection", t: "teal" as Tone, caption: "Waylo answers the repeat pre-sales questions from your docs, with sources. Your team takes the hard ones." },
+  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps see a Slack post about a lead who asked about pricing, with a link to the conversation." },
+  dashboard: { src: "/marketing/dashboard.webp", alt: "Analytics dashboard on a laptop screen", tag: "Signals", t: "indigo" as Tone, caption: "Journeys and signals show which pages lead to buying questions." },
+  workshop: { src: "/marketing/workshop.webp", alt: "Marketing team collaborating at a whiteboard", tag: "Guidance", t: "teal" as Tone, caption: "Marketing owns the voice. Facts, rules, and skills keep answers in your words." },
 };
 export function ValueProps({ items }: { items: { k: string; d: string; href: string; t: Tone }[] }) {
   return <div className="grid gap-px overflow-hidden rounded-2xl bg-stone-200 ring-1 ring-stone-200 md:grid-cols-3">{items.map((p, i) => <Link key={p.k} href={p.href} className="group bg-white px-5 py-5 hover:bg-stone-50"><p className={`font-mono text-[11px] font-semibold ${p.t === "amber" ? "text-amber-700" : p.t === "indigo" ? "text-indigo-700" : "text-teal-700"}`}>0{i + 1}</p><p className="mt-1 text-lg font-semibold tracking-tight text-stone-900 group-hover:text-teal-800">{p.k}</p><p className="mt-1.5 text-sm leading-6 text-stone-600">{p.d}</p></Link>)}</div>;
