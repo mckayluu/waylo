@@ -20,6 +20,8 @@ function Md({ text }: { text: string }) {
 
 const SITE = () => (typeof location !== "undefined" && new URLSearchParams(location.search).get("site")) || "default";
 const api = (path: string) => `${path}?site=${encodeURIComponent(SITE())}`;
+// Waylo's own site is fully self-serve: no "talk to a person" / "book a demo"; trial + instant try instead. Customer workspaces unchanged.
+const SELF = () => SITE() === "default";
 const LS = (k: string) => `${k}:${SITE()}`; // per-site so chats never cross workspaces in the shared widget origin
 
 export default function Widget() {
@@ -101,7 +103,7 @@ export default function Widget() {
           </div>
           <div className="relative">
             <button onClick={() => setMenu(!menu)} className="rounded-full px-2 py-1 text-lg text-stone-500 hover:bg-stone-200" aria-label="Menu">⋮</button>
-            {menu && <div className="absolute right-0 z-10 mt-1 w-40 rounded-xl border border-stone-200 bg-white py-1 text-sm shadow-lg"><button onClick={() => { setTab("chat"); setHo(ho === "sent" ? "sent" : "ask"); setMenu(false); }} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Talk to a person</button><button onClick={clear} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Clear history</button></div>}
+            {menu && <div className="absolute right-0 z-10 mt-1 w-40 rounded-xl border border-stone-200 bg-white py-1 text-sm shadow-lg">{!SELF() && <button onClick={() => { setTab("chat"); setHo(ho === "sent" ? "sent" : "ask"); setMenu(false); }} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Talk to a person</button>}<button onClick={clear} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Clear history</button></div>}
           </div>
         </div>
         <div className="mt-4 grid grid-cols-2 border-b border-stone-200 text-sm">
@@ -113,7 +115,7 @@ export default function Widget() {
       {tab === "chat" ? (<>
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-3">
           <div className="text-sm leading-relaxed"><Md text={b.greeting} /></div>
-          {msgs.length === 0 && <div className="flex flex-wrap gap-2">{["How much does it cost?", "How do I install it?", "Can I book a demo?"].map((q) =>
+          {msgs.length === 0 && <div className="flex flex-wrap gap-2">{(SELF() ? ["How much does it cost?", "How do I install it?", "Is there a free trial?"] : ["How much does it cost?", "How do I install it?", "Can I book a demo?"]).map((q) =>
             <button key={q} onClick={() => ask(q)} className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs hover:border-stone-500">{q}</button>)}</div>}
           {msgs.map((m, i) => m.role === "visitor" ? (
             <div key={i} className="flex justify-end"><div className="max-w-[85%] rounded-2xl rounded-br-sm px-3.5 py-2 text-sm text-white" style={{ background: a }}>{m.text}</div></div>
@@ -135,6 +137,7 @@ export default function Widget() {
             <input placeholder="What do you need help with? (optional)" value={hoNote} onChange={(e) => setHoNote(e.target.value)} className="w-full rounded-lg border border-stone-300 px-2.5 py-1.5 text-sm outline-none focus:border-stone-500" />
             <button disabled={ho === "sending"} className="w-full rounded-lg py-1.5 text-sm font-medium text-white disabled:opacity-50" style={{ background: a }}>{ho === "sending" ? "Requesting…" : "Request a person"}</button>
           </form>
+        : SELF() ? <div className="mx-4 mb-1.5 flex justify-end gap-3 text-xs font-medium"><a href="/try" target="_top" className="text-stone-500 hover:text-stone-800">Try it on your site</a><a href="/signup" target="_top" style={{ color: a }} className="hover:underline">Start free trial →</a></div>
         : <div className="mx-4 mb-1.5 flex justify-end"><button onClick={() => setHo("ask")} className="text-xs font-medium text-stone-500 hover:text-stone-800">🙋 Talk to a person</button></div>}
         {b.paused ? <div className="mx-4 mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">AI answers are paused right now. <button onClick={() => setTab("contact")} className="font-semibold underline">Leave a message</button> and the team will reply by email.</div> :
         <form onSubmit={(e) => { e.preventDefault(); ask(input.trim()); }} className="mx-4 mb-2 flex items-center gap-2 rounded-2xl border border-stone-300 bg-white p-1.5 pl-3 focus-within:border-stone-500">
@@ -144,7 +147,7 @@ export default function Widget() {
       </>) : (
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-3 text-sm">
           {fstate === "sent" ? <div className="rounded-xl bg-white p-4 text-center"><p className="font-medium">Thanks — we got it!</p><p className="mt-1 text-stone-500">Someone will reply by email soon.</p><button onClick={() => setFstate("")} className="mt-3 text-xs underline">Send another</button></div> : <>
-            <p className="text-stone-600">Leave a note or book a demo and we'll get back to you.</p>
+            <p className="text-stone-600">{SELF() ? "Account or billing question? Leave a message and we'll reply by email. Most answers are in the docs, or just ask the AI Chat." : "Leave a note or book a demo and we'll get back to you."}</p>
             <label className="block">Name*<input className={field} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
             <label className="block">Email*<input type="email" className={field} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
             <label className="block">Message*<textarea rows={4} className={field} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></label>
@@ -152,8 +155,8 @@ export default function Widget() {
             {fstate && fstate !== "sending" && <p className="text-xs text-red-600">{fstate}</p>}
             <div className="flex gap-2 pt-1">
               <button disabled={fstate === "sending"} onClick={() => submit("message")} className="flex-1 rounded-xl border px-3 py-2 font-medium" style={{ borderColor: a, color: a }}>Leave a message</button>
-              <button disabled={fstate === "sending"} onClick={() => submit("demo")} className="flex-1 rounded-xl px-3 py-2 font-medium text-white" style={{ background: a }}>Book a demo</button>
-            </div></>}
+              {SELF() ? <a href="/signup" target="_top" className="flex-1 rounded-xl px-3 py-2 text-center font-medium text-white" style={{ background: a }}>Start free trial</a> : <button disabled={fstate === "sending"} onClick={() => submit("demo")} className="flex-1 rounded-xl px-3 py-2 font-medium text-white" style={{ background: a }}>Book a demo</button>}
+            </div>{SELF() && <a href="/try" target="_top" className="block text-center text-xs font-medium text-stone-500 hover:text-stone-800">Or try Waylo on your own site, no signup →</a>}</>}
         </div>)}
       <p className="pb-3 text-center text-[11px] tracking-wide text-stone-400">{/^(northpoint-demo|acme-demo)$/i.test(SITE()) ? "Northpoint Ops · answers from this site" : "waylo · answers from this site"}</p>
     </div>
