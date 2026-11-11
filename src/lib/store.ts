@@ -22,6 +22,8 @@ export const setSettings = (...a: Parameters<typeof P.setSettings>): ReturnType<
 export const getIntegrations = (...a: Parameters<typeof P.getIntegrations>): ReturnType<typeof P.getIntegrations> => Promise.resolve().then(() => pick("getIntegrations")(...a));
 export const setIntegrations = (...a: Parameters<typeof P.setIntegrations>): ReturnType<typeof P.setIntegrations> => Promise.resolve().then(() => pick("setIntegrations")(...a));
 export const getLastCrawl = (...a: Parameters<typeof P.getLastCrawl>): ReturnType<typeof P.getLastCrawl> => Promise.resolve().then(() => pick("getLastCrawl")(...a));
+export const getInstall = (...a: Parameters<typeof P.getInstall>): ReturnType<typeof P.getInstall> => Promise.resolve().then(() => pick("getInstall")(...a));
+export const setInstall = (...a: Parameters<typeof P.setInstall>): ReturnType<typeof P.setInstall> => Promise.resolve().then(() => pick("setInstall")(...a));
 export const setLastCrawl = (...a: Parameters<typeof P.setLastCrawl>): ReturnType<typeof P.setLastCrawl> => Promise.resolve().then(() => pick("setLastCrawl")(...a));
 export const getGuidance = (...a: Parameters<typeof P.getGuidance>): ReturnType<typeof P.getGuidance> => Promise.resolve().then(() => pick("getGuidance")(...a));
 export const addGuidance = (...a: Parameters<typeof P.addGuidance>): ReturnType<typeof P.addGuidance> => Promise.resolve().then(() => pick("addGuidance")(...a));

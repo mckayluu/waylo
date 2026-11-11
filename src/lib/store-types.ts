@@ -32,3 +32,6 @@ export type BillingStatus = "trialing" | "active" | "past_due" | "canceled" | "n
 export type Billing = { stripeCustomerId?: string; stripeSubscriptionId?: string; stripePriceId?: string; tier?: Tier; status: BillingStatus; currentPeriodEnd?: string; cancelAtPeriodEnd?: boolean; email?: string; lastPaymentError?: string; lastRiskEvent?: string; updatedAt?: string };
 export const DEFAULT_BILLING: Billing = { status: "none" };
 export type Workspace = { id: string; name: string; ownerEmail?: string; createdAt: string };
+
+/** Real install evidence: the snippet loaded on a customer domain (from /api/track Origin), or a server-side page check. */
+export type InstallSeen = { host?: string; url?: string; firstSeen?: string; lastSeen?: string; check?: { at: string; url: string; found: boolean; siteMatches: boolean; detail: string } };

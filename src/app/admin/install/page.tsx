@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHeader, Card, Checklist } from "../ui";
-import { listVisitors, listConversations, getSettings, currentWs } from "@/lib/store";
+import { listConversations, getSettings, currentWs, getInstall } from "@/lib/store";
+import { InstallStatus } from "./InstallStatus";
 import { CopyButton } from "../settings/CopyButton";
 import { WAYLO_URL } from "@/lib/embed";
 import { SnippetBuilder } from "./SnippetBuilder";
@@ -8,7 +9,8 @@ export const dynamic = "force-dynamic";
 const Code = ({ children }: { children: string }) => <div className="relative"><pre className="overflow-x-auto rounded-xl bg-stone-900 p-4 pr-24 text-sm text-teal-200">{children}</pre><div className="absolute right-2 top-2"><CopyButton text={children} /></div></div>;
 export default async function Install() {
   const st = await getSettings(); const WS = await currentWs(); const origins = (st.allowedOrigins || "").split(/\s+/).filter(Boolean);
-  const visitors = await listVisitors(); const live = visitors.length > 0;
+  const inst = await getInstall(); const live = !!inst.host || !!inst.check?.siteMatches;
+  let siteUrl: string | undefined; try { siteUrl = st.siteUrl ? new URL(st.siteUrl).toString() : undefined; } catch {}
   const asked = (await listConversations()).some((c) => c.messages.some((m) => m.role === "visitor"));
   return (<>
     <PageHeader title="Install" sub={`Add Waylo to ${st.siteName || "your site"} — one script tag, four quick checks.`} actions={<Link href="/admin/tracking" className="w-btn-ghost">Tracking</Link>} />
@@ -20,11 +22,12 @@ export default async function Install() {
         <dl className="mt-2 divide-y divide-stone-100 border-t border-stone-100 text-sm [&>div]:py-1.5">
           <div className="flex justify-between gap-4"><dt className="text-stone-500">Website URL</dt><dd>{st.siteUrl ? <span className="text-stone-700">{st.siteUrl}</span> : <Link href="/admin/settings" className="text-amber-700 hover:underline">Not set — add in Settings</Link>}</dd></div>
           <div className="flex justify-between gap-4"><dt className="text-stone-500">Allowed origins</dt><dd>{origins.length ? <span className="text-stone-700">{origins.length} set</span> : <Link href="/admin/settings" className="text-amber-700 hover:underline">Empty — any site can embed</Link>}</dd></div>
-        </dl></Card>
+        </dl>
+        <div className="mt-3 border-t border-stone-100 pt-3"><InstallStatus initial={inst} siteUrl={siteUrl} /></div></Card>
       <Card title="1. Copy this snippet"><SnippetBuilder key={st.openOnLoad ? "open" : "closed"} url={WAYLO_URL} site={WS} initialOpen={!!st.openOnLoad} />
         <p className="mt-2 text-sm text-stone-600">Paste it just before the closing <code>&lt;/body&gt;</code> tag on every page (or in your site builder&apos;s &quot;custom code / footer scripts&quot; box — Webflow, WordPress, Squarespace, Wix, Shopify, GTM all work). A chat button appears bottom-right and page views show up under Tracking.</p></Card>
       <Card title="2. Verify it works" actions={live ? <span className="text-xs font-medium text-teal-700">● Receiving visitors</span> : <span className="text-xs text-stone-400">Waiting for first visit</span>}>
-        {live ? <p className="mb-3 rounded-lg bg-teal-50 px-3 py-2 text-sm text-teal-800 ring-1 ring-inset ring-teal-200">✓ Waylo is live — {visitors.length} visitor{visitors.length === 1 ? "" : "s"} tracked, last seen {new Date(visitors[0].lastSeen).toLocaleString()}. <Link href="/admin/tracking" className="font-medium underline">View Tracking →</Link></p> : null}
+        {live ? <p className="mb-3 rounded-lg bg-teal-50 px-3 py-2 text-sm text-teal-800 ring-1 ring-inset ring-teal-200">✓ Waylo is installed{inst.host ? <> on {inst.host}, last seen {inst.lastSeen ? new Date(inst.lastSeen).toLocaleString() : "recently"}</> : null}. <Link href="/admin/tracking" className="font-medium underline">View Tracking →</Link></p> : null}
         <Checklist steps={[
           { ok: live, label: "Publish your site with the snippet", desc: "Deploy or save the page where you pasted it." },
           { ok: live, label: "Open your site in a fresh tab", desc: "The Waylo chat button should appear bottom-right within a second." },

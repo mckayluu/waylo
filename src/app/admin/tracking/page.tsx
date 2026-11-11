@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { listConversations, listLeads, listVisitors } from "@/lib/store";
+import { listConversations, listLeads, listVisitors, currentWs } from "@/lib/store";
+import { FirstDay } from "../_parts/FirstDay";
 import { tier } from "@/lib/analytics";
 import { PageHeader, Card, Empty, Badge, ago, initials } from "../ui";
 import { Tag } from "../Tag";
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 type Row = { key: string; href: string; who: string; sub: string; entry: string; value: "High" | "Medium" | "Low"; signals: string[]; at: string; n: number; pv: number; lastPath?: string };
 const rank = { High: 3, Medium: 2, Low: 1 };
 export default async function Tracking({ searchParams }: { searchParams: { tier?: string } }) {
+  const ws = await currentWs();
   const leads = (await listLeads()).filter((l) => l.intent !== "support"); const convs = (await listConversations()); const visitors = (await listVisitors());
   const leadByConv = new Map(leads.filter((l) => l.conversationId).map((l) => [l.conversationId!, l]));
   const convsByVid = new Map<string, typeof convs>(); convs.forEach((c) => c.visitorId && convsByVid.set(c.visitorId, [...(convsByVid.get(c.visitorId) || []), c]));
@@ -31,7 +33,8 @@ export default async function Tracking({ searchParams }: { searchParams: { tier?
     <div className="mb-3 flex w-fit gap-1 rounded-lg border border-stone-200 bg-white p-1 text-sm shadow-sm">
       {["", "High", "Medium", "Low"].map((x) => <Link key={x} href={x ? `?tier=${x}` : "/admin/tracking"} className={`rounded-md px-2.5 py-1 font-medium ${(t || "") === x ? (x === "High" ? "bg-amber-600 text-white" : "bg-teal-700 text-white") : "text-stone-600 hover:bg-stone-100"}`}>{x || "All"} <span className="ml-1 text-xs opacity-70">{x ? rows.filter((r) => r.value === x).length : rows.length}</span></Link>)}
     </div>
-    <Card pad={false}>{shown.length === 0 ? (t && rows.length ? <Empty title={`No ${t} value visitors`} body="Nobody in this tier yet." href="/admin/tracking" cta="Show all" /> : <Empty title="No visitors yet" body="Add waylo.js to your site (or browse /demo) — visitors appear here as soon as they load a page." href="/admin/install" cta="Install snippet" secondaryHref="/demo" secondaryCta="Open demo" />) :
+    <Card pad={false}>{shown.length === 0 ? (t && rows.length ? <Empty title={`No ${t} value visitors`} body="Nobody in this tier yet." href="/admin/tracking" cta="Show all" /> : <FirstDay ws={ws} title="No visitors yet" body="Visitors and their page journeys appear here as soon as the snippet loads on your site: pages viewed, where they came from, and what they asked." steps={["install", "chat"]}
+        example={<div className="space-y-1.5 text-left text-sm">{[["Visitor from Google · 4 pages · 6m", "/ → /pricing → /integrations → /pricing", "High"], ["Visitor from LinkedIn · 2 pages · 1m", "/blog/onboarding → /", "Low"]].map(([a, b, c]) => <div key={a} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 ring-1 ring-stone-200"><div><p className="font-medium">{a}</p><p className="font-mono text-xs text-stone-500">{b}</p></div><span className="text-xs text-stone-500">{c} value</span></div>)}</div>} />) :
       <div className="overflow-x-auto"><table className="w-full text-sm">
         <thead className="border-b border-stone-100 bg-stone-50/60"><tr><th className="w-th">Visitor</th><th className="w-th">Value</th><th className="w-th">Entry</th><th className="w-th">Last page</th><th className="w-th">Signals</th><th className="w-th text-right">Pages</th><th className="w-th text-right">Questions</th><th className="w-th text-right">Last seen</th></tr></thead>
         <tbody className="divide-y divide-stone-100">{shown.map((r) => <tr key={r.key} className={`group hover:bg-stone-50 ${r.value === "High" ? "border-l-2 border-l-amber-500" : ""}`}>

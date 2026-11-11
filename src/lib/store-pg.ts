@@ -2,7 +2,7 @@
 import crypto from "crypto";
 import { pool, q } from "./db";
 import { currentWs } from "./tenant";
-import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Guidance, Pageview, Message, Billing } from "./store-types";
+import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Guidance, Pageview, Message, Billing, InstallSeen } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
 
 const newId = () => crypto.randomUUID();
@@ -79,6 +79,8 @@ export async function getIntegrations(): Promise<Integrations> { return { ...DEF
 export async function setIntegrations(p: Partial<Integrations>) { const v = { ...(await getIntegrations()), ...p }; await kvSet("integrations", v); return v; }
 export async function getLastCrawl() { return kvGet<CrawlRun>("last_crawl"); }
 export async function setLastCrawl(r: CrawlRun) { await kvSet("last_crawl", r); }
+export async function getInstall(): Promise<InstallSeen> { return (await kvGet<InstallSeen>("install")) || {}; }
+export async function setInstall(p: Partial<InstallSeen>) { const v = { ...(await getInstall()), ...p }; await kvSet("install", v); return v; }
 
 // ── Guidance
 export async function getGuidance(): Promise<Guidance> {

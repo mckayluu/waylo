@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing } from "./store-types";
+import type { Workspace, Branding, Conversation, Lead, SiteSettings, Member, Audience, Integrations, Handoff, Delivery, Visitor, Page, CrawlRun, Fact, Rule, Skill, Guidance, Pageview, Billing, InstallSeen } from "./store-types";
 import { DEFAULT_BRANDING, DEFAULT_SETTINGS, DEFAULT_INTEGRATIONS } from "./store-types";
 type DB = { conversations: Conversation[]; leads?: Lead[]; branding?: Branding; settings?: SiteSettings; members?: Member[]; audiences?: Audience[]; integrations?: Integrations; handoffs?: Handoff[]; deliveries?: Delivery[]; visitors?: Visitor[]; pages?: Page[]; lastCrawl?: CrawlRun; facts?: Fact[]; rules?: Rule[]; skills?: Skill[]; billing?: Billing };
 
@@ -76,6 +76,8 @@ export function deletePage(id: string) { const db = load(); db.pages = (db.pages
 export function clearPages() { const db = load(); db.pages = []; save(db); }
 export function getLastCrawl() { return load().lastCrawl; }
 export function setLastCrawl(r: CrawlRun) { const db = load(); db.lastCrawl = r; save(db); }
+export function getInstall(): InstallSeen { return (load() as any).install || {}; }
+export function setInstall(p: Partial<InstallSeen>) { const db = load() as any; db.install = { ...(db.install || {}), ...p }; save(db); return db.install as InstallSeen; }
 
 const MAX_PV = 300;
 export function listVisitors(): Visitor[] { return (load().visitors || []).sort((a, b) => b.lastSeen.localeCompare(a.lastSeen)); }

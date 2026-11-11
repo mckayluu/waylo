@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { trackPageview } from "@/lib/store";
+import { trackPageview, getInstall, setInstall } from "@/lib/store";
+import { WAYLO_URL } from "@/lib/embed";
 import { guard } from "@/lib/guard";
 import { withSite, isDemo } from "@/lib/site";
 export const dynamic = "force-dynamic";
@@ -17,5 +18,16 @@ async function track(req: Request, b: any) {
   const visitorId = String(b.visitorId || ""), path = String(b.path || "").slice(0, 500);
   if (!VID.test(visitorId) || !path) return NextResponse.json({ error: "visitorId and path required" }, { status: 400, headers: CORS });
   const v = (await trackPageview(visitorId, { path, title: b.title ? String(b.title).slice(0, 200) : undefined, referrer: b.referrer ? String(b.referrer).slice(0, 500) : undefined }, req.headers.get("user-agent")?.slice(0, 300)));
+  await noteInstall(req, b).catch(() => {});
   return NextResponse.json({ ok: true, pageviews: v.pageviews.length }, { headers: CORS });
+}
+const OWN = new Set([new URL(WAYLO_URL).host, process.env.RENDER_EXTERNAL_HOSTNAME || ""].filter(Boolean));
+/** The snippet reporting from a customer domain is the real "installed" signal (our own preview/demo pages don't count). */
+async function noteInstall(req: Request, b: any) {
+  const src = req.headers.get("origin") || req.headers.get("referer") || ""; let host = "";
+  try { host = new URL(src).host; } catch { return; }
+  if (!host || OWN.has(host) || /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(host)) return;
+  const cur = await getInstall(); const now = new Date().toISOString();
+  if (cur.host === host && cur.lastSeen && Date.now() - +new Date(cur.lastSeen) < 10 * 60_000) return; // throttle writes
+  await setInstall({ host, url: `${new URL(src).origin}${String(b.path || "/").slice(0, 300)}`, firstSeen: cur.firstSeen || now, lastSeen: now });
 }

@@ -5,6 +5,10 @@ import { daily, tier } from "@/lib/analytics";
 import { PageHeader, MetricCard, Card, Badge, Checklist, ago } from "./ui";
 import { PublishToggle } from "./PublishToggle";
 import { billingAllowsPublish, getBilling, stripeConfigured } from "@/lib/stripe";
+import { getInstall, getLastCrawl } from "@/lib/store";
+import { entitlement } from "@/lib/entitlement";
+import { UsageMeter } from "./_parts/UsageMeter";
+import { FirstDay } from "./_parts/FirstDay";
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const s = (await stats()); const convs = (await listConversations()); const leads = (await listLeads()); const st = (await getSettings());
@@ -15,6 +19,7 @@ export default async function Home() {
   const top = [...topics].sort((a, b) => b[1] - a[1]).slice(0, 5);
   const pages = await listPages(); const visitors = await listVisitors(); const handoffs = await listHandoffs(); const b = await getBranding(); const g = await getGuidance();
   const wsId = await currentWs(); const isDefault = wsId === DEFAULT_WS;
+  const inst = await getInstall(); const last = await getLastCrawl(); const ent = await entitlement(); const preview = `/widget?site=${encodeURIComponent(wsId)}`;
   const bill = await getBilling(); const stripeOn = stripeConfigured(); const canPublish = await billingAllowsPublish();
   // Signup auto-fills botName/greeting from the company name. Don't treat that as the user finishing this step.
   const signupBrand = !!st.siteName && b.botName === st.siteName.slice(0, 40) && b.greeting === `Hi! Ask me anything about ${st.siteName}.` && b.accent === DEFAULT_BRANDING.accent;
@@ -22,12 +27,14 @@ export default async function Home() {
   const branded = !signupBrand && !wayloBrand;
   const guided = !!st.companyProfile || g.facts.length + g.rules.length + g.skills.length > 0;
   const go = (href: string, label: string) => <Link href={href} className="w-btn-ghost whitespace-nowrap">{label}</Link>;
+  const crawling = last?.status === "running";
   const steps = [
     { ok: !!st.siteUrl?.trim(), label: "Set website URL", desc: "Tell Waylo which site it represents.", action: go("/admin/settings", "Settings") },
-    { ok: pages.length > 0, label: "Index your site", desc: st.siteUrl?.trim() ? "Crawl your pages so answers cite your content." : (isDefault ? "Set a website URL first, then crawl — until then replies use demo samples only." : "Set a website URL first, then crawl your pages."), action: st.siteUrl?.trim() ? go("/admin/content", "Content") : go("/admin/settings", "Settings") },
+    { ok: pages.length > 0, label: "Index your site", desc: crawling ? `Crawling now: ${last?.pages || 0} pages so far. Watch it live in Content.` : st.siteUrl?.trim() ? `Crawl your pages so answers cite your content.${pages.length ? "" : " Sitemap first, then links."}` : (isDefault ? "Set a website URL first, then crawl. Until then replies use demo samples only." : "Set a website URL first, then crawl your pages."), action: st.siteUrl?.trim() ? go("/admin/content", crawling ? "Watch crawl" : "Content") : go("/admin/settings", "Settings") },
+    { ok: s.totalConversations > 0, label: "Send a test chat", desc: "Ask your bot a real question in the preview. It shows up under Questions with its sources.", action: <a href={preview} target="_blank" rel="noreferrer" className="w-btn-ghost whitespace-nowrap">Open preview ↗</a> },
     { ok: branded || guided, label: "Brand or guide answers", desc: "Set name, color and greeting, or add facts and rules.", action: <span className="flex gap-2">{go("/admin/settings", "Branding")}{go("/admin/guidance", "Guidance")}</span> },
-    { ok: visitors.length > 0, label: "Install on your site", desc: "Paste one line of HTML — done when your first visitor loads it.", action: go("/admin/install", "Install") },
-    { ok: st.published && canPublish, label: "Publish", desc: canPublish ? "Remove the “Preview only” banner for visitors." : "Choose a plan in Billing first — publishing needs an active plan or trial.", action: canPublish ? <PublishToggle initial={st.published} /> : go("/admin/billing", "Billing") },
+    { ok: !!inst.host || !!inst.check?.siteMatches, label: "Install on your site", desc: inst.host ? `Detected on ${inst.host}.` : inst.check && !inst.check.siteMatches ? inst.check.detail : "Paste one line of HTML. Verified when the snippet reports in from your domain, or use Check now.", action: go("/admin/install", inst.host ? "Install" : "Install & check") },
+    { ok: st.published && canPublish, label: "Publish", desc: canPublish ? "Remove the “Preview only” banner for visitors." : "Choose a plan in Billing first. Publishing needs an active plan or trial.", action: canPublish ? <PublishToggle initial={st.published} /> : go("/admin/billing", "Billing") },
   ];
   const done = steps.filter((x) => x.ok).length; const complete = done === steps.length;
   const firstRun = visitors.length === 0 && s.totalConversations === 0;
@@ -42,7 +49,8 @@ export default async function Home() {
     <div className="w-accent-line mb-4" />
     {complete && canPublish ? <div className="mb-4 flex items-center gap-2 text-sm text-teal-800"><span className="grid h-5 w-5 place-items-center rounded-full bg-teal-700 text-[10px] text-white">✓</span>Setup complete — Waylo is live on {st.siteName}.</div> : complete && !canPublish ? <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">Setup steps are done, but publishing needs an active plan or trial. <Link href="/admin/billing" className="font-semibold underline">Open Billing</Link></div> :
       <div className="mb-4"><Card title={`Get Waylo live · ${done}/${steps.length}`} actions={<div className="h-1.5 w-32 overflow-hidden rounded-full bg-stone-100"><div className="h-full bg-teal-600" style={{ width: `${(done / steps.length) * 100}%` }} /></div>}><Checklist steps={steps} /></Card></div>}
-    {firstRun && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-teal-200 border-l-4 border-l-amber-500 bg-gradient-to-r from-teal-50 to-indigo-50/40 px-4 py-3"><div><p className="flex items-center gap-2 font-semibold text-teal-900"><span className="w-badge-accent">First run</span>No visitors yet</p><p className="text-sm text-teal-800/80">Install the snippet on your site, or try the demo to see conversations, leads and topics fill in.</p></div><div className="flex gap-2"><Link href="/admin/install" className="w-btn-grad">Install snippet</Link><Link href="/demo" target="_blank" className="w-btn-ghost">Open demo ↗</Link></div></div>}
+    {firstRun && <div className="mb-4"><Card pad={false}><FirstDay ws={wsId} title="No visitors or chats yet" body="Two minutes to see the whole loop: ask your bot a question in the preview, then paste the snippet on your site." steps={pages.length ? ["chat", "install"] : ["crawl", "chat"]}
+      example={<div className="grid gap-2 text-left text-sm sm:grid-cols-3"><div className="rounded-lg bg-white p-3 ring-1 ring-stone-200"><p className="text-xs text-stone-500">Conversations</p><p className="text-xl font-semibold">18</p></div><div className="rounded-lg bg-white p-3 ring-1 ring-stone-200"><p className="text-xs text-stone-500">Top question</p><p className="font-medium">“Do you integrate with HubSpot?”</p></div><div className="rounded-lg bg-white p-3 ring-1 ring-stone-200"><p className="text-xs text-stone-500">High intent</p><p className="font-medium">3 visitors viewed /pricing twice</p></div></div>} /></Card></div>}
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
       <MetricCard label="Conversations" value={s.totalConversations} hint="All time" tone="indigo" />
       <MetricCard label="Questions" value={questions} hint="Visitor messages" tone="teal" />
@@ -52,7 +60,7 @@ export default async function Home() {
     </div>
     <div className="mt-3 grid gap-3 lg:grid-cols-3">
       <div className="lg:col-span-2"><Card title="Questions · last 14 days" actions={<span className="text-xs text-stone-500">{d.reduce((n, x) => n + x.questions, 0)} total · {d.reduce((n, x) => n + x.leads, 0)} leads</span>}>
-        {d.every((x) => x.questions === 0) ? <div className="grid h-44 place-items-center rounded-lg border border-dashed border-stone-200 text-center text-sm text-stone-400"><p>No questions in the last 14 days.<br /><Link href="/demo" target="_blank" className="font-medium text-teal-700 hover:underline">Ask one on the demo ↗</Link></p></div> : <>
+        {d.every((x) => x.questions === 0) ? <div className="grid h-44 place-items-center rounded-lg border border-dashed border-stone-200 text-center text-sm text-stone-400"><p>No questions in the last 14 days.<br /><a href={preview} target="_blank" rel="noreferrer" className="font-medium text-teal-700 hover:underline">Ask one in your preview ↗</a></p></div> : <>
         <div className="flex h-44 items-end gap-1.5">{d.map((x) => (
           <div key={x.day} className="group relative flex h-full flex-1 flex-col justify-end" title={`${x.day}: ${x.questions} questions, ${x.leads} leads`}>
             <div className="rounded-t bg-teal-600/85 transition group-hover:bg-teal-700" style={{ height: `${(x.questions / max) * 100}%`, minHeight: x.questions ? 4 : 2, opacity: x.questions ? 1 : 0.15 }} />
@@ -71,6 +79,7 @@ export default async function Home() {
           <div className="flex justify-between"><dt className="text-stone-500">Embed</dt><dd>{visitors.length ? <Badge tone="teal">Receiving · {ago(visitors[0].lastSeen)}</Badge> : <Link href="/admin/install" className="text-amber-700 hover:underline">Not detected</Link>}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Company profile</dt><dd className="text-stone-700">{st.companyProfile ? "Set" : "—"}</dd></div>
         </dl>
+        <div className="mt-3 border-t border-stone-100 pt-3"><UsageMeter e={ent} compact />{ent.state !== "unlimited" && <Link href="/admin/billing" className="mt-1 inline-block text-xs text-teal-700 hover:underline">{ent.plan.name} plan · Billing →</Link>}</div>
         <div className="mt-3 flex gap-2"><Link href="/admin/content" className="w-btn-ghost flex-1">Content</Link><Link href="/admin/settings" className="w-btn-ghost flex-1">Settings</Link></div>
       </Card>
     </div>
