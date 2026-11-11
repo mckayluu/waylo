@@ -1,5 +1,7 @@
 // Keyword retrieval (BM25-lite over page chunks). Falls back to mock knowledge if nothing crawled.
 import { listPages } from "./store";
+import { usePostgres, q } from "./db";
+import { createHash } from "crypto";
 import { findRelevant } from "./knowledge";
 import { currentWs, DEFAULT_WS } from "./tenant";
 // Built-in Waylo product knowledge is only for Waylo's own (default) workspace — never customer workspaces.
@@ -11,9 +13,16 @@ export const terms = (s: string) => (s.toLowerCase().match(/[a-z0-9$]+/g) || [])
 type Chunk = { url: string; title: string; text: string; tf: Map<string, number>; len: number };
 type Index = { key: string; chunks: Chunk[]; df: Map<string, number>; avg: number };
 const caches = new Map<string, Index>(); // per workspace
+// Cheap change check so a chat doesn't reload every page's text (Growth workspaces index up to 2,000 pages).
+async function pagesVersion(ws: string): Promise<string | null> {
+  if (!usePostgres()) return null;
+  try { const [r] = await q("SELECT count(*)::int AS n, max(updated_at) AS m, string_agg(id, '' ORDER BY id) AS ids FROM pages WHERE workspace_id=$1", [ws]); return `${r.n}:${r.m ? new Date(r.m).toISOString() : ""}:${r.ids ? createHash("sha1").update(r.ids).digest("hex") : ""}`; } catch { return null; }
+}
 async function index() {
-  const pages = (await listPages()); const key = pages.map((p) => p.id + p.updatedAt).join("|");
-  const ws = await currentWs(); const hit = caches.get(ws); if (hit?.key === key) return hit;
+  const ws = await currentWs(); const hit = caches.get(ws);
+  const ver = await pagesVersion(ws); if (ver && hit?.key === ver) return hit;
+  const pages = (await listPages()); const key = ver || pages.map((p) => p.id + p.updatedAt).join("|");
+  if (hit?.key === key) return hit;
   const chunks: Chunk[] = [];
   for (const p of pages) {
     const paras = p.text.split("\n"); let buf = "";
@@ -22,14 +31,14 @@ async function index() {
   }
   const df = new Map<string, number>(); chunks.forEach((c) => c.tf.forEach((_, w) => df.set(w, (df.get(w) || 0) + 1)));
   const idx = { key, chunks, df, avg: chunks.reduce((n, c) => n + c.len, 0) / Math.max(1, chunks.length) };
-  caches.set(ws, idx); return idx;
+  caches.delete(ws); caches.set(ws, idx); while (caches.size > 8) caches.delete(caches.keys().next().value!); return idx;
 }
 function bestSentences(text: string, q: Set<string>, max = 3) {
   const sents = text.replace(/\n+/g, ". ").split(/(?<=[.!?])\s+/).map((s) => s.replace(/^\.\s*/, "").trim()).filter((s) => s.length > 25 && s.length < 400);
   const scored = sents.map((s, i) => ({ s, i, n: new Set(terms(s).filter((w) => q.has(w))).size })).filter((x) => x.n > 0);
   return scored.sort((a, b) => b.n - a.n || a.i - b.i).slice(0, max).sort((a, b) => a.i - b.i).map((x) => x.s.replace(/\.\.$/, ".")).join(" ");
 }
-export async function hasCrawl() { return (await listPages()).length > 0; }
+export async function hasCrawl() { return (await index()).chunks.length > 0; }
 export async function retrieve(question: string, max = 3): Promise<Source[]> {
   if (!(await hasCrawl())) return !(await isWayloWs()) ? [] : findRelevant(question, max).map(({ title, url, summary }) => ({ title, url, summary }));
   const { chunks, df, avg } = (await index()); const q = terms(question); if (!q.length) return [];

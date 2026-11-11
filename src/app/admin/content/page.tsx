@@ -3,6 +3,8 @@ import { KNOWLEDGE } from "@/lib/knowledge";
 import { decodeEntities } from "@/lib/crawler";
 import { PageHeader, Card, Badge, ago } from "../ui";
 import { CrawlPanel } from "./CrawlPanel";
+import { entitlement } from "@/lib/entitlement";
+import { siteList } from "@/lib/sites";
 import { DeletePage } from "./DeletePage";
 export const dynamic = "force-dynamic";
 export default async function Content({ searchParams }: { searchParams: { q?: string } }) {
@@ -10,6 +12,7 @@ export default async function Content({ searchParams }: { searchParams: { q?: st
   (await listConversations()).forEach((c) => c.messages.forEach((m) => m.citations?.forEach((x) => counts.set(x.url, (counts.get(x.url) || 0) + 1))));
   const pages = (await listPages()); const crawled = pages.length > 0; const q = (searchParams.q || "").toLowerCase();
   const isDefault = (await currentWs()) === DEFAULT_WS;
+  const st = await getSettings(); const ent = await entitlement();
   const rows = (crawled ? pages.map((p) => ({ id: p.id, url: p.url, title: decodeEntities(p.title), summary: decodeEntities(p.text.slice(0, 220)), chars: p.text.length, at: p.updatedAt }))
     : isDefault ? KNOWLEDGE.map((k) => ({ id: "", url: k.url, title: k.title, summary: k.summary.replace(/\*\*|`/g, ""), chars: k.summary.length, at: "" })) : [])
     .filter((r) => !q || (r.title + r.url + r.summary).toLowerCase().includes(q));
@@ -17,7 +20,7 @@ export default async function Content({ searchParams }: { searchParams: { q?: st
   const emptyNew = !crawled && !isDefault;
   return (<>
     <PageHeader title="Content" sub={crawled ? `${pages.length} pages indexed from your site · ${(totalChars / 1000).toFixed(0)}k characters. Waylo answers from these and cites them.` : emptyNew ? "Nothing crawled yet. This workspace starts empty — add your website URL and crawl to index your own pages." : "Nothing crawled yet — Waylo is using its built-in sample pages."} />
-    <div className="mb-4"><Card title="Crawl your site"><CrawlPanel siteUrl={(await getSettings()).siteUrl} last={(await getLastCrawl())} /></Card></div>
+    <div className="mb-4"><Card title="Crawl your site"><CrawlPanel siteUrl={st.siteUrl} last={(await getLastCrawl())} sites={siteList(st)} planSites={ent.plan.sites} planPages={ent.plan.pages} planName={ent.plan.name} indexed={pages.length} /></Card></div>
     <form className="mb-3"><input name="q" defaultValue={searchParams.q} placeholder="Filter pages…" className="w-input max-w-xs" /></form>
     <Card pad={false}><div className="overflow-x-auto"><table className="w-full text-sm">
       <thead className="border-b border-stone-100 bg-stone-50/60"><tr><th className="w-th">Page</th><th className="w-th">Preview</th><th className="w-th">Status</th><th className="w-th text-right">Cited</th><th className="w-th" /></tr></thead>
