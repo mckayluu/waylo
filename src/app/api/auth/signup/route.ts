@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { COOKIE, MAX_AGE, sign } from "@/lib/session";
-import { findMember, createWorkspace, deleteWorkspace, addMember, setSettings, setBranding, runIn, DEFAULT_BRANDING } from "@/lib/store";
+import { findMember, createWorkspace, deleteWorkspace, addMember, setSettings, setBranding, runIn, DEFAULT_BRANDING, upsertPages, setLastCrawl } from "@/lib/store";
+import { getTry, TRY_TTL_MS } from "@/lib/trysession";
 import { hashPassword } from "@/lib/auth";
 import { usePostgres } from "@/lib/db";
 import { rateLimit } from "@/lib/guard";
@@ -15,7 +16,9 @@ export async function POST(req: Request) {
   if (!usePostgres()) return NextResponse.json({ error: "Signup needs the Postgres store (DATABASE_URL)." }, { status: 503 });
   const b = await req.json().catch(() => ({}));
   const company = String(b.company || "").trim().slice(0, 80), email = String(b.email || "").trim().toLowerCase(), pw = String(b.password || "");
-  const siteUrl = String(b.siteUrl || "").trim().slice(0, 300);
+  // Instant-try carry-over: the site (and pages) the visitor already tried come with them.
+  const tried = getTry(b.tryId); const fromTry = tried?.status === "done" ? tried : undefined;
+  const siteUrl = (fromTry?.url || String(b.siteUrl || "").trim()).slice(0, 300);
   if (!company) return NextResponse.json({ error: "Company name required" }, { status: 400 });
   if (!EMAIL_RE.test(email)) return NextResponse.json({ error: "Valid work email required" }, { status: 400 });
   if (pw.length < 8) return NextResponse.json({ error: "Use at least 8 characters for your password" }, { status: 400 });
@@ -32,12 +35,17 @@ export async function POST(req: Request) {
       await addMember(email, "Owner", hashPassword(pw));
       await setSettings({ siteName: company, siteUrl, published: false });
       await setBranding({ botName: company.slice(0, 40), greeting: `Hi! Ask me anything about ${company}.`, accent: DEFAULT_BRANDING.accent });
+      if (fromTry && Date.now() - fromTry.createdAt < TRY_TTL_MS) {
+        await upsertPages(fromTry.pages.map(({ id: _id, ...p }) => p));
+        const at = new Date().toISOString();
+        await setLastCrawl({ startUrl: fromTry.url, startedAt: new Date(fromTry.createdAt).toISOString(), finishedAt: at, pages: fromTry.pages.length, errors: 0, status: "done", message: "Imported from your instant try · re-crawl to index up to your plan's page limit" });
+      }
     });
   } catch (e: any) { await deleteWorkspace(ws.id).catch(() => {}); console.error("[signup]", e?.message); return NextResponse.json({ error: "That email already has a Waylo account — sign in instead." }, { status: 409 }); }
   // Start the 14-day no-card trial right away so the workspace is usable without a billing detour.
   let trial = false;
   if (stripeConfigured()) { try { await runIn(ws.id, () => startTrialSubscription(email)); trial = true; } catch (e: any) { console.error("[signup] trial", e?.message); } }
-  const res = NextResponse.json({ ok: true, workspace: ws.id, trial });
+  const res = NextResponse.json({ ok: true, workspace: ws.id, trial, imported: fromTry ? fromTry.pages.length : 0 });
   res.cookies.set(COOKIE, await sign({ email, role: "Owner", ws: ws.id }), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" && !/^http:\/\/localhost/.test(process.env.WAYLO_PUBLIC_URL || ""), path: "/", maxAge: MAX_AGE });
   return res;
 }

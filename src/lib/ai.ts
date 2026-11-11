@@ -4,6 +4,7 @@ import { findRelevant } from "./knowledge";
 import { DEMO_PAGES, findDemo } from "./demoKnowledge";
 import { isDemoSite } from "./tenant";
 import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl, isWayloWs } from "./retrieve";
+import { tryCtx } from "./trycontext";
 
 export type Answer = { text: string; citations: Citation[] };
 function absUrl(url: string) {
@@ -34,6 +35,7 @@ function matchFacts(text: string, facts: Fact[]) {
   return facts.filter((f) => words(f.text).some((w) => q.has(w) || q.has(w.replace(/s$/, ""))));
 }
 export async function guidancePrompt() {
+  const t = tryCtx(); if (t) return `COMPANY: ${t.siteName}`;
   const g = (await getGuidance()); const st = (await getSettings());
   return [
     `COMPANY: ${st.siteName}` + (st.companyProfile ? `\nCOMPANY PROFILE (authoritative):\n${st.companyProfile}` : ""),
@@ -75,7 +77,7 @@ async function simulate(text: string, onDelta: OnDelta) {
   for (const tok of text.match(/\s*\S+/g) || []) { await onDelta(tok); await sleep(18 + Math.random() * 22); }
 }
 async function systemPrompt(src: { title: string; url: string; summary: string }[]) {
-  const waylo = await isWayloWs(); const name = waylo ? "Waylo" : (await getSettings()).siteName || "this company";
+  const waylo = await isWayloWs(); const name = waylo ? "Waylo" : tryCtx()?.siteName || (await getSettings()).siteName || "this company";
   const pricing = waylo ? " For pricing, the only current plans are Trial ($0, 14 days, no card, 500 AI replies), Starter ($79/mo, 3,000 replies), and Growth ($249/mo, 3 sites, 15,000 replies), all with unlimited seats; never mention a Free tier, $49 plan, or Enterprise tier. Waylo is fully self-serve: there are no sales calls, setup calls, demos with a person, or founder contact. When a visitor wants to try or buy, point them to the free trial at /signup or pasting their URL on the homepage; for help, the docs at /docs." : " Never quote prices, plans or facts that are not in SOURCES or the guidance; you are not Waylo and must not describe Waylo's product. Always write at least one sentence before the SOURCES line, even when the answer is not available.";
   return `You are ${name}'s concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly${waylo ? " and suggest the docs at /docs or starting the free trial at /signup" : " and point the visitor to the **Contact** tab"} — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. ${waylo ? "Never suggest contacting the team, booking a call, or the Contact tab." : "Only mention the **Contact** tab when the answer is genuinely missing from SOURCES."}${pricing} Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
 }

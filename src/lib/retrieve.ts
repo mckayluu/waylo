@@ -2,10 +2,11 @@
 import { listPages } from "./store";
 import { usePostgres, q } from "./db";
 import { createHash } from "crypto";
+import { tryCtx } from "./trycontext";
 import { findRelevant } from "./knowledge";
 import { currentWs, DEFAULT_WS } from "./tenant";
 // Built-in Waylo product knowledge is only for Waylo's own (default) workspace — never customer workspaces.
-export const isWayloWs = async () => (await currentWs()) === DEFAULT_WS;
+export const isWayloWs = async () => !tryCtx() && (await currentWs()) === DEFAULT_WS;
 export type Source = { title: string; url: string; summary: string };
 const STOP = new Set("the a an is are was were what how do does can i you we our your to of and or for in on it its with be my me about this that from at by as will would should could have has had any there their them they us".split(" "));
 export const terms = (s: string) => (s.toLowerCase().match(/[a-z0-9$]+/g) || []).filter((w) => w.length > 2 && !STOP.has(w)).map((w) => w.replace(/(ies)$/, "y").replace(/(?<!s)s$/, ""));
@@ -19,10 +20,15 @@ async function pagesVersion(ws: string): Promise<string | null> {
   try { const [r] = await q("SELECT count(*)::int AS n, max(updated_at) AS m, string_agg(id, '' ORDER BY id) AS ids FROM pages WHERE workspace_id=$1", [ws]); return `${r.n}:${r.m ? new Date(r.m).toISOString() : ""}:${r.ids ? createHash("sha1").update(r.ids).digest("hex") : ""}`; } catch { return null; }
 }
 async function index() {
+  const t = tryCtx(); if (t) { const hit = caches.get("try:" + t.id); if (hit && hit.key === String(t.pages.length)) return hit; return store("try:" + t.id, build(t.pages, String(t.pages.length))); }
   const ws = await currentWs(); const hit = caches.get(ws);
   const ver = await pagesVersion(ws); if (ver && hit?.key === ver) return hit;
   const pages = (await listPages()); const key = ver || pages.map((p) => p.id + p.updatedAt).join("|");
   if (hit?.key === key) return hit;
+  return store(ws, build(pages, key));
+}
+function store(k: string, idx: Index) { caches.delete(k); caches.set(k, idx); while (caches.size > 24) caches.delete(caches.keys().next().value!); return idx; }
+function build(pages: { url: string; title: string; text: string }[], key: string): Index {
   const chunks: Chunk[] = [];
   for (const p of pages) {
     const paras = p.text.split("\n"); let buf = "";
@@ -30,8 +36,7 @@ async function index() {
     for (const para of paras) { if ((buf + para).length > 900) push(); buf += para + "\n"; } push();
   }
   const df = new Map<string, number>(); chunks.forEach((c) => c.tf.forEach((_, w) => df.set(w, (df.get(w) || 0) + 1)));
-  const idx = { key, chunks, df, avg: chunks.reduce((n, c) => n + c.len, 0) / Math.max(1, chunks.length) };
-  caches.delete(ws); caches.set(ws, idx); while (caches.size > 8) caches.delete(caches.keys().next().value!); return idx;
+  return { key, chunks, df, avg: chunks.reduce((n, c) => n + c.len, 0) / Math.max(1, chunks.length) };
 }
 function bestSentences(text: string, q: Set<string>, max = 3) {
   const sents = text.replace(/\n+/g, ". ").split(/(?<=[.!?])\s+/).map((s) => s.replace(/^\.\s*/, "").trim()).filter((s) => s.length > 25 && s.length < 400);
