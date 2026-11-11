@@ -33,7 +33,7 @@ function ProductShot() {
   return (
     <figure className="w-glow overflow-hidden rounded-2xl border border-white/20 bg-white">
       <div className="flex items-center gap-1.5 border-b border-stone-200 bg-stone-100 px-4 py-2.5"><span className="h-2.5 w-2.5 rounded-full bg-stone-300" /><span className="h-2.5 w-2.5 rounded-full bg-stone-300" /><span className="h-2.5 w-2.5 rounded-full bg-stone-300" /><span className="ml-3 text-xs text-stone-500">waylo-j5hv.onrender.com/demo</span></div>
-      <Image src="/product/demo-acme-answer.webp" alt="Screenshot of the Waylo chat on the Northpoint Ops demo site answering a pricing question with a Northpoint Ops Pricing source chip" width={1920} height={1072} priority sizes="(min-width:1024px) 620px, 100vw" className="h-auto w-full" />
+      <Image src="/product/demo-northpoint-answer.webp" alt="Screenshot of the Waylo chat on the Northpoint Ops demo site answering a pricing question with a Northpoint Ops Pricing source chip" width={1920} height={1072} priority sizes="(min-width:1024px) 620px, 100vw" className="h-auto w-full" />
       <figcaption className="border-t border-stone-200 bg-white px-4 py-2 text-[11px] text-stone-500">Real screenshot · the <Link href="/demo" className="font-medium text-teal-700 hover:underline">/demo</Link> page. Northpoint Ops is a sample company; the answer and its source chip come from Northpoint Ops’ own pricing page.</figcaption>
     </figure>
   );
