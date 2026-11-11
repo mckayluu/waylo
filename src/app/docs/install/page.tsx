@@ -16,13 +16,13 @@ export default function Install() {
     <p className="text-lg text-stone-600">One line of HTML adds the chat to every page. It also starts recording visitor journeys and flagging buying intent. There’s no build step or SDK.</p>
     <ol className="not-prose mt-6 grid gap-3 sm:grid-cols-3">{([["Add the snippet", "#snippet", "teal"], ["Allow your domain", "#allowlist", "indigo"], ["Verify", "#verify", "amber"]] as const).map(([t, h, c], i) => <li key={h}><a href={h} className="w-card flex items-center gap-3 p-4 !no-underline hover:border-amber-300"><IconTile t={c}>{i + 1}</IconTile><span className="font-semibold text-stone-900">{t}</span></a></li>)}</ol>
     <h2 id="checklist">Install checklist</h2>
-    <p>Work through these in order. Each one takes a few minutes.</p>
+    <p>Work through these in order. Each one takes a few minutes. To see answers from your own pages before you install anything, <a href="/try">try it on your site</a> first. It reads up to 20 pages, answers up to 12 questions, and carries over into a Trial when you sign up.</p>
     <ol className="not-prose mt-4 divide-y divide-stone-200 border-y border-stone-200 text-sm">{([
       ["Add the script tag", <>Paste the snippet before <code>&lt;/body&gt;</code> on every page, or as a GTM Custom HTML tag on All Pages.</>],
       ["Set data-site", <>Use the workspace id from Admin → Install. A wrong id loads the widget but logs nothing.</>],
       ["Pick data-mode", <><code>launcher</code> for marketing pages, <code>sidebar</code> for docs, <code>track</code> to collect journeys and signals without chat.</>],
       ["Allow your domains", <>Add the root domain, <code>www</code>, and staging to the embed allowlist.</>],
-      ["Verify the crawl", <>In the admin, check that your pricing, docs, and integrations pages are in the crawled list. Crawl again after big site changes.</>],
+      ["Verify the crawl", <>In the admin, check that your pricing, docs, and integrations pages are in the crawled list. Waylo re-crawls every 3 days on the Trial and daily on paid plans. Click Re-crawl after big changes if you can’t wait.</>],
       ["Ask a test question", <>Ask something only your pricing page answers. The reply should link that page. Then ask something that isn’t on your site. It should say it doesn’t know.</>],
       ["Connect Slack", <>Create a Slack incoming webhook for your leads channel, paste it in Admin → Integrations, and run a test handoff (Starter and up).</>],
     ] as const).map(([h, d], i) => <li key={h} className="grid gap-1 py-3 sm:grid-cols-[28px_180px_1fr]"><span className="font-mono text-teal-700">{i + 1}</span><span className="font-semibold text-stone-900">{h}</span><span className="text-stone-600">{d}</span></li>)}</ol>

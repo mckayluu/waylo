@@ -1,6 +1,7 @@
 // Positioning (from App Boss's messaging plan, in our own words). Only shipped behavior goes here.
-// HOLD until shipped: "try it on your own URL without signing up", "nightly answer checks",
-// seat counts (still being checked). Add them to `later` slots when confirmed.
+// Shipped and verified: /try (20 pages, 12 questions, no signup, carries into the Trial),
+// automatic re-crawl (every 3 days on the Trial, daily on paid). No plan caps seats. Say "Invite your whole team" or leave seats out.
+// HOLD until shipped: "nightly answer checks".
 export const MSG = {
   headline: ["Website chat", "that shows its receipts."] as const,
   sub: "Waylo reads your public pages, answers every visitor with a link to the page it used, and tells you who’s ready to buy. Start free and set it up yourself.",
