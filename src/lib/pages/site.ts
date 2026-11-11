@@ -41,7 +41,7 @@ export const INTEGRATIONS: InfoDef = { path: "/integrations", crumb: "Integratio
   metaTitle: "Integrations: Slack, JSON webhook, CMS and GTM", metaDesc: "What Waylo integrates with today: Slack via incoming webhook, any CRM via a JSON webhook (Zapier, Make, n8n), and installs on Webflow, WordPress, Shopify, Squarespace, Wix, and GTM.",
   blocks: [
     { t: "table", eyebrow: "Today", h: "What’s built, and how it connects", head: ["Integration", "How", "Notes"], rows: [
-      ["Slack", "Incoming webhook URL", "One channel per workspace. Leads, high-intent, handoffs. [Details](/product/slack-routing)."], ["CRM (HubSpot, Salesforce, …)", "JSON webhook → Zapier / Make / n8n / your endpoint", "No native CRM app."],
+      ["Slack", "Incoming webhook URL", "Starter and Growth. One channel per workspace. Leads, high-intent, handoffs. [Details](/product/slack-routing)."], ["CRM (HubSpot, Salesforce, …)", "JSON webhook → Zapier / Make / n8n / your endpoint", "No native CRM app."],
       ["Google Tag Manager", "Custom HTML tag, All Pages", "[Install guide](/docs/install#cms)."], ["Webflow", "Site settings → Custom code → Footer", ""],
       ["WordPress", "Theme footer or a header/footer code plugin", "No Waylo plugin."], ["Shopify", "theme.liquid, before </body>", "No Shopify app."],
       ["Squarespace, Wix", "Code injection / custom code", "Paid plans on those platforms may be required for custom code."], ["Stripe", "Built-in billing for your Waylo plan", "Not a visitor-facing integration."]] },
