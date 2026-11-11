@@ -1,6 +1,6 @@
 export type Citation = { title: string; url: string };
 export type Message = { id: string; role: "visitor" | "bot"; text: string; at: string; citations?: Citation[]; feedback?: "up" | "down" };
-export type Lead = { id: string; name: string; email: string; message: string; intent: "message" | "demo"; consent: boolean; conversationId?: string; createdAt: string };
+export type Lead = { id: string; name: string; email: string; message: string; intent: "message" | "demo" | "support"; consent: boolean; conversationId?: string; createdAt: string };
 export type Branding = { botName: string; accent: string; greeting: string };
 export const DEFAULT_BRANDING: Branding = { botName: "Waylo", accent: "#0f766e", greeting: "Hi! I'm Waylo's AI assistant. Ask me anything about the product, pricing, or setup." };
 export type Conversation = {

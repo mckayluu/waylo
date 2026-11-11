@@ -5,9 +5,9 @@ import type { Guidance } from "@/lib/store";
 import { PageHeader } from "../ui";
 type K = "facts" | "rules" | "skills";
 const INFO: Record<K, { label: string; blurb: string; ph: string }> = {
-  facts: { label: "Facts", blurb: "Statements Waylo treats as true. They win over knowledge pages when they conflict.", ph: "e.g. Growth plan includes a 14-day free trial." },
-  rules: { label: "Rules", blurb: "Guardrails Waylo always follows.", ph: "e.g. Never quote pricing; send visitors to the Contact tab." },
-  skills: { label: "Skills", blurb: "Playbooks for specific intents — when a visitor wants X, do Y.", ph: "e.g. Ask for their work email, then suggest Contact → Book a demo." },
+  facts: { label: "Facts", blurb: "Statements Waylo treats as true. They win over knowledge pages when they conflict.", ph: "e.g. We ship to the US and Canada only." },
+  rules: { label: "Rules", blurb: "Guardrails Waylo always follows.", ph: "e.g. Never promise delivery dates; link the shipping page instead." },
+  skills: { label: "Skills", blurb: "Playbooks for specific intents — when a visitor wants X, do Y.", ph: "e.g. When someone asks for a quote, ask for their project size and work email." },
 };
 export function GuidanceEditor({ initial }: { initial: Guidance }) {
   const [g, setG] = useState(initial); const [tab, setTab] = useState<K>("facts");

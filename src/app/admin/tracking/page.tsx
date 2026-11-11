@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 type Row = { key: string; href: string; who: string; sub: string; entry: string; value: "High" | "Medium" | "Low"; signals: string[]; at: string; n: number; pv: number; lastPath?: string };
 const rank = { High: 3, Medium: 2, Low: 1 };
 export default async function Tracking({ searchParams }: { searchParams: { tier?: string } }) {
-  const leads = (await listLeads()); const convs = (await listConversations()); const visitors = (await listVisitors());
+  const leads = (await listLeads()).filter((l) => l.intent !== "support"); const convs = (await listConversations()); const visitors = (await listVisitors());
   const leadByConv = new Map(leads.filter((l) => l.conversationId).map((l) => [l.conversationId!, l]));
   const convsByVid = new Map<string, typeof convs>(); convs.forEach((c) => c.visitorId && convsByVid.set(c.visitorId, [...(convsByVid.get(c.visitorId) || []), c]));
   const pricingSeen = (paths: string[]) => paths.some((p) => /pric|demo|contact/i.test(p));
