@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { AdminNav } from "./AdminNav";
+import { PlanBanner } from "./_parts/PlanBanner";
 import { getSettings } from "@/lib/store";
 import { currentSession } from "@/lib/auth";
 import { authEnabled } from "@/lib/session";
@@ -37,6 +38,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <span className="flex items-center gap-2 rounded-full border border-stone-200 py-1 pl-1 pr-3 text-sm" title={`${who} · ${s?.role}`}><span className="grid h-6 w-6 place-items-center rounded-full bg-teal-700 text-[11px] font-semibold text-white">{ini || "W"}</span><span className="hidden text-stone-700 sm:inline">{auth ? who : "Local owner"}</span><span className="hidden text-[11px] text-stone-400 sm:inline">{s?.role}</span></span>{auth && <form action="/api/auth/logout" method="post"><button className="text-sm text-stone-500 hover:text-stone-800">Sign out</button></form>}
           </div>
         </div><div className="w-accent-line opacity-70" /></header>
+        <PlanBanner />
         {!auth && <div className="border-b border-amber-200 bg-amber-50 px-6 py-2 text-center text-xs text-amber-900">Admin is open to anyone who can reach it. Set <code className="font-semibold">WAYLO_ADMIN_PASSWORD</code> to lock it.</div>}
         {!st.published && <div className="border-b border-teal-100 bg-teal-50/60 px-6 py-2 text-center text-xs text-teal-900">Your widget is in preview. Finish the <Link href="/admin" className="font-semibold underline">setup checklist</Link> or <Link href="/admin/install" className="font-semibold underline">install &amp; publish</Link> to go live.</div>}
         <main className="mx-auto max-w-6xl px-5 py-6">{children}</main>

@@ -6,6 +6,8 @@ import { syncConversation } from "@/lib/crm";
 import { notify } from "@/lib/notify";
 import { guard, rateLimit } from "@/lib/guard";
 import { withSite, siteParam, isDemo } from "@/lib/site";
+import { entitlement, PAUSED_REPLY } from "@/lib/entitlement";
+import { addUsage } from "@/lib/usage";
 export const dynamic = "force-dynamic";
 const VID = /^[a-zA-Z0-9_-]{6,64}$/;
 
@@ -42,9 +44,18 @@ async function handle(req: Request, b: any, demo: boolean) {
   c.themes = [...new Set([...c.themes, ...found])];
   c.visitorType = inferVisitorType(c.signals);
   const botId = newId();
+  const ent = demo ? null : await entitlement();
+  if (ent && !ent.chatOpen) {
+    // Paused (trial ended / limit reached): keep the visitor's question so the workspace sees missed demand, but don't call the model.
+    c.messages.push({ id: botId, role: "bot", text: PAUSED_REPLY, citations: [], at: new Date().toISOString() });
+    c.updatedAt = new Date().toISOString(); await upsertConversation(c);
+    if (!stream) return NextResponse.json({ conversationId: c.id, messageId: botId, reply: PAUSED_REPLY, citations: [], paused: true });
+    const enc = new TextEncoder(); const ev = (e: string, d: unknown) => `event: ${e}\ndata: ${JSON.stringify(d)}\n\n`;
+    return new Response(enc.encode(ev("meta", { conversationId: c.id, messageId: botId, paused: true }) + ev("done", { reply: PAUSED_REPLY, citations: [], paused: true })), { headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform" } });
+  }
   const finish = async (ans: { text: string; citations: { title: string; url: string }[] }) => {
     c.messages.push({ id: botId, role: "bot", text: ans.text, citations: ans.citations, at: new Date().toISOString() });
-    c.updatedAt = new Date().toISOString(); (await upsertConversation(c)); if (demo) return; syncConversation(c).catch(() => {});
+    c.updatedAt = new Date().toISOString(); (await upsertConversation(c)); if (demo) return; if (ent) addUsage(ent.period).catch(() => {}); syncConversation(c).catch(() => {});
     if (!wasHot && c.signals.includes("high-intent")) notify("conversation.high_intent", { conversation: c }).catch(() => {});
   };
 

@@ -25,8 +25,16 @@ export async function POST(req: Request) {
     if (billing.stripeSubscriptionId && (billing.status === "active" || billing.status === "trialing")) {
       try { billing = await syncSubscription(billing.stripeSubscriptionId); } catch (e: any) { console.error("[billing] checkout sync", e?.message); }
     }
-    // One billing record per workspace: never open a second subscription Checkout while a plan is live.
-    if (billing.stripeSubscriptionId && (billing.status === "active" || billing.status === "trialing")) {
+    const onTrial = billing.status === "trialing" && (billing.tier === "trial" || !billing.tier);
+    // One trial per workspace.
+    if (tier === "trial" && billing.stripeSubscriptionId) {
+      const msg = "Your free trial has already been used — choose Starter or Growth to keep Waylo answering";
+      if (isForm) return NextResponse.redirect(`${publicUrl()}/admin/billing?billing=${encodeURIComponent(msg)}`, 303);
+      return NextResponse.json({ error: msg }, { status: 409 });
+    }
+    // One billing record per workspace: never open a second subscription Checkout while a paid plan is live.
+    // A live trial may upgrade: the new paid sub keeps the remaining trial days, and the webhook cancels the old trial.
+    if (billing.stripeSubscriptionId && (billing.status === "active" || billing.status === "trialing") && !(onTrial && tier !== "trial")) {
       const msg = "You already have an active plan — manage it in Billing";
       if (isForm) return NextResponse.redirect(s ? `${publicUrl()}/admin/billing?billing=${encodeURIComponent(msg)}` : `${publicUrl()}/pricing?billing=${encodeURIComponent(msg)}`, 303);
       return NextResponse.json({ error: msg, manage: `${publicUrl()}/admin/billing` }, { status: 409 });
@@ -44,7 +52,9 @@ export async function POST(req: Request) {
             payment_method_collection: "if_required" as const,
             subscription_data: { metadata: { tier, workspace: ws }, trial_period_days: 14, trial_settings: { end_behavior: { missing_payment_method: "cancel" as const } } },
           }
-        : { subscription_data: { metadata: { tier, workspace: ws } } }),
+        : { subscription_data: { metadata: { tier, workspace: ws, ...(onTrial ? { upgraded_from: billing.stripeSubscriptionId || "" } : {}) },
+            // Upgrading mid-trial: don't charge until the trial would have ended (Checkout needs trial_end ≥ 48h out).
+            ...(onTrial && billing.currentPeriodEnd && +new Date(billing.currentPeriodEnd) - Date.now() > 49 * 3600_000 ? { trial_end: Math.floor(+new Date(billing.currentPeriodEnd) / 1000) } : {}) } }),
       allow_promotion_codes: true,
       success_url: `${publicUrl()}${signedIn ? "/admin/billing" : "/pricing"}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${publicUrl()}${signedIn ? "/admin/billing" : "/pricing"}?checkout=canceled`,

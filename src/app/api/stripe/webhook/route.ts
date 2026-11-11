@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { stripe, syncSubscription } from "@/lib/stripe";
+import { stripe, syncSubscription, cancelOtherTrials } from "@/lib/stripe";
 import { setBilling, getBilling, runIn, findWorkspaceByStripe, getWorkspace } from "@/lib/store";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -38,6 +38,9 @@ async function handle(event: Stripe.Event, o: any) {
         if (o.mode === "subscription" && o.subscription && (o.payment_status === "paid" || o.payment_status === "no_payment_required" || event.type.endsWith("succeeded"))) {
           await syncSubscription(typeof o.subscription === "string" ? o.subscription : o.subscription.id);
           await setBilling({ email: o.customer_details?.email || o.customer_email || undefined });
+          // Trial → paid upgrade: retire the old trial subscription so only the paid plan remains.
+          const subId = typeof o.subscription === "string" ? o.subscription : o.subscription.id;
+          if (o.metadata?.tier && o.metadata.tier !== "trial" && o.customer) await cancelOtherTrials(typeof o.customer === "string" ? o.customer : o.customer.id, subId);
         }
         break;
       case "customer.subscription.created":

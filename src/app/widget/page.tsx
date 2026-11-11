@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 type C = { title: string; url: string };
 const citeHref = (u: string) => { if (/^https?:\/\//i.test(u) || u.startsWith("mailto:")) return u; const base = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || "https://waylo-j5hv.onrender.com"); try { return new URL(u.startsWith("/") ? u : `/${u}`, base).href; } catch { return u; } };
 type M = { id?: string; role: "visitor" | "bot"; text: string; citations?: C[]; feedback?: "up" | "down"; streaming?: boolean };
-type B = { botName: string; accent: string; greeting: string; published?: boolean };
+type B = { botName: string; accent: string; greeting: string; published?: boolean; paused?: boolean };
 
 // Tiny safe markdown: **bold**, `code`, "- " bullets, paragraphs.
 function inline(s: string, k: string) {
@@ -67,7 +67,7 @@ export default function Widget() {
           const name = ev.match(/^event: (.+)$/m)?.[1]; const data = JSON.parse(ev.match(/^data: (.+)$/m)?.[1] || "{}");
           if (name === "meta") { setCid(data.conversationId); localStorage.setItem(LS("waylo_cid"), data.conversationId); patch({ id: data.messageId }); }
           else if (name === "delta") { acc += data.t; patch({ text: acc }); }
-          else if (name === "done") patch({ text: data.reply, citations: data.citations, streaming: false });
+          else if (name === "done") { patch({ text: data.reply, citations: data.citations, streaming: false }); if (data.paused) setB((x) => ({ ...x, paused: true })); }
         }
       }
       patch({ streaming: false });
@@ -136,10 +136,11 @@ export default function Widget() {
             <button disabled={ho === "sending"} className="w-full rounded-lg py-1.5 text-sm font-medium text-white disabled:opacity-50" style={{ background: a }}>{ho === "sending" ? "Requesting…" : "Request a person"}</button>
           </form>
         : <div className="mx-4 mb-1.5 flex justify-end"><button onClick={() => setHo("ask")} className="text-xs font-medium text-stone-500 hover:text-stone-800">🙋 Talk to a person</button></div>}
+        {b.paused ? <div className="mx-4 mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">AI answers are paused right now. <button onClick={() => setTab("contact")} className="font-semibold underline">Leave a message</button> and the team will reply by email.</div> :
         <form onSubmit={(e) => { e.preventDefault(); ask(input.trim()); }} className="mx-4 mb-2 flex items-center gap-2 rounded-2xl border border-stone-300 bg-white p-1.5 pl-3 focus-within:border-stone-500">
           <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask me anything…" className="flex-1 bg-transparent text-sm outline-none" />
           <button disabled={busy || !input.trim()} className="rounded-xl px-3.5 py-1.5 text-sm font-medium text-white disabled:opacity-40" style={{ background: a }}>Send</button>
-        </form>
+        </form>}
       </>) : (
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-3 text-sm">
           {fstate === "sent" ? <div className="rounded-xl bg-white p-4 text-center"><p className="font-medium">Thanks — we got it!</p><p className="mt-1 text-stone-500">Someone will reply by email soon.</p><button onClick={() => setFstate("")} className="mt-3 text-xs underline">Send another</button></div> : <>

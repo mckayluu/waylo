@@ -5,6 +5,7 @@ import { hashPassword } from "@/lib/auth";
 import { usePostgres } from "@/lib/db";
 import { rateLimit } from "@/lib/guard";
 import { EMAIL_RE } from "@/lib/signals";
+import { stripeConfigured, startTrialSubscription } from "@/lib/stripe";
 export const dynamic = "force-dynamic";
 const RESERVED = new Set(["default", "waylo", "acme-demo", "northpoint-demo", "admin", "api", "demo", "www", "app", "widget", "signup", "login"]);
 const slugify = (s: string) => s.toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\.[a-z.]+(\/.*)?$/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 32);
@@ -33,7 +34,10 @@ export async function POST(req: Request) {
       await setBranding({ botName: company.slice(0, 40), greeting: `Hi! Ask me anything about ${company}.`, accent: DEFAULT_BRANDING.accent });
     });
   } catch (e: any) { await deleteWorkspace(ws.id).catch(() => {}); console.error("[signup]", e?.message); return NextResponse.json({ error: "That email already has a Waylo account — sign in instead." }, { status: 409 }); }
-  const res = NextResponse.json({ ok: true, workspace: ws.id });
+  // Start the 14-day no-card trial right away so the workspace is usable without a billing detour.
+  let trial = false;
+  if (stripeConfigured()) { try { await runIn(ws.id, () => startTrialSubscription(email)); trial = true; } catch (e: any) { console.error("[signup] trial", e?.message); } }
+  const res = NextResponse.json({ ok: true, workspace: ws.id, trial });
   res.cookies.set(COOKIE, await sign({ email, role: "Owner", ws: ws.id }), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" && !/^http:\/\/localhost/.test(process.env.WAYLO_PUBLIC_URL || ""), path: "/", maxAge: MAX_AGE });
   return res;
 }

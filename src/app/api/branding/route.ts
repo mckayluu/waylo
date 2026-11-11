@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { withSite, siteParam, isDemo } from "@/lib/site";
 import { currentSession } from "@/lib/auth";
 import { DEMO_BRANDING } from "@/lib/demoKnowledge";
+import { entitlement } from "@/lib/entitlement";
 // Public (widget) reads branding for ?site=; admin (no site param) reads the signed-in workspace.
 // northpoint-demo (and alias acme-demo) must NOT fall through to the default (Waylo) workspace branding.
 export async function GET(req: Request) {
@@ -12,7 +13,7 @@ export async function GET(req: Request) {
   if (s == null && (await currentSession())) return get();
   return withSite(s, get);
 }
-async function get() { const st = (await getSettings()); return NextResponse.json({ ...(await getBranding()), published: st.published, siteName: st.siteName }); }
+async function get() { const st = (await getSettings()); const e = await entitlement().catch(() => null); return NextResponse.json({ ...(await getBranding()), published: st.published, siteName: st.siteName, paused: e ? !e.chatOpen : false }); }
 export async function PUT(req: Request) {
   const b = await req.json().catch(() => ({}));
   const patch: Record<string, string> = {};

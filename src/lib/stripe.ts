@@ -54,6 +54,27 @@ export async function syncSubscription(subOrId: string | Stripe.Subscription): P
   });
 }
 
+/** Self-serve trial: create the customer + a 14-day no-card trial subscription right at signup (no Checkout detour).
+ *  Trial ends with no payment method → Stripe cancels it → the workspace pauses until it picks a plan. */
+export async function startTrialSubscription(email: string): Promise<Billing> {
+  const ws = await currentWs();
+  const customer = await stripe().customers.create({ email, metadata: { workspace: ws } });
+  await setBilling({ stripeCustomerId: customer.id, email });
+  const sub = await stripe().subscriptions.create({
+    customer: customer.id, items: [{ price: await priceForTier("trial") }], trial_period_days: 14,
+    trial_settings: { end_behavior: { missing_payment_method: "cancel" } },
+    metadata: { tier: "trial", workspace: ws, source: "signup" },
+  });
+  return syncSubscription(sub);
+}
+/** Cancel leftover trial subscriptions on this customer once a paid plan is live (trial → paid upgrade). */
+export async function cancelOtherTrials(customerId: string, keepSubId: string) {
+  const subs = await stripe().subscriptions.list({ customer: customerId, status: "trialing", limit: 10 });
+  for (const s of subs.data) if (s.id !== keepSubId && (s.metadata?.tier === "trial" || !s.metadata?.tier)) {
+    try { await stripe().subscriptions.cancel(s.id); } catch (e: any) { console.error("[billing] cancel old trial", s.id, e?.message); }
+  }
+}
+
 /** Publishing / paid features allowed? Open when Stripe isn't configured (self-host / dev). */
 export async function billingAllowsPublish(): Promise<boolean> {
   if (!stripeConfigured()) return true;
