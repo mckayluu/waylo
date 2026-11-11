@@ -3,9 +3,9 @@ import { Wordmark } from "./Header";
 export function Footer() {
   const cols: [string, [string, string][]][] = [
     ["Product", [["All features", "/features"], ["AI chat", "/product/ai-chat"], ["Citations", "/product/citations"], ["Lead capture", "/product/lead-capture"], ["Slack routing", "/product/slack-routing"], ["Analytics", "/product/analytics"], ["Branding", "/product/branding"], ["Install", "/product/install"], ["How it works", "/how-it-works"], ["Integrations", "/integrations"], ["Security & data", "/security"], ["Pricing", "/pricing"], ["Live demo", "/demo"]]],
-    ["Solutions", [["All use cases", "/use-cases"], ["Marketing teams", "/solutions/marketing"], ["Sales teams", "/solutions/sales"], ["SaaS & docs", "/solutions/saas"], ["Agencies", "/solutions/agencies"]]],
+    ["Solutions", [["All use cases", "/use-cases"], ["SaaS pre-sales → Slack", "/use-cases/saas-presales-slack"], ["Agencies", "/use-cases/agencies"], ["E-commerce", "/use-cases/ecommerce"], ["B2B services", "/use-cases/b2b-services"], ["Support deflection", "/use-cases/support-deflection"], ["Marketing teams", "/solutions/marketing"], ["Sales teams", "/solutions/sales"], ["SaaS & docs", "/solutions/saas"], ["Waylo vs chatbots", "/compare/generic-chatbots"], ["Waylo vs live chat", "/compare/live-chat"]]],
     ["Resources", [["Resources hub", "/resources"], ["Documentation", "/docs"], ["Install guide", "/docs/install"], ["JavaScript API", "/docs/install#api"], ["FAQ", "/faq"]]],
-    ["Account & legal", [["Sign in", "/admin/login"], ["Start free trial", "/signup"], ["Contact", "/contact"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
+    ["Company", [["About", "/about"], ["Changelog", "/changelog"], ["Sign in", "/admin/login"], ["Start free trial", "/signup"], ["Contact", "/contact"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
   ];
   return (
     <footer className="relative bg-stone-950 text-stone-300"><div className="w-accent-line" />

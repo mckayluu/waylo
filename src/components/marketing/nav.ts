@@ -19,7 +19,11 @@ export const NAV: NavGroup[] = [
     { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts on pricing and demo interest", icon: "🎯", t: "amber" },
     { label: "SaaS & docs", href: "/solutions/saas", desc: "Cited answers from docs and pricing", icon: "🧪", t: "indigo" },
     { label: "SaaS pre-sales → Slack", href: "/use-cases/saas-presales-slack", desc: "Cited answers, then a rep in Slack", icon: "#", t: "amber" },
-    { label: "Agencies", href: "/solutions/agencies", desc: "Cited chat across client sites", icon: "🏢", t: "teal" },
+    { label: "Agencies", href: "/use-cases/agencies", desc: "A workspace per client site", icon: "🏢", t: "teal" },
+    { label: "E-commerce", href: "/use-cases/ecommerce", desc: "Shipping, returns, sizing answers", icon: "🛒", t: "indigo" },
+    { label: "B2B services", href: "/use-cases/b2b-services", desc: "Scope, process, and call requests", icon: "💼", t: "amber" },
+    { label: "Support deflection", href: "/use-cases/support-deflection", desc: "Docs answers with the link", icon: "🛟", t: "teal" },
+    { label: "Compare", href: "/compare", desc: "vs generic chatbots, vs live chat", icon: "⚖", t: "indigo" },
     { label: "All use cases", href: "/use-cases", desc: "Compare every team side by side", icon: "↗", t: "amber" },
   ], feature: { title: "Sales handoff in minutes", body: "Reps open Slack to a lead that already asked about pricing — transcript included.", href: "/solutions/sales", cta: "See how", img: "/marketing/meeting.webp" } },
   { id: "resources", label: "Resources", href: "/resources", blurb: "Docs, setup guides, and answers for evaluating and running Waylo.", items: [
@@ -28,5 +32,7 @@ export const NAV: NavGroup[] = [
     { label: "Install guide", href: "/docs/install", desc: "One script tag, live in minutes", icon: "⚡", t: "amber" },
     { label: "JavaScript API", href: "/docs/install#api", desc: "Open chat from your own buttons", icon: "</>", t: "indigo" },
     { label: "FAQ", href: "/faq", desc: "Accuracy, data, pricing, rollout", icon: "❓", t: "teal" },
+    { label: "About", href: "/about", desc: "Who builds Waylo and why", icon: "👋", t: "amber" },
+    { label: "Changelog", href: "/changelog", desc: "What shipped, by date", icon: "🗓", t: "indigo" },
   ], feature: { title: "Install in one line", body: "Paste the snippet before </body> — works on Webflow, WordPress, Shopify, and GTM.", href: "/docs/install", cta: "Install guide", img: "/marketing/dashboard.webp" } },
 ];
