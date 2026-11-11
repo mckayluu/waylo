@@ -11,9 +11,9 @@ export function ContactForm() {
     const r = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(f) });
     const j = await r.json().catch(() => ({}));
     if (r.ok) { setDone(true); return; }
-    setErr(j.error || "Couldn't send — please try again."); setBusy(false);
+    setErr(j.error || "Couldn’t send. Please try again."); setBusy(false);
   }
-  if (done) return <div className="w-card-lg p-6 sm:p-8"><p className="text-lg font-semibold text-stone-900">Thanks — we’ll reply by email.</p><p className="mt-2 text-sm text-stone-600">Your report is logged. Meanwhile, <Link href="/docs/install#troubleshooting" className="font-medium text-teal-700 hover:underline">troubleshooting</Link> and the <Link href="/faq" className="font-medium text-teal-700 hover:underline">FAQ</Link> cover the common fixes.</p></div>;
+  if (done) return <div className="w-card-lg p-6 sm:p-8"><p className="text-lg font-semibold text-stone-900">Thanks. We’ll reply by email.</p><p className="mt-2 text-sm text-stone-600">Your report is logged. Meanwhile, <Link href="/docs/install#troubleshooting" className="font-medium text-teal-700 hover:underline">troubleshooting</Link> and the <Link href="/faq" className="font-medium text-teal-700 hover:underline">FAQ</Link> cover the common fixes.</p></div>;
   return <form onSubmit={go} className="w-card-lg space-y-4 p-6 sm:p-8" noValidate>
     <div className="grid gap-4 sm:grid-cols-2">
       <div><label className="w-label" htmlFor="c-name">Name</label><input id="c-name" className="w-input" value={f.name} onChange={set("name")} autoComplete="name" required /></div>
