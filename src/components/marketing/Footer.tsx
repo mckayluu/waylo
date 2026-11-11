@@ -5,7 +5,7 @@ export function Footer() {
     ["Product", [["Features", "/features"], ["Cited answers", "/features#answers"], ["Intent signals", "/features#signals"], ["Lead handoff", "/features#handoff"], ["Embed modes", "/docs/embed-modes"], ["Pricing", "/pricing"], ["Live demo", "/demo"]]],
     ["Solutions", [["All use cases", "/use-cases"], ["Marketing teams", "/solutions/marketing"], ["Sales teams", "/solutions/sales"], ["SaaS & docs", "/solutions/saas"], ["Agencies", "/solutions/agencies"]]],
     ["Resources", [["Resources hub", "/resources"], ["Documentation", "/docs"], ["Install guide", "/docs/install"], ["JavaScript API", "/docs/install#api"], ["FAQ", "/faq"]]],
-    ["Account & legal", [["Sign in", "/admin/login"], ["Request access", "mailto:hello@waylo.ai?subject=Waylo%20access"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
+    ["Account & legal", [["Sign in", "/admin/login"], ["Start free trial", "/signup"], ["Email hello@waylo.ai", "mailto:hello@waylo.ai?subject=Waylo"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
   ];
   return (
     <footer className="relative bg-stone-950 text-stone-300"><div className="w-accent-line" />

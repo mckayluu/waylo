@@ -14,7 +14,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <Link href="/admin/login" className="hidden px-2 text-sm font-medium text-stone-700 hover:text-stone-900 sm:inline">Sign in</Link>
           <Link href="/demo" className="hidden items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3.5 py-2 text-sm font-medium text-amber-800 transition hover:bg-amber-100 sm:inline-flex">Try demo</Link>
-          <a href="mailto:hello@waylo.ai?subject=Waylo%20early%20access" className="w-btn hidden sm:inline-flex">Request access</a>
+          <Link href="/signup" className="w-btn hidden sm:inline-flex">Start free trial</Link>
           <MobileMenu />
         </div>
       </div>
