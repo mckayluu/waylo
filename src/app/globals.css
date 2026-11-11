@@ -43,3 +43,50 @@ body { @apply bg-stone-50 text-stone-900 antialiased; }
   .w-admin-main { background: radial-gradient(40% 30% at 0% 0%, rgba(13,148,136,.07), transparent 70%), radial-gradient(35% 30% at 100% 0%, rgba(245,158,11,.06), transparent 70%), radial-gradient(45% 40% at 70% 100%, rgba(67,56,202,.05), transparent 70%), var(--w-canvas); background-attachment: fixed; }
   .w-admin-eyebrow { @apply px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-teal-200/60; }
 }
+
+/* ---------------------------------------------------------------------------
+   Raspberry Navy (refined) – marketing scope.
+   Everything below applies only inside `.mk` (the marketing Shell, docs, legal,
+   the Waylo banner on /demo). The admin and the widget iframe keep the legacy
+   teal tokens above until they get their own pass.
+   Raspberry is reserved for the primary button, the signal dot, the widget send
+   control and the hot-lead number. Navy carries structure. Paper is the page.
+   ------------------------------------------------------------------------- */
+.mk { --w-primary:#A81B48; --w-primary-hover:#8C1640; --w-primary-soft:#F6E8EC; --w-signal:#A81B48; --w-ink:#1A1714; --w-muted:#5A534C; --w-line:#E4DDD4; --w-canvas:#F5F0EA;
+  --w-deep:#0F1C33; --w-bright:#163352; --w-mint:#E8A8B8; --w-navy:#163352; --w-night:#0F1C33; --w-blush:#E8A8B8; --w-card:#FFFCF8; --w-cream:#D8D0C6; --w-soft-navy:#E8EEF3;
+  --w-accent:#A81B48; --w-accent-soft:#F6E8EC; --w-accent-bright:#A81B48; --w-support:#163352; --w-support-soft:#E8EEF3;
+  --w-grad:linear-gradient(180deg,#0F1C33 0%,#163352 100%);
+  --w-grad-cta:none; --w-grad-accent:none; --w-grad-text:none;
+  --w-shadow:0 1px 2px rgba(26,23,20,.05);
+  --w-shadow-lg:0 1px 2px rgba(26,23,20,.06),0 12px 32px -18px rgba(15,28,51,.28);
+  font-family: var(--font-ui), system-ui, -apple-system, "Segoe UI", sans-serif; background-color: var(--w-canvas); color: var(--w-ink); }
+.mk :is(h1, h2, h3) { font-family: var(--font-display), Georgia, serif; font-weight: 560; font-optical-sizing: auto; letter-spacing: -0.012em; }
+.mk :is(code, kbd, pre, samp) { font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace; }
+.mk ::selection { background: #F6E8EC; color: #1A1714; }
+.mk .w-eyebrow { color: #A81B48; }
+.mk .w-eyebrow-alt { color: #163352; }
+.mk .w-eyebrow-amber { color: #8C1640; }
+.mk :is(.w-gradient, .w-mesh .w-gradient) .w-eyebrow, .mk .w-gradient .w-eyebrow-alt, .mk .w-gradient .w-eyebrow-amber { color: #E8A8B8; }
+.mk .w-code { background: #0F1C33; color: #E8EEF3; border-radius: 6px; }
+.mk .w-card { border-radius: 6px; border-color: #E4DDD4; background: #FFFCF8; box-shadow: none; }
+.mk .w-card-lg { border-radius: 6px; border-color: #E4DDD4; background: #FFFCF8; box-shadow: var(--w-shadow); }
+.mk .w-input { border-radius: 4px; border-color: #D2C9BE; background: #FFFCF8; color: #1A1714; }
+.mk .w-input:focus { border-color: #163352; --tw-ring-color: rgba(22,51,82,.18); }
+.mk .w-input::placeholder { color: #6F665E; }
+.mk .w-label { color: #5A534C; }
+.mk .w-th { color: #5A534C; }
+.mk .w-btn, .mk .w-btn-grad, .mk .w-btn-accent { border-radius: 4px; background: #A81B48; color: #fff; box-shadow: none; filter: none; }
+.mk .w-btn:hover, .mk .w-btn-grad:hover, .mk .w-btn-accent:hover { background: #8C1640; filter: none; }
+.mk .w-btn-ghost { border-radius: 4px; border-color: #D2C9BE; background: #FFFCF8; color: #163352; }
+.mk .w-btn-ghost:hover { background: #F5F0EA; }
+.mk .w-btn-glass { border-radius: 4px; border-color: rgba(255,255,255,.45); background: transparent; backdrop-filter: none; }
+.mk .w-btn-glass:hover { background: rgba(255,255,255,.08); }
+.mk .w-badge-accent { border-radius: 4px; background: #F6E8EC; color: #8C1640; --tw-ring-color: #F0CFD9; }
+.mk .w-badge-support { border-radius: 4px; background: #E8EEF3; color: #163352; --tw-ring-color: #CBD7E3; }
+.mk .w-gradient { background: var(--w-grad); }
+.mk .w-mesh { background: #F5F0EA; }
+.mk .w-grid-bg { background-image: none; }
+.mk .w-text-grad { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #163352; }
+.mk .w-gradient .w-text-grad, .mk .w-text-grad-light { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #FFFFFF; }
+.mk .w-glow { box-shadow: var(--w-shadow-lg); }
+.mk .w-accent-line { height: 1px; background: #E4DDD4; }

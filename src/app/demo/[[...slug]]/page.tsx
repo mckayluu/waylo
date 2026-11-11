@@ -106,7 +106,7 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
   const key = params.slug?.[0] || ""; const View = VIEWS[key]; if (!View || (params.slug?.length || 0) > 1) notFound();
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <div className="bg-indigo-700 px-5 py-2 text-xs text-white"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
+      <div className="bg-navy-700 px-5 py-2 text-xs text-white"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
         <span><b>Waylo demo.</b> Northpoint Ops is a fictional customer site with Waylo installed. Click around, then open the chat bottom-right.</span>
         <span className="flex gap-4"><a href="/admin/tracking" className="underline decoration-white/50 hover:decoration-white">See your journey in Admin →</a><a href="/" className="text-white/80 hover:text-white">Back to Waylo</a></span></div></div>
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-5 backdrop-blur"><nav className="mx-auto flex max-w-6xl items-center gap-5 overflow-x-auto py-3 text-sm">
@@ -114,9 +114,9 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
         {NAV.map(([k, l]) => <a key={k} href={`/demo/${k}`} className={`shrink-0 ${k === key ? "font-semibold text-slate-900" : "text-slate-600 hover:text-slate-900"}`}>{l}</a>)}
         <span className="ml-auto shrink-0"><Btn href="/demo/contact">Book a walkthrough</Btn></span></nav></header>
       <main>{<View />}</main>
-      <section aria-labelledby="waylo-tour" className="border-t-4 border-indigo-700 bg-slate-50 px-5 py-12"><div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1.6fr] lg:items-start">
-        <div><p className="text-xs font-semibold uppercase tracking-[0.08em] text-indigo-700">Waylo · not part of Northpoint Ops</p><h2 id="waylo-tour" className="mt-2 text-2xl font-semibold tracking-tight">Want this chat on your site?</h2><p className="mt-3 text-sm leading-6 text-slate-600">Try the chat bottom-right first. Then flip through the eight screens it takes to set up yourself: sign up, crawl, brand, paste one tag. Screens are the real app on a test workspace.</p>
-          <div className="mt-5 flex flex-wrap gap-3"><a href="/signup" className="rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800">Start free trial</a><a href="/how-it-works" className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-100">See how it works</a></div></div>
+      <section aria-labelledby="waylo-tour" className="mk border-t-4 border-navy-700 bg-paper px-5 py-12"><div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1.6fr] lg:items-start">
+        <div><p className="text-xs font-semibold uppercase tracking-[0.08em] text-rasp-600">Waylo · not part of Northpoint Ops</p><h2 id="waylo-tour" className="mt-2 text-2xl font-semibold tracking-tight">Want this chat on your site?</h2><p className="mt-3 text-sm leading-6 text-slate-600">Try the chat bottom-right first. Then flip through the eight screens it takes to set up yourself: sign up, crawl, brand, paste one tag. Screens are the real app on a test workspace.</p>
+          <div className="mt-5 flex flex-wrap gap-3"><a href="/signup" className="rounded bg-rasp-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rasp-700">Start free trial</a><a href="/how-it-works" className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-100">See how it works</a></div></div>
         <ProductTour steps={tourSteps()} compact /></div></section>
       <footer className="border-t border-slate-200 px-5 py-8 pb-24 text-xs text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3"><span>© 2026 Northpoint Ops (fictional). Chat by Waylo, embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code>.</span><a href="/demo/pricing" className="hover:text-slate-800">Pricing</a></div></footer>
       <Script src="/waylo.js" data-site="northpoint-demo" data-mode="launcher" strategy="afterInteractive" />

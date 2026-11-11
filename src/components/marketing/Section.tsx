@@ -4,16 +4,16 @@ export function Section({ id, eyebrow, title, sub, children, className = "", cen
       <div className="mx-auto max-w-6xl">
         {(eyebrow || title) && (center
           ? <div className="mx-auto mb-7 max-w-2xl text-center">
-              {eyebrow && <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">{eyebrow}</p>}
-              {title && <h2 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">{title}</h2>}
-              {sub && <p className="mt-4 text-stone-600">{sub}</p>}
+              {eyebrow && <p className="text-xs font-semibold uppercase tracking-wider text-rasp-700">{eyebrow}</p>}
+              {title && <h2 className="mt-2 text-3xl font-semibold tracking-tight text-warm-900 sm:text-4xl">{title}</h2>}
+              {sub && <p className="mt-4 text-warm-600">{sub}</p>}
             </div>
-          : <div className="mb-7 grid gap-x-10 gap-y-2 border-t border-stone-200 pt-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end">
+          : <div className="mb-7 grid gap-x-10 gap-y-2 border-t border-warm-200 pt-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end">
               <div>
-                {eyebrow && <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">{eyebrow}</p>}
-                {title && <h2 className="mt-1.5 max-w-2xl text-2xl font-semibold tracking-tight text-stone-900 sm:text-[2rem] sm:leading-tight">{title}</h2>}
+                {eyebrow && <p className="text-xs font-semibold uppercase tracking-wider text-rasp-700">{eyebrow}</p>}
+                {title && <h2 className="mt-1.5 max-w-2xl text-2xl font-semibold tracking-tight text-warm-900 sm:text-[2rem] sm:leading-tight">{title}</h2>}
               </div>
-              {sub && <p className="text-[15px] leading-7 text-stone-600">{sub}</p>}
+              {sub && <p className="text-[15px] leading-7 text-warm-600">{sub}</p>}
             </div>)}
         {children}
       </div>
@@ -21,5 +21,5 @@ export function Section({ id, eyebrow, title, sub, children, className = "", cen
   );
 }
 export function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-stone-50 text-stone-900">{children}</div>;
+  return <div className="mk min-h-screen bg-warm-50 text-warm-900">{children}</div>;
 }

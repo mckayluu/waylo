@@ -50,33 +50,33 @@ export function TryWaylo({ compact = false }: { compact?: boolean }) {
     setAsking(false);
   }
   const signup = s ? `/signup?try=${encodeURIComponent(s.id)}` : "/signup";
-  return <div className={`rounded-2xl border border-stone-200 bg-white text-left text-stone-800 shadow-xl ${compact ? "p-4" : "p-5 sm:p-6"}`} data-try-waylo>
+  return <div className={`rounded-md border border-warm-200 bg-white text-left text-warm-800 shadow-xl ${compact ? "p-4" : "p-5 sm:p-6"}`} data-try-waylo>
     {(!s || s.status === "error") && <form onSubmit={start} className="flex flex-col gap-2 sm:flex-row">
-      <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="yourcompany.com" aria-label="Your website" className="min-w-0 flex-1 rounded-xl border border-stone-300 px-4 py-3 text-base outline-none focus:border-teal-600" />
-      <button disabled={busy} className="rounded-xl bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-60">{busy ? "Starting…" : "Try it on my site"}</button>
+      <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="yourcompany.com" aria-label="Your website" className="min-w-0 flex-1 rounded-md border border-warm-300 px-4 py-3 text-base outline-none focus:border-navy-600" />
+      <button disabled={busy} className="rounded-md bg-navy-700 px-5 py-3 font-semibold text-white hover:bg-navy-800 disabled:opacity-60">{busy ? "Starting…" : "Try it on my site"}</button>
     </form>}
-    {!s && !err && <p className="mt-2 text-xs text-stone-500">No account, no card. Waylo reads up to 20 public pages and you can ask it 12 questions. Nothing is saved; the preview expires in an hour.</p>}
-    {err && <p className="mt-2 text-sm text-rose-700">{err}</p>}
+    {!s && !err && <p className="mt-2 text-xs text-warm-500">No account, no card. Waylo reads up to 20 public pages and you can ask it 12 questions. Nothing is saved; the preview expires in an hour.</p>}
+    {err && <p className="mt-2 text-sm text-rasp-700">{err}</p>}
     {s?.status === "running" && <div className="py-2">
       <p className="font-medium">Reading {s.host}…</p>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-stone-100"><div className="h-full bg-teal-600 transition-all" style={{ width: `${Math.max(6, (s.found / 20) * 100)}%` }} /></div>
-      <p className="mt-1.5 text-xs text-stone-500">{s.found} of up to 20 pages · {secs}s · sitemap first, then links</p>
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-warm-100"><div className="h-full bg-navy-600 transition-all" style={{ width: `${Math.max(6, (s.found / 20) * 100)}%` }} /></div>
+      <p className="mt-1.5 text-xs text-warm-500">{s.found} of up to 20 pages · {secs}s · sitemap first, then links</p>
     </div>}
     {s?.status === "done" && <div>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
-        <div><p className="font-semibold">Chat with {s.siteName}</p><p className="text-xs text-stone-500">Read {s.total} pages of {s.host} in {secs}s · answers cite those pages</p></div>
-        <a href={signup} className="rounded-lg bg-amber-500 px-3 py-2 text-sm font-semibold text-stone-900 hover:bg-amber-400">Start free trial with this site →</a>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-warm-100 pb-3">
+        <div><p className="font-semibold">Chat with {s.siteName}</p><p className="text-xs text-warm-500">Read {s.total} pages of {s.host} in {secs}s · answers cite those pages</p></div>
+        <a href={signup} className="rounded-md bg-rasp-600 px-3 py-2 text-sm font-semibold text-white hover:bg-rasp-700">Start free trial with this site →</a>
       </div>
       <div className={`${compact ? "max-h-72" : "max-h-96"} space-y-3 overflow-y-auto py-3 text-sm`}>
-        {msgs.length === 0 && <div className="flex flex-wrap gap-2">{s.suggestions.map((x) => <button key={x} onClick={() => ask(x)} className="rounded-full border border-stone-300 px-3 py-1 text-xs hover:border-teal-600">{x}</button>)}</div>}
-        {msgs.map((m, i) => m.role === "visitor" ? <div key={i} className="flex justify-end"><div className="max-w-[85%] rounded-2xl rounded-br-sm bg-teal-700 px-3.5 py-2 text-white">{m.text}</div></div> :
-          <div key={i} className="border-l-2 border-teal-600 pl-3 leading-relaxed">{m.text ? <Md text={m.text} /> : <p className="animate-pulse text-xs text-stone-500">Looking through {s.host}…</p>}
-            {!!m.citations?.length && <div className="mt-2 flex flex-wrap gap-1.5">{m.citations.map((c, j) => <a key={j} href={c.url} target="_blank" rel="noreferrer nofollow" className="rounded-md border border-stone-300 px-2 py-0.5 text-xs hover:border-teal-600"><span className="mr-1 font-mono text-[10px] font-semibold text-teal-700">{j + 1}</span>{c.title}</a>)}</div>}</div>)}
+        {msgs.length === 0 && <div className="flex flex-wrap gap-2">{s.suggestions.map((x) => <button key={x} onClick={() => ask(x)} className="rounded-full border border-warm-300 px-3 py-1 text-xs hover:border-navy-600">{x}</button>)}</div>}
+        {msgs.map((m, i) => m.role === "visitor" ? <div key={i} className="flex justify-end"><div className="max-w-[85%] rounded-md rounded-br-sm bg-navy-700 px-3.5 py-2 text-white">{m.text}</div></div> :
+          <div key={i} className="border-l-2 border-navy-600 pl-3 leading-relaxed">{m.text ? <Md text={m.text} /> : <p className="animate-pulse text-xs text-warm-500">Looking through {s.host}…</p>}
+            {!!m.citations?.length && <div className="mt-2 flex flex-wrap gap-1.5">{m.citations.map((c, j) => <a key={j} href={c.url} target="_blank" rel="noreferrer nofollow" className="rounded-md border border-warm-300 px-2 py-0.5 text-xs hover:border-navy-600"><span className="mr-1 font-mono text-[10px] font-semibold text-navy-700">{j + 1}</span>{c.title}</a>)}</div>}</div>)}
         <div ref={end} />
       </div>
-      {left === 0 ? <div className="rounded-xl bg-amber-50 p-3 text-sm text-amber-950">That's the free preview. <a href={signup} className="font-semibold underline">Start your free trial</a> and we'll bring {s.host} with you: 100 pages, 500 replies, 14 days, no card.</div> :
-      <form onSubmit={(e) => { e.preventDefault(); ask(q); }} className="flex gap-2"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Ask ${s.siteName} anything…`} className="min-w-0 flex-1 rounded-xl border border-stone-300 px-3 py-2 text-sm outline-none focus:border-teal-600" /><button disabled={asking || !q.trim()} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Ask</button></form>}
-      <p className="mt-2 text-[11px] text-stone-400">{left ?? 12} questions left in this preview · <button onClick={() => { setS(null); setMsgs([]); setErr(""); history.replaceState(null, "", location.pathname); }} className="underline">try another site</button></p>
+      {left === 0 ? <div className="rounded-md bg-rasp-50 p-3 text-sm text-rasp-950">That's the free preview. <a href={signup} className="font-semibold underline">Start your free trial</a> and we'll bring {s.host} with you: 100 pages, 500 replies, 14 days, no card.</div> :
+      <form onSubmit={(e) => { e.preventDefault(); ask(q); }} className="flex gap-2"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Ask ${s.siteName} anything…`} className="min-w-0 flex-1 rounded-md border border-warm-300 px-3 py-2 text-sm outline-none focus:border-navy-600" /><button disabled={asking || !q.trim()} className="rounded-md bg-navy-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Ask</button></form>}
+      <p className="mt-2 text-[11px] text-warm-500">{left ?? 12} questions left in this preview · <button onClick={() => { setS(null); setMsgs([]); setErr(""); history.replaceState(null, "", location.pathname); }} className="underline">try another site</button></p>
     </div>}
   </div>;
 }

@@ -18,12 +18,12 @@ export const SHOTS = {
 export type ShotKey = keyof typeof SHOTS;
 export function Shot({ k, className = "", crop, priority }: { k: ShotKey; className?: string; crop?: string; priority?: boolean }) {
   const s = SHOTS[k];
-  return <figure className={`overflow-hidden rounded-2xl bg-white ring-1 ring-stone-200 shadow-lg shadow-indigo-950/5 ${className}`}>
-    <div className="flex items-center gap-1.5 border-b border-stone-200 bg-stone-100 px-3 py-2"><span className="h-2 w-2 rounded-full bg-stone-300" /><span className="h-2 w-2 rounded-full bg-stone-300" /><span className="h-2 w-2 rounded-full bg-stone-300" /><span className="ml-2 truncate text-[11px] text-stone-500">{s.where}</span></div>
+  return <figure className={`overflow-hidden rounded-md bg-white ring-1 ring-warm-200 shadow-lg shadow-navy-950/5 ${className}`}>
+    <div className="flex items-center gap-1.5 border-b border-warm-200 bg-warm-100 px-3 py-2"><span className="h-2 w-2 rounded-full bg-warm-300" /><span className="h-2 w-2 rounded-full bg-warm-300" /><span className="h-2 w-2 rounded-full bg-warm-300" /><span className="ml-2 truncate text-[11px] text-warm-500">{s.where}</span></div>
     <Image src={s.src} alt={s.alt} width={s.w} height={s.h} priority={priority} sizes="(min-width:1024px) 640px, 100vw" className={crop ? `w-full object-cover object-left-top ${crop}` : "h-auto w-full"} />
-    <figcaption className="border-t border-stone-200 px-3 py-2 text-xs leading-5 text-stone-500">{s.caption}</figcaption>
+    <figcaption className="border-t border-warm-200 px-3 py-2 text-xs leading-5 text-warm-500">{s.caption}</figcaption>
   </figure>;
 }
 export function ShotNote() {
-  return <p className="mt-3 text-xs text-stone-500">Screenshots are the real product. Admin views use sample data (anonymous test visitors, Waylo’s own site crawled); Northpoint Ops is the sample company on <a href="/demo" className="text-teal-700 underline">/demo</a>.</p>;
+  return <p className="mt-3 text-xs text-warm-500">Screenshots are the real product. Admin views use sample data (anonymous test visitors, Waylo’s own site crawled); Northpoint Ops is the sample company on <a href="/demo" className="text-navy-700 underline">/demo</a>.</p>;
 }

@@ -15,18 +15,18 @@ const groups: G[] = [
 export default function Features() {
   return <MarketingPage eyebrow="Features" crumb="Features" title="What Waylo does" sub="One script tag adds the chat to your site. The admin shows your team who is ready to buy." answer="Waylo is AI chat for your website. It crawls your public pages and answers visitor questions with source links. It flags buying intent, records visitor journeys, and can hand ready-to-talk leads to your team in Slack or your CRM.">
     <JsonLd data={[appLd, crumbsLd([["Features", "/features"]])]} />
-    <nav aria-label="Feature groups" className="mx-auto mt-6 max-w-5xl px-5 text-sm"><ul className="flex flex-wrap gap-x-5 gap-y-1 border-b border-stone-200 pb-3">{groups.map(g => <li key={g.id}><a href={`#${g.id}`} className="font-medium text-stone-600 hover:text-teal-800">{g.tag}</a></li>)}</ul></nav>
+    <nav aria-label="Feature groups" className="mx-auto mt-6 max-w-5xl px-5 text-sm"><ul className="flex flex-wrap gap-x-5 gap-y-1 border-b border-warm-200 pb-3">{groups.map(g => <li key={g.id}><a href={`#${g.id}`} className="font-medium text-warm-600 hover:text-navy-800">{g.tag}</a></li>)}</ul></nav>
     {groups.map((g, i) => <Section key={g.id} id={g.id} className={i % 2 ? "bg-white" : "w-mesh"}>
       <div className={`grid items-center gap-10 ${["lg:grid-cols-[1.2fr_1fr]", "lg:grid-cols-[1fr_1.15fr]", "lg:grid-cols-[1.1fr_1fr]", "lg:grid-cols-[1fr_1.3fr]", "lg:grid-cols-[1.25fr_1fr]"][i]} ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-        <div><p className={g.t === "amber" ? "w-eyebrow-amber" : g.t === "indigo" ? "w-eyebrow-alt" : "w-eyebrow"}>{g.tag}</p><h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{g.title}</h2><p className="mt-3 leading-7 text-stone-700">{g.answer}</p>
-          <dl className="mt-6 divide-y divide-stone-200 border-y border-stone-200">{g.items.map(([h, d]) => <div key={h} className="grid gap-1 py-3 sm:grid-cols-[180px_1fr] sm:gap-4"><dt className="text-sm font-semibold text-stone-900">{h}</dt><dd className="text-sm leading-6 text-stone-600">{d}</dd></div>)}</dl></div>
+        <div><p className={g.t === "amber" ? "w-eyebrow-amber" : g.t === "indigo" ? "w-eyebrow-alt" : "w-eyebrow"}>{g.tag}</p><h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{g.title}</h2><p className="mt-3 leading-7 text-warm-700">{g.answer}</p>
+          <dl className="mt-6 divide-y divide-warm-200 border-y border-warm-200">{g.items.map(([h, d]) => <div key={h} className="grid gap-1 py-3 sm:grid-cols-[180px_1fr] sm:gap-4"><dt className="text-sm font-semibold text-warm-900">{h}</dt><dd className="text-sm leading-6 text-warm-600">{d}</dd></div>)}</dl></div>
         <div>{g.visual}</div>
       </div>
     </Section>)}
     <Section eyebrow="How it fits together" title="From crawl to demo request in four steps" className="bg-white"><WorkflowStrip /></Section>
-    <Section id="modes" eyebrow="Embed modes" title="Works on marketing sites and docs" sub="Pick a mode with one attribute. Change it any time."><ModesVisual /><p className="mt-6 text-center text-sm"><Link href="/docs/embed-modes" className="font-medium text-teal-700 underline">Read the embed modes guide →</Link></p></Section>
+    <Section id="modes" eyebrow="Embed modes" title="Works on marketing sites and docs" sub="Pick a mode with one attribute. Change it any time."><ModesVisual /><p className="mt-6 text-center text-sm"><Link href="/docs/embed-modes" className="font-medium text-navy-700 underline">Read the embed modes guide →</Link></p></Section>
     <Section className="bg-white"><MiniCTA title="See it on a real page" body="The demo site is a fictional company, Northpoint Ops. Ask it a question and see the cited answer." /></Section>
-    <Section><FactsBlock /><p className="mx-auto mt-6 max-w-3xl text-sm text-stone-600">Next: see <Link href="/use-cases" className="text-teal-700 underline">use cases</Link>, compare <Link href="/pricing" className="text-teal-700 underline">pricing</Link>, or read the <Link href="/docs/install" className="text-teal-700 underline">install guide</Link>.</p></Section>
+    <Section><FactsBlock /><p className="mx-auto mt-6 max-w-3xl text-sm text-warm-600">Next: see <Link href="/use-cases" className="text-navy-700 underline">use cases</Link>, compare <Link href="/pricing" className="text-navy-700 underline">pricing</Link>, or read the <Link href="/docs/install" className="text-navy-700 underline">install guide</Link>.</p></Section>
     <Section className="pt-0"><CTA /></Section>
   </MarketingPage>;
 }

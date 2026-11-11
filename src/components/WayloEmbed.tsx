@@ -10,7 +10,7 @@ export default function WayloEmbed() {
     const w = window as unknown as { __waylo?: boolean };
     if (hidden(p) || w.__waylo) return;
     const s = document.createElement("script");
-    s.src = "/waylo.js"; s.async = true; s.dataset.site = "waylo"; s.dataset.mode = "launcher";
+    s.src = "/waylo.js"; s.async = true; s.dataset.site = "waylo"; s.dataset.mode = "launcher"; s.dataset.color = "#A81B48"; // Raspberry launcher on marketing pages
     if (process.env.NEXT_PUBLIC_WAYLO_OPEN_ON_LOAD === "true") s.dataset.open = "true"; // default closed
     document.body.appendChild(s);
   }, [p]);

@@ -13,7 +13,7 @@ export function ContactForm() {
     if (r.ok) { setDone(true); return; }
     setErr(j.error || "Couldn’t send. Please try again."); setBusy(false);
   }
-  if (done) return <div className="w-card-lg p-6 sm:p-8"><p className="text-lg font-semibold text-stone-900">Thanks. We’ll reply by email.</p><p className="mt-2 text-sm text-stone-600">Your report is logged. Meanwhile, <Link href="/docs/install#troubleshooting" className="font-medium text-teal-700 hover:underline">troubleshooting</Link> and the <Link href="/faq" className="font-medium text-teal-700 hover:underline">FAQ</Link> cover the common fixes.</p></div>;
+  if (done) return <div className="w-card-lg p-6 sm:p-8"><p className="text-lg font-semibold text-warm-900">Thanks. We’ll reply by email.</p><p className="mt-2 text-sm text-warm-600">Your report is logged. Meanwhile, <Link href="/docs/install#troubleshooting" className="font-medium text-navy-700 hover:underline">troubleshooting</Link> and the <Link href="/faq" className="font-medium text-navy-700 hover:underline">FAQ</Link> cover the common fixes.</p></div>;
   return <form onSubmit={go} className="w-card-lg space-y-4 p-6 sm:p-8" noValidate>
     <div className="grid gap-4 sm:grid-cols-2">
       <div><label className="w-label" htmlFor="c-name">Name</label><input id="c-name" className="w-input" value={f.name} onChange={set("name")} autoComplete="name" required /></div>
@@ -28,9 +28,9 @@ export function ContactForm() {
       </select>
     </div>
     <div><label className="w-label" htmlFor="c-message">Message</label><textarea id="c-message" className="w-input min-h-[8rem]" value={f.message} onChange={set("message")} required /></div>
-    <label className="flex items-start gap-2 text-sm text-stone-600"><input type="checkbox" className="mt-1" checked={f.consent} onChange={set("consent")} required />I agree to be contacted about this support request. We’ll only use your details to reply.</label>
-    {err && <p role="alert" className="text-sm text-rose-600">{err}</p>}
+    <label className="flex items-start gap-2 text-sm text-warm-600"><input type="checkbox" className="mt-1" checked={f.consent} onChange={set("consent")} required />I agree to be contacted about this support request. We’ll only use your details to reply.</label>
+    {err && <p role="alert" className="text-sm text-rasp-600">{err}</p>}
     <button disabled={busy} className="w-btn" aria-busy={busy}>{busy ? "Sending…" : "Send support request"}</button>
-    <p className="text-xs text-stone-500">Not set up yet? <Link href="/how-it-works" className="text-teal-700 hover:underline">The product tour</Link> walks through every step.</p>
+    <p className="text-xs text-warm-500">Not set up yet? <Link href="/how-it-works" className="text-navy-700 hover:underline">The product tour</Link> walks through every step.</p>
   </form>;
 }

@@ -13,12 +13,12 @@ export default function Docs() {
     <JsonLd data={crumbsLd([["Docs", "/docs"]])} />
     <p className="w-eyebrow">Documentation</p>
     <h1 className="mt-2">Get Waylo live on your site</h1>
-    <p className="text-lg text-stone-600">Waylo runs from a single async script tag. It adds the chat, records visitor journeys, and flags buying intent. The install takes about ten minutes.</p>
+    <p className="text-lg text-warm-600">Waylo runs from a single async script tag. It adds the chat, records visitor journeys, and flags buying intent. The install takes about ten minutes.</p>
     <div className="mt-6 [&_pre]:mt-0"><Code label="Quick start. Paste before </body>">{snippet()}</Code></div>
     <Callout t="amber" title="Using the default site id">Replace <code>data-site=&quot;default&quot;</code> with your workspace id from Admin → Install. The admin shows the exact snippet for your site.</Callout>
-    <dl className="not-prose mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-stone-200 ring-1 ring-stone-200 sm:grid-cols-4">{([["1 tag", "async, never blocks", "text-teal-700"], ["3 modes", "launcher · sidebar · track", "text-indigo-700"], ["5 attributes", "data-* config", "text-amber-700"], ["~10 min", "typical install", "text-teal-700"]] as const).map(([v, l, c]) => <div key={v} className="bg-white px-4 py-3"><dt className={`text-lg font-semibold ${c}`}>{v}</dt><dd className="text-xs text-stone-500">{l}</dd></div>)}</dl>
+    <dl className="not-prose mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-md bg-warm-200 ring-1 ring-warm-200 sm:grid-cols-4">{([["1 tag", "async, never blocks", "text-navy-700"], ["3 modes", "launcher · sidebar · track", "text-navy-700"], ["5 attributes", "data-* config", "text-rasp-700"], ["~10 min", "typical install", "text-navy-700"]] as const).map(([v, l, c]) => <div key={v} className="bg-white px-4 py-3"><dt className={`text-lg font-semibold ${c}`}>{v}</dt><dd className="text-xs text-warm-500">{l}</dd></div>)}</dl>
     <h2 id="steps">Four steps to launch</h2>
-    <ol className="not-prose mt-5 grid gap-4 sm:grid-cols-2">{steps.map(([t, d, c], i) => <li key={t} className="w-card flex gap-3 p-5"><IconTile t={c as "teal"}>{i + 1}</IconTile><div><p className="font-semibold text-stone-900">{t}</p><p className="mt-1 text-sm text-stone-600">{d}</p></div></li>)}</ol>
+    <ol className="not-prose mt-5 grid gap-4 sm:grid-cols-2">{steps.map(([t, d, c], i) => <li key={t} className="w-card flex gap-3 p-5"><IconTile t={c as "teal"}>{i + 1}</IconTile><div><p className="font-semibold text-warm-900">{t}</p><p className="mt-1 text-sm text-warm-600">{d}</p></div></li>)}</ol>
     <h2 id="result">What you get after install</h2>
     <p>Visitors get answers from your pages with source chips. Your team sees crawl status, conversations, journeys, and intent signals in the admin.</p>
     <div className="not-prose mt-5 grid gap-4 lg:grid-cols-2"><ChatVisual /><CrawlVisual /></div>
@@ -29,8 +29,8 @@ export default function Docs() {
     <p>The script exposes <code>window.Waylo</code>, so any button can open the chat. That could be a “Talk to sales” button, a pricing-table link, or a help icon.</p>
     <div className="not-prose mt-4 grid gap-4 lg:grid-cols-2"><Code label="Open from a CTA">{`<button onclick="Waylo.open()">Ask a question</button>`}</Code><Code label="Single-page apps">{`// route changes are tracked automatically;\n// call manually if you need to:\nWaylo.track();`}</Code></div>
     <h2 id="guides">Guides</h2>
-    <div className="not-prose mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{cards.map(([t, d, h, c]) => <Link key={h} href={h} className={`w-card block border-t-4 p-5 transition hover:-translate-y-0.5 ${c === "teal" ? "border-t-teal-600" : c === "amber" ? "border-t-amber-500" : "border-t-indigo-600"}`}><p className="font-semibold text-stone-900">{t} →</p><p className="mt-1 text-sm text-stone-600">{d}</p></Link>)}</div>
+    <div className="not-prose mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{cards.map(([t, d, h, c]) => <Link key={h} href={h} className={`w-card block border-t-4 p-5 transition hover:-translate-y-0.5 ${c === "teal" ? "border-t-navy-600" : c === "amber" ? "border-t-rasp-500" : "border-t-navy-600"}`}><p className="font-semibold text-warm-900">{t} →</p><p className="mt-1 text-sm text-warm-600">{d}</p></Link>)}</div>
     <Callout t="indigo" title="What Waylo reads">Waylo answers from your public pages, linked PDF and .docx files, and facts you add in Guidance. It can’t read text that only appears after JavaScript runs.</Callout>
-    <p className="mt-10 text-sm text-stone-500">Questions? Try the <a href="/faq">FAQ</a> or <a href="/contact">Help &amp; support</a>.</p>
+    <p className="mt-10 text-sm text-warm-500">Questions? Try the <a href="/faq">FAQ</a> or <a href="/contact">Help &amp; support</a>.</p>
   </DocsLayout>;
 }
