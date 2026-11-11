@@ -8,7 +8,7 @@ Site: https://waylo-j5hv.onrender.com · Contact: hello@waylo.ai · Status: earl
 - Answers are grounded in crawled public HTML pages plus facts the customer adds; every answer cites sources.
 - When content doesn't cover a question, Waylo says so and offers a handoff instead of guessing.
 - Buying-intent signals: pricing, integration, security, and demo interest.
-- Integrations: Slack alerts and outbound webhooks (HubSpot, Salesforce, Zapier, Make).
+- Integrations: Slack incoming webhook and a JSON outbound webhook (route to HubSpot, Salesforce, etc. via Zapier, Make, or your own endpoint). No native CRM apps yet.
 - Install: `<script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="YOUR_SITE" async></script>` before </body>. Works with Webflow, WordPress, Shopify, Squarespace, Wix, Google Tag Manager.
 - Embed modes: launcher (default), sidebar, track (analytics only).
 - Pricing: Trial $0 (1 site, 500 AI messages); Starter $79/mo (3,000 messages, webhooks, handoff); Growth $249/mo (3 sites, 15,000 messages, Audiences).

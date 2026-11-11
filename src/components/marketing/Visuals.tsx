@@ -43,7 +43,7 @@ export function HandoffVisual() {
       <p className="mt-1 text-stone-700"><span className="font-semibold text-amber-700">Hot lead</span> · Dana Kim, dana@acme.co</p>
       <p className="text-stone-600">Asked about HubSpot sync and Starter pricing. Requested a demo.</p>
       <div className="mt-2 flex flex-wrap gap-1.5"><Chip t="amber">demo</Chip><Chip t="indigo">integration</Chip><Chip>3 pages viewed</Chip></div>
-      <p className="mt-2 text-xs text-stone-500">Full transcript attached · also sent to CRM webhook</p></div></div>
+      <p className="mt-2 text-xs text-stone-500">Open in Waylo → full transcript · also sent to your webhook</p></div></div>
   </Frame>;
 }
 export function GuidanceVisual() {

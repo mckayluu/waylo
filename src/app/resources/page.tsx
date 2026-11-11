@@ -12,7 +12,7 @@ const res: R[] = [
   { h: "Install guide", d: "Add the one-line script tag, allow your domain, and verify it’s live in minutes.", href: "/docs/install", t: "amber", i: "⚡", tag: "Setup" },
   { h: "Install checklist", d: "Script tag, data-site, mode, crawl check, a test question, and the Slack webhook — in order.", href: "/docs/install#checklist", t: "teal", i: "✓", tag: "Setup" },
   { h: "Embed modes", d: "Launcher, sidebar, or track-only — choose the right mode per page.", href: "/docs/embed-modes", t: "indigo", i: "🧩", tag: "Setup" },
-  { h: "JavaScript API", d: "Open the chat, pass context, and trigger Waylo from your own buttons.", href: "/docs/install#api", t: "teal", i: "</>", tag: "Developers" },
+  { h: "JavaScript API", d: "Open, close, or toggle the chat from your own buttons.", href: "/docs/install#api", t: "teal", i: "</>", tag: "Developers" },
   { h: "CMS & platform notes", d: "Webflow, WordPress, Shopify, Squarespace, Wix, and Google Tag Manager.", href: "/docs/install#cms", t: "amber", i: "🛠", tag: "Setup" },
   { h: "Troubleshooting", d: "Widget not showing? Domain not allowed? Fixes for the common cases.", href: "/docs/install#troubleshooting", t: "indigo", i: "🩺", tag: "Support" },
   { h: "FAQ", d: "Answers on accuracy, sources, data, pricing, integrations, and rollout.", href: "/faq", t: "teal", i: "❓", tag: "Evaluate" },

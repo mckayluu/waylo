@@ -23,7 +23,7 @@ export const FACTS: [string, string][] = [
   ["Answers", "Grounded in your crawled public pages plus facts you add; every answer cites source links"],
   ["When unsure", "Says it doesn’t know and offers a handoff to your team"],
   ["Signals", "Flags buying intent such as pricing, integration, and demo interest"],
-  ["Integrations", "Slack and outbound webhooks (HubSpot, Salesforce, Zapier, Make)"],
+  ["Integrations", "Slack incoming webhook and a JSON outbound webhook (connect HubSpot or Salesforce through Zapier, Make, or your own endpoint)"],
   ["Install", "One async script tag before </body>; works with Webflow, WordPress, Shopify, Squarespace, Wix, GTM"],
   ["Embed modes", "launcher, sidebar, or track (analytics only)"],
   ["Pricing", "Trial $0 (500 AI messages), Starter $79/mo (3,000), Growth $249/mo (15,000, 3 sites)"],
@@ -36,17 +36,17 @@ export const FAQS: [string, string][] = [
   ["What if Waylo doesn’t know something?", "It says so and offers to connect the visitor with your team instead of guessing. You can add facts to fill the gap."],
   ["How do I install Waylo?", "Paste one script tag before </body>, or add it through Google Tag Manager or your CMS’s custom-code settings. Most teams are live in a few minutes."],
   ["Will Waylo slow my site down?", "No. The script loads with async, so it never blocks rendering, and the chat panel only loads when opened."],
-  ["Does Waylo work with my CRM?", "Yes, via webhooks that work with HubSpot, Salesforce, Zapier, Make, and most CRMs. Native apps are on the roadmap."],
-  ["Which AI model does Waylo use?", "OpenAI models. Your content is sent to OpenAI only to generate replies. See the Privacy Policy."],
+  ["Does Waylo work with my CRM?", "Through a JSON webhook. Point it at Zapier, Make, or your own endpoint and map the fields into HubSpot, Salesforce, or any CRM. There are no native CRM apps today."],
+  ["Which AI model does Waylo use?", "OpenAI’s API (gpt-4o-mini by default). The visitor’s messages and the relevant crawled page text are sent to OpenAI to write each reply. See the Privacy Policy."],
   ["How much does Waylo cost?", "Trial is free (500 AI messages), Starter is $79/month (3,000 messages), and Growth is $249/month (3 sites, 15,000 messages, Audiences)."],
-  ["Is Waylo available now?", "Waylo is in early access. Request access and we’ll set up your site with you."],
+  ["Is Waylo available now?", "Yes, in early access. Start a free Trial at /signup (no card), and McKay will help set up your first site."],
 ];
 
 export const FAQ_GROUPS: { id: string; title: string; items: [string, string][] }[] = [
   { id: "basics", title: "The basics", items: FAQS.slice(0, 2).concat([["How is Waylo different from a generic chatbot?", "Waylo only answers from your crawled pages and the facts you add, shows numbered source links on every reply, and turns conversations into buying-intent signals and lead handoffs instead of just chat logs."], ["Is Waylo available now?", "Waylo is in early access. Request access at hello@waylo.ai and we’ll set up your site with you."]]) },
   { id: "answers", title: "Answers & accuracy", items: [FAQS[2], FAQS[3], ["Can I control what Waylo says?", "Yes. Guidance lets you add facts, set rules for what Waylo must never say, and define skills for how to handle topics like security or custom pricing."], ["How do I keep answers up to date?", "Re-crawl your site from the dashboard after you publish changes. Facts you add in Guidance apply immediately."]] },
-  { id: "signals", title: "Signals & handoff", items: [["What is a buying-intent signal?", "A tag Waylo adds when a conversation shows interest in pricing, integrations, security, or a demo. Signals appear in the dashboard with the visitor’s page journey."], ["How do leads reach my team?", "When a visitor shares contact details or asks for a demo, Waylo posts the lead to your Slack channel and to any CRM webhook, with the transcript and signals attached."], FAQS[6], ["What are Audiences?", "On the Growth plan, Audiences group visitors by behavior and signals, such as everyone who viewed /pricing and asked about integrations."]] },
+  { id: "signals", title: "Signals & handoff", items: [["What is a buying-intent signal?", "A tag Waylo adds when a conversation shows interest in pricing, integrations, security, or a demo. Signals appear in the dashboard with the visitor’s page journey."], ["How do leads reach my team?", "When a visitor shares contact details or asks for a demo, Waylo posts the lead to your Slack channel and to any CRM webhook, with the signals, last question, and a link to the full transcript."], FAQS[6], ["What are Audiences?", "On the Growth plan, Audiences group visitors by behavior and signals, such as everyone who viewed /pricing and asked about integrations."]] },
   { id: "install", title: "Install & performance", items: [FAQS[4], FAQS[5], ["Which embed modes are there?", "Three: launcher (floating button, default), sidebar (always-open docked panel), and track (no chat UI, records page views and signals only)."], ["Can I open the chat from my own button?", "Yes. Call Waylo.open(), Waylo.close(), or Waylo.toggle() from any element, such as a “Talk to us” button."]] },
-  { id: "data", title: "Data & AI", items: [FAQS[7], ["Who on my team can see conversations?", "Anyone you invite. Members get admin, editor, or viewer roles that control who can change settings and guidance."]] },
-  { id: "pricing", title: "Pricing", items: [FAQS[8], ["Is there a contract?", "No long-term contract during early access. Online checkout isn’t live yet; we set you up and invoice directly."]] },
+  { id: "data", title: "Data & AI", items: [FAQS[7], ["Who on my team can see conversations?", "Anyone you invite. Members get Owner, Editor, or Viewer roles that control who can change settings and guidance."]] },
+  { id: "pricing", title: "Pricing", items: [FAQS[8], ["Is there a contract?", "No long-term contract. Plans are monthly through Stripe Checkout and you can cancel from Billing in the admin. During early access Stripe runs in test mode."]] },
 ];
