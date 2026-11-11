@@ -26,7 +26,7 @@ export default function Install() {
       ["Ask a test question", <>Ask something only your pricing page answers. The reply should link that page. Then ask something not on your site: it should say it doesn’t know.</>],
       ["Connect Slack", <>Create a Slack incoming webhook for your leads channel, paste it in Admin → Integrations, and run a test handoff (Starter and up).</>],
     ] as const).map(([h, d], i) => <li key={h} className="grid gap-1 py-3 sm:grid-cols-[28px_180px_1fr]"><span className="font-mono text-teal-700">{i + 1}</span><span className="font-semibold text-stone-900">{h}</span><span className="text-stone-600">{d}</span></li>)}</ol>
-    <p className="text-sm text-stone-500">During early access we’ll do this with you. Email <a href="mailto:hello@waylo.ai">hello@waylo.ai</a>.</p>
+    <p className="text-sm text-stone-500">During early access we’ll do this with you. <a href="/contact">Contact us</a>.</p>
     <h2 id="snippet">1. Add the snippet</h2>
     <p>Paste this just before the closing <code>&lt;/body&gt;</code> tag on every page, or in your site builder’s footer-scripts box.</p>
     <Code>{s}</Code>
@@ -54,6 +54,6 @@ export default function Install() {
     <div className="not-prose mt-4 grid gap-3 sm:grid-cols-2">{cms.map(([n, d], i) => <div key={n} className={`w-card border-l-4 p-4 ${["border-l-teal-600", "border-l-indigo-600", "border-l-amber-500"][i % 3]}`}><p className="font-semibold text-stone-900">{n}</p><p className="mt-1 text-sm text-stone-600">{d}</p></div>)}</div>
     <h2 id="troubleshooting">Troubleshooting</h2>
     <ul><li><b className="text-stone-900">Widget doesn’t appear:</b> view source to confirm the script is on the page, check <code>data-site</code>, and look for errors in the browser console.</li><li><b className="text-stone-900">Works on www but not the root domain:</b> allowlist both.</li><li><b className="text-stone-900">Content Security Policy:</b> allow <code>{WAYLO_URL}</code> in <code>script-src</code>, <code>connect-src</code>, and <code>frame-src</code>.</li><li><b className="text-stone-900">Loaded twice:</b> the script guards against double-loading, so a duplicate tag is harmless — but remove it.</li></ul>
-    <p className="mt-10 text-sm text-stone-500">Stuck? Email <a href="mailto:hello@waylo.ai">hello@waylo.ai</a> and we’ll help you install.</p>
+    <p className="mt-10 text-sm text-stone-500">Stuck? <a href="/contact">Contact us</a> and we’ll help you install.</p>
   </DocsLayout>;
 }

@@ -3,7 +3,7 @@ import { getSettings } from "@/lib/store";
 
 // In-memory fixed-window rate limiter. Fine for a single instance;
 // multiple instances need a shared store (e.g. Redis / Render Key Value).
-const LIMITS = { chat: 20, track: 120, feedback: 30, handoff: 10, leads: 10, login: 10, forgot: 5 } as const;
+const LIMITS = { chat: 20, track: 120, feedback: 30, handoff: 10, leads: 10, contact: 8, login: 10, forgot: 5 } as const;
 export type Bucket = keyof typeof LIMITS;
 const WINDOW = 60_000;
 const hits = new Map<string, { n: number; reset: number }>();

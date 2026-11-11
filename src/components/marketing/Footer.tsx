@@ -5,7 +5,7 @@ export function Footer() {
     ["Product", [["All features", "/features"], ["AI chat", "/product/ai-chat"], ["Citations", "/product/citations"], ["Lead capture", "/product/lead-capture"], ["Slack routing", "/product/slack-routing"], ["Analytics", "/product/analytics"], ["Branding", "/product/branding"], ["Install", "/product/install"], ["How it works", "/how-it-works"], ["Integrations", "/integrations"], ["Security & data", "/security"], ["Pricing", "/pricing"], ["Live demo", "/demo"]]],
     ["Solutions", [["All use cases", "/use-cases"], ["Marketing teams", "/solutions/marketing"], ["Sales teams", "/solutions/sales"], ["SaaS & docs", "/solutions/saas"], ["Agencies", "/solutions/agencies"]]],
     ["Resources", [["Resources hub", "/resources"], ["Documentation", "/docs"], ["Install guide", "/docs/install"], ["JavaScript API", "/docs/install#api"], ["FAQ", "/faq"]]],
-    ["Account & legal", [["Sign in", "/admin/login"], ["Start free trial", "/signup"], ["Email hello@waylo.ai", "mailto:hello@waylo.ai?subject=Waylo"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
+    ["Account & legal", [["Sign in", "/admin/login"], ["Start free trial", "/signup"], ["Contact", "/contact"], ["Terms", "/terms"], ["Privacy", "/privacy"]]],
   ];
   return (
     <footer className="relative bg-stone-950 text-stone-300"><div className="w-accent-line" />

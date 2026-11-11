@@ -2,7 +2,7 @@
 
 > Waylo is an AI chat for B2B and SaaS websites. It learns a company's public web pages, answers visitor questions with links to its sources, detects buying intent, and hands warm leads to the team in Slack or a CRM. It installs with one script tag.
 
-Site: https://waylo-j5hv.onrender.com · Contact: hello@waylo.ai · Status: early access
+Site: https://waylo-j5hv.onrender.com · Contact: https://waylo-j5hv.onrender.com/contact · Status: early access
 
 ## Key facts
 - Answers are grounded in crawled public HTML pages plus facts the customer adds; every answer cites sources.

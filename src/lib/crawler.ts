@@ -3,7 +3,15 @@ import type { Page } from "./store";
 const UA = "WayloBot/0.1 (+https://waylo.local/bot)";
 const SKIP_EXT = /\.(png|jpe?g|gif|webp|svg|ico|pdf|zip|gz|mp4|mp3|webm|mov|woff2?|ttf|css|js|json|xml|rss|txt|csv|docx?|xlsx?|pptx?)(\?|$)/i;
 
-const decode = (s: string) => s.replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&#x27;|&rsquo;|&lsquo;/g, "'").replace(/&ldquo;|&rdquo;/g, '"').replace(/&hellip;/g, "…").replace(/&mdash;/g, "—").replace(/&ndash;/g, "–").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n));
+export function decodeEntities(s: string) {
+  const cp = (n: number) => (n >= 0 && n <= 0x10ffff ? String.fromCodePoint(n) : "");
+  return s.replace(/&#x([0-9a-f]+);/gi, (_, h) => cp(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, n) => cp(+n))
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&apos;|&#39;|&rsquo;|&lsquo;/g, "'").replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/&hellip;/g, "…").replace(/&mdash;/g, "—").replace(/&ndash;/g, "–");
+}
+const decode = decodeEntities;
 
 export function extract(html: string) {
   const title = decode((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] || html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1] || "").replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
@@ -45,6 +53,7 @@ export async function crawl(start: string, opts: { max?: number; concurrency?: n
   const blocked = (u: URL) => disallow.some((d) => u.pathname.startsWith(d));
   const seen = new Set<string>([norm(base.toString())]); const queue = [norm(base.toString())];
   const pages: Omit<Page, "id">[] = []; let errors = 0;
+  const failures: { url: string; reason: string }[] = [];
   let inflight = 0;
   async function worker() {
     while (pages.length < max && (queue.length || inflight)) {
@@ -54,16 +63,23 @@ export async function crawl(start: string, opts: { max?: number; concurrency?: n
       try {
         const r = await fetch(url, { headers: { "User-Agent": UA, Accept: "text/html" }, redirect: "follow", signal: AbortSignal.timeout(10000) });
         const ct = r.headers.get("content-type") || "";
-        if (!r.ok || !ct.includes("html")) { if (!r.ok) errors++; continue; }
+        if (!r.ok || !ct.includes("html")) {
+          if (!r.ok) { errors++; failures.push({ url, reason: `HTTP ${r.status}` }); }
+          continue;
+        }
         const finalUrl = new URL(r.url || url); if (finalUrl.origin !== base.origin) continue;
         const html = (await r.text()).slice(0, 2_000_000);
         const { title, text } = extract(html);
         if (text.length > 80 && pages.length < max) { pages.push({ url: norm(finalUrl.toString()), title: title || finalUrl.pathname, text: text.slice(0, 40000), updatedAt: new Date().toISOString() }); opts.onProgress?.(pages.length); }
         for (const l of links(html, finalUrl)) { const n = norm(l); if (!seen.has(n) && seen.size < max * 6) { seen.add(n); queue.push(n); } }
-      } catch { errors++; } finally { inflight--; }
+      } catch (e) {
+        errors++;
+        const reason = (e as Error)?.name === "TimeoutError" || /timeout/i.test(String((e as Error)?.message)) ? "Timed out" : ((e as Error)?.message || "Request failed");
+        failures.push({ url, reason });
+      } finally { inflight--; }
     }
   }
   await Promise.all(Array.from({ length: conc }, worker));
-  return { pages: dedupe(pages), errors };
+  return { pages: dedupe(pages), errors, failures };
 }
 function dedupe(ps: Omit<Page, "id">[]) { const m = new Map<string, Omit<Page, "id">>(); for (const p of ps) if (!m.has(p.url)) m.set(p.url, p); return [...m.values()]; }

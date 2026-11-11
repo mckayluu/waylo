@@ -55,7 +55,7 @@ export default function SaasPresalesSlack() {
     <Section eyebrow="Questions" title="Before you set it up" className="bg-white">
       <div className="max-w-3xl divide-y divide-stone-200 border-y border-stone-200">{faq.map(([q, a]) => <div key={q} className="py-4"><p className="font-medium">{q}</p><p className="mt-1 text-sm text-stone-600">{a}</p></div>)}</div>
       <p className="mt-6 text-sm text-stone-500">Customer stories will be added after the first installs.</p>
-      <div className="mt-6 flex flex-wrap gap-3"><Link href="/demo" className="w-btn-accent px-4 py-2">Try the live demo</Link><a href="mailto:hello@waylo.ai?subject=Waylo%20SaaS%20setup" className="w-btn px-4 py-2">Book a setup call</a></div>
+      <div className="mt-6 flex flex-wrap gap-3"><Link href="/demo" className="w-btn-accent px-4 py-2">Try the live demo</Link><Link href="/contact" className="w-btn px-4 py-2">Book a setup call</Link></div>
     </Section>
   </MarketingPage>;
 }

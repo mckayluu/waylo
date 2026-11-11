@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
 import type { CrawlRun } from "@/lib/store";
 export function CrawlPanel({ siteUrl, last }: { siteUrl: string; last?: CrawlRun }) {
-  const [url, setUrl] = useState(siteUrl); const [max, setMax] = useState(50); const [busy, setBusy] = useState(false); const [msg, setMsg] = useState(""); const r = useRouter();
+  const [url, setUrl] = useState(siteUrl); const [max, setMax] = useState(50); const [busy, setBusy] = useState(false); const [msg, setMsg] = useState(""); const [fail, setFail] = useState(last?.failures || []); const r = useRouter();
   async function go(e: React.FormEvent) {
     e.preventDefault();
     const u = url.trim();
@@ -19,15 +19,21 @@ export function CrawlPanel({ siteUrl, last }: { siteUrl: string; last?: CrawlRun
       const p = await api("/api/crawl"); if (p.ok && p.data) j = p.data;
     }
     setBusy(false);
-    setMsg(j?.status === "error" ? `Crawl failed — ${j.message || "unknown error"}` : j?.status === "running" ? "Still crawling in the background — check back shortly." : `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${j.errors ? ` · ${j.errors} errors` : ""}${j.message ? ` — ${j.message}` : ""}`);
+    const errBit = (n: number) => n ? ` · ${n} error${n === 1 ? "" : "s"}` : "";
+    setMsg(j?.status === "error" ? `Crawl failed — ${j.message || "unknown error"}` : j?.status === "running" ? "Still crawling in the background — check back shortly." : `Indexed ${j.pages} page${j.pages === 1 ? "" : "s"}${errBit(j.errors || 0)}${j.message ? ` — ${j.message}` : ""}`);
+    setFail(j?.failures || []);
     r.refresh();
   }
+  const run = last;
+  const failures = fail.length ? fail : (run?.failures || []);
+  const errBit = (n: number) => n ? ` · ${n} error${n === 1 ? "" : "s"}` : "";
   return <form onSubmit={go} className="space-y-3">
     <div className="flex flex-wrap gap-2">
       <input className="w-input min-w-[16rem] flex-1" placeholder="https://yoursite.com" value={url} onChange={(e) => setUrl(e.target.value)} required />
       <select className="w-input w-auto" value={max} onChange={(e) => setMax(+e.target.value)}>{[10, 25, 50, 100].map((n) => <option key={n} value={n}>Up to {n} pages</option>)}</select>
       <button disabled={busy} className="w-btn">{busy ? <><span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />Crawling…</> : last ? "Re-crawl site" : "Crawl site"}</button>
     </div>
-    <p className="text-xs text-stone-500">{msg || (last ? `Last crawl ${new Date(last.startedAt).toLocaleString()} · ${last.status} · ${last.pages} pages${last.errors ? ` · ${last.errors} errors` : ""}${last.message ? ` — ${last.message}` : ""}` : "Follows same-site links, respects robots.txt, skips files and images. Re-crawling replaces the index.")}</p>
+    <p className="text-xs text-stone-500">{msg || (run ? `Last crawl ${new Date(run.startedAt).toLocaleString()} · ${run.status} · ${run.pages} page${run.pages === 1 ? "" : "s"}${errBit(run.errors || 0)}${run.message ? ` — ${run.message}` : ""}` : "Follows same-site links, respects robots.txt, skips files and images. Re-crawling replaces the index.")}</p>
+    {failures.length > 0 && <ul className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">{failures.map((f) => <li key={f.url + f.reason} className="truncate"><span className="font-mono">{f.url}</span> — {f.reason}</li>)}</ul>}
   </form>;
 }

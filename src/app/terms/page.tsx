@@ -15,6 +15,6 @@ export default function Terms() {
     <h2>9. Disclaimers</h2><p>THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT WARRANTIES OF ANY KIND, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. We don’t guarantee the Service will be uninterrupted or error-free.</p>
     <h2>10. Limitation of liability</h2><p>To the maximum extent permitted by law, we aren’t liable for indirect, incidental, special, consequential, or punitive damages, or lost profits or data. Our total liability for any claim is limited to the amount you paid us in the 12 months before the claim.</p>
     <h2>11. Changes</h2><p>We may update these Terms. If changes are material, we’ll give notice by email or in the product. Continued use after changes take effect means you accept them.</p>
-    <h2>12. Contact</h2><p>Questions? Email <a href="mailto:hello@waylo.ai">hello@waylo.ai</a>.</p>
+    <h2>12. Contact</h2><p>Questions? Use the <a href="/contact">contact form</a>.</p>
   </LegalPage>;
 }

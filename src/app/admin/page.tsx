@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { listConversations, stats, listLeads, getSettings, listPages, listVisitors, listHandoffs, getBranding, getGuidance, DEFAULT_BRANDING } from "@/lib/store";
+import { listConversations, stats, listLeads, getSettings, listPages, listVisitors, listHandoffs, getBranding, getGuidance, DEFAULT_BRANDING, currentWs, DEFAULT_WS } from "@/lib/store";
 import { KNOWLEDGE } from "@/lib/knowledge";
 import { daily, tier } from "@/lib/analytics";
 import { PageHeader, MetricCard, Card, Badge, Checklist, ago } from "./ui";
@@ -14,13 +14,18 @@ export default async function Home() {
   const topics = new Map<string, number>(); convs.forEach((c) => c.themes.forEach((t) => topics.set(t, (topics.get(t) || 0) + 1)));
   const top = [...topics].sort((a, b) => b[1] - a[1]).slice(0, 5);
   const pages = await listPages(); const visitors = await listVisitors(); const handoffs = await listHandoffs(); const b = await getBranding(); const g = await getGuidance();
+  const wsId = await currentWs(); const isDefault = wsId === DEFAULT_WS;
   const bill = await getBilling(); const stripeOn = stripeConfigured(); const canPublish = await billingAllowsPublish();
-  const branded = b.botName !== DEFAULT_BRANDING.botName || b.accent !== DEFAULT_BRANDING.accent || b.greeting !== DEFAULT_BRANDING.greeting;
+  // Signup auto-fills botName/greeting from the company name. Don't treat that as the user finishing this step.
+  const signupBrand = !!st.siteName && b.botName === st.siteName.slice(0, 40) && b.greeting === `Hi! Ask me anything about ${st.siteName}.` && b.accent === DEFAULT_BRANDING.accent;
+  const wayloBrand = b.botName === DEFAULT_BRANDING.botName && b.accent === DEFAULT_BRANDING.accent && b.greeting === DEFAULT_BRANDING.greeting;
+  const branded = !signupBrand && !wayloBrand;
+  const guided = !!st.companyProfile || g.facts.length + g.rules.length + g.skills.length > 0;
   const go = (href: string, label: string) => <Link href={href} className="w-btn-ghost whitespace-nowrap">{label}</Link>;
   const steps = [
     { ok: !!st.siteUrl?.trim(), label: "Set website URL", desc: "Tell Waylo which site it represents.", action: go("/admin/settings", "Settings") },
-    { ok: pages.length > 0, label: "Index your site", desc: st.siteUrl?.trim() ? "Crawl your pages so answers cite your content." : "Set a website URL first, then crawl — until then replies use demo samples only.", action: st.siteUrl?.trim() ? go("/admin/content", "Content") : go("/admin/settings", "Settings") },
-    { ok: branded || !!st.companyProfile || g.facts.length + g.rules.length + g.skills.length > 0, label: "Brand or guide answers", desc: "Set name, color and greeting, or add facts and rules.", action: <span className="flex gap-2">{go("/admin/settings", "Branding")}{go("/admin/guidance", "Guidance")}</span> },
+    { ok: pages.length > 0, label: "Index your site", desc: st.siteUrl?.trim() ? "Crawl your pages so answers cite your content." : (isDefault ? "Set a website URL first, then crawl — until then replies use demo samples only." : "Set a website URL first, then crawl your pages."), action: st.siteUrl?.trim() ? go("/admin/content", "Content") : go("/admin/settings", "Settings") },
+    { ok: branded || guided, label: "Brand or guide answers", desc: "Set name, color and greeting, or add facts and rules.", action: <span className="flex gap-2">{go("/admin/settings", "Branding")}{go("/admin/guidance", "Guidance")}</span> },
     { ok: visitors.length > 0, label: "Install on your site", desc: "Paste one line of HTML — done when your first visitor loads it.", action: go("/admin/install", "Install") },
     { ok: st.published && canPublish, label: "Publish", desc: canPublish ? "Remove the “Preview only” banner for visitors." : "Choose a plan in Billing first — publishing needs an active plan or trial.", action: canPublish ? <PublishToggle initial={st.published} /> : go("/admin/billing", "Billing") },
   ];
@@ -58,11 +63,11 @@ export default async function Home() {
       <Card title="Workspace" actions={<span className="w-badge-support">Active</span>}>
         <p className="text-base font-bold tracking-tight text-stone-900">{st.siteName}</p>
         <dl className="mt-2 divide-y divide-stone-100 text-sm [&>div]:py-1.5">
-          <div className="flex justify-between"><dt className="text-stone-500">Workspace id</dt><dd className="rounded bg-indigo-50 px-1.5 py-0.5 font-mono text-xs text-indigo-700 ring-1 ring-inset ring-indigo-100">default</dd></div>
+          <div className="flex justify-between"><dt className="text-stone-500">Workspace id</dt><dd className="rounded bg-indigo-50 px-1.5 py-0.5 font-mono text-xs text-indigo-700 ring-1 ring-inset ring-indigo-100">{wsId}</dd></div>
           <div className="flex justify-between gap-3"><dt className="text-stone-500">Status</dt><dd className="flex flex-wrap items-center justify-end gap-1.5 text-right">{st.published ? <Badge tone="teal">Published</Badge> : <Badge tone="amber">Preview only</Badge>}{stripeOn && !canPublish && <Badge tone="amber">No active plan</Badge>}{st.published && (!st.siteUrl?.trim() || pages.length === 0) && <Badge tone="stone">Setup incomplete</Badge>}</dd></div>
           {stripeOn && <div className="flex justify-between"><dt className="text-stone-500">Plan</dt><dd className="text-stone-700">{bill.tier ? bill.tier[0]!.toUpperCase() + bill.tier.slice(1) : "No plan"}{bill.status && bill.status !== "none" ? <span className="text-stone-400"> · {bill.status}</span> : null}</dd></div>}
           <div className="flex justify-between gap-3"><dt className="text-stone-500">Website URL</dt><dd className="max-w-[14rem] truncate text-right text-stone-700">{st.siteUrl?.trim() || <Link href="/admin/settings" className="text-amber-700 hover:underline">Not set</Link>}</dd></div>
-          <div className="flex justify-between gap-3"><dt className="text-stone-500">Indexed pages</dt><dd className="text-right">{pages.length ? <span className="tabular-nums text-stone-800">{pages.length}</span> : <span className="text-amber-800">None yet · <span className="text-stone-500">demo samples only ({KNOWLEDGE.length})</span></span>}</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-stone-500">Indexed pages</dt><dd className="text-right">{pages.length ? <span className="tabular-nums text-stone-800">{pages.length}</span> : isDefault ? <span className="text-amber-800">None yet · <span className="text-stone-500">demo samples only ({KNOWLEDGE.length})</span></span> : <span className="text-amber-800">None yet — crawl your site to index pages</span>}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Embed</dt><dd>{visitors.length ? <Badge tone="teal">Receiving · {ago(visitors[0].lastSeen)}</Badge> : <Link href="/admin/install" className="text-amber-700 hover:underline">Not detected</Link>}</dd></div>
           <div className="flex justify-between"><dt className="text-stone-500">Company profile</dt><dd className="text-stone-700">{st.companyProfile ? "Set" : "—"}</dd></div>
         </dl>

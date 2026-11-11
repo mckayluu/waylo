@@ -17,9 +17,9 @@ export async function GET() {
 async function run(url: string, max: number, replace: boolean, base: CrawlRun) {
   let lastWrite = 0;
   try {
-    const { pages, errors } = await crawl(url, { max, onProgress: (n) => { if (Date.now() - lastWrite > 1500) { lastWrite = Date.now(); setLastCrawl({ ...base, pages: n }).catch(() => {}); } } });
+    const { pages, errors, failures } = await crawl(url, { max, onProgress: (n) => { if (Date.now() - lastWrite > 1500) { lastWrite = Date.now(); setLastCrawl({ ...base, pages: n }).catch(() => {}); } } });
     if (pages.length) { if (replace) await clearPages(); await upsertPages(pages); }
-    const done = { ...base, pages: pages.length, errors, status: "done" as const, finishedAt: new Date().toISOString(), message: pages.length ? undefined : "No readable HTML pages found (existing index kept)." };
+    const done = { ...base, pages: pages.length, errors, failures: failures?.length ? failures : undefined, status: "done" as const, finishedAt: new Date().toISOString(), message: pages.length ? undefined : "No readable HTML pages found (existing index kept)." };
     await setLastCrawl(done); return done;
   } catch (e) {
     const err = { ...base, status: "error" as const, finishedAt: new Date().toISOString(), message: (e as Error).message };

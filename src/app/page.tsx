@@ -13,7 +13,6 @@ import { JsonLd, orgLd, appLd, faqLd, FAQS, DEFINITION } from "@/lib/seo";
 
 export const metadata: Metadata = { title: { absolute: "Waylo — AI website chat that shows its sources" }, description: "Waylo is AI website chat that crawls your site, answers visitors with cited source links, flags buying intent, and posts warm leads to Slack or a CRM webhook with a link to the full conversation. One-line install.", alternates: { canonical: "/" } };
 
-const ACCESS = "mailto:hello@waylo.ai?subject=Waylo%20early%20access";
 const features = [
   ["Cited source chips", "Every reply links the exact pages it used, so buyers can verify it and your team can audit it."],
   ["Background site crawl", "Enter your domain; Waylo indexes your public pages and re-crawls on demand."],
@@ -81,7 +80,7 @@ export default function Home() {
                 <li className="flex gap-2"><span className="text-amber-600">–</span>No custom domain or status page yet. Some rough edges.</li>
                 <li className="flex gap-2"><span className="text-amber-600">–</span>No customer logos yet. Customer stories will come after the first installs.</li>
               </ul>
-              <a href={ACCESS} className="w-btn-accent mt-5 inline-block px-4 py-2">Book a setup slot</a>
+              <Link href="/contact" className="w-btn-accent mt-5 inline-block px-4 py-2">Book a setup slot</Link>
             </div>
           </div>
         </Section>
@@ -116,7 +115,7 @@ export default function Home() {
         <Section id="faq" className="w-mesh">
           <div className="grid gap-8 lg:grid-cols-[280px_1fr]"><div className="lg:sticky lg:top-24 lg:self-start"><p className="text-xs font-semibold uppercase tracking-wider text-amber-700">FAQ</p><h2 className="mt-1.5 text-2xl font-semibold tracking-tight sm:text-[2rem]">Questions, answered</h2><Link href="/faq" className="mt-3 inline-block text-sm font-medium text-teal-700 hover:underline">All questions →</Link></div><div className="divide-y divide-stone-200 border-y border-stone-200">{faqs.map(([q, a]) => <details key={q} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium"><h3>{q}</h3><span className="text-lg leading-none text-amber-700 transition group-open:rotate-45">+</span></summary><p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">{a}</p></details>)}</div></div>
         </Section>
-        <section className="px-5 pb-14 pt-4"><div className="w-gradient w-glow relative mx-auto grid max-w-6xl items-center gap-8 overflow-hidden rounded-3xl px-8 py-12 text-white md:grid-cols-[1.3fr_1fr]"><div className="w-grid-bg absolute inset-0 opacity-50" aria-hidden /><div className="relative"><h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Try it on the demo site</h2><p className="mt-3 text-white/85">Ask the Acme demo a pricing question and check the source chip. Then start a Trial on your own site — 500 AI messages, no card.</p><div className="mt-7 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/demo" className="w-btn-glass px-5 py-3 text-base">Try the live demo</Link><a href={ACCESS} className="px-2 py-3 text-sm font-medium text-white/85 underline-offset-4 hover:underline">or email McKay</a></div></div><div className="relative hidden overflow-hidden rounded-2xl ring-1 ring-white/20 md:block"><Image src="/marketing/office.webp" alt="" width={1400} height={935} sizes="400px" className="h-56 w-full object-cover opacity-90" /></div></div></section>
+        <section className="px-5 pb-14 pt-4"><div className="w-gradient w-glow relative mx-auto grid max-w-6xl items-center gap-8 overflow-hidden rounded-3xl px-8 py-12 text-white md:grid-cols-[1.3fr_1fr]"><div className="w-grid-bg absolute inset-0 opacity-50" aria-hidden /><div className="relative"><h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Try it on the demo site</h2><p className="mt-3 text-white/85">Ask the Acme demo a pricing question and check the source chip. Then start a Trial on your own site — 500 AI messages, no card.</p><div className="mt-7 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/demo" className="w-btn-glass px-5 py-3 text-base">Try the live demo</Link><Link href="/contact" className="px-2 py-3 text-sm font-medium text-white/85 underline-offset-4 hover:underline">or contact McKay</Link></div></div><div className="relative hidden overflow-hidden rounded-2xl ring-1 ring-white/20 md:block"><Image src="/marketing/office.webp" alt="" width={1400} height={935} sizes="400px" className="h-56 w-full object-cover opacity-90" /></div></div></section>
       </main>
       <Footer />
     </Shell>

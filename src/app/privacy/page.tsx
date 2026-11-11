@@ -21,6 +21,6 @@ export default function Privacy() {
     <h2>Your rights</h2><p>Depending on where you live, you may have rights to access, correct, delete, or export your data. Visitors should contact the website owner first; we’ll help them respond. Customers can email us directly.</p>
     <h2>Children</h2><p>Waylo isn’t directed to children under 16 and we don’t knowingly collect their data.</p>
     <h2>Changes</h2><p>We’ll post updates here and change the date above. Material changes will be communicated to customers.</p>
-    <h2>Contact</h2><p>Email <a href="mailto:hello@waylo.ai">hello@waylo.ai</a>.</p>
+    <h2>Contact</h2><p>Use the <a href="/contact">contact form</a>.</p>
   </LegalPage>;
 }

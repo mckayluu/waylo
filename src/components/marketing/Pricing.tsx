@@ -18,7 +18,7 @@ export function PricingCards() {
           </div>
         ))}
       </div>
-      <p className="mt-6 text-center text-xs text-stone-500">Early access pricing. Secure checkout by Stripe — manage or cancel anytime from Billing in your admin. Questions? <a href="mailto:hello@waylo.ai" className="underline">hello@waylo.ai</a></p>
+      <p className="mt-6 text-center text-xs text-stone-500">Early access pricing. Secure checkout by Stripe — manage or cancel anytime from Billing in your admin. Questions? <a href="/contact" className="underline">Contact us</a></p>
     </>
   );
 }
