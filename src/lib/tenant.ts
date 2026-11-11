@@ -14,4 +14,10 @@ export async function currentWs(): Promise<string> {
 export const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$/;
 // Marketing site embeds with data-site="waylo"; it is the original default workspace.
 export const SITE_ALIASES: Record<string, string> = { waylo: DEFAULT_WS };
-export const DEMO_SITE = "acme-demo";
+export const DEMO_SITE = "northpoint-demo";
+export const DEMO_SITE_ALIAS = "acme-demo";
+export const isDemoSite = (s: unknown) => {
+  if (typeof s !== "string") return false;
+  const v = s.trim().toLowerCase();
+  return v === DEMO_SITE || v === DEMO_SITE_ALIAS;
+};

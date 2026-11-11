@@ -8,14 +8,14 @@ export const GUIDES: ArticleDef[] = [
     { h: "Why citations, specifically", p: ["A cited answer is checkable. The visitor can click and confirm, and your team can see which page the bot leaned on when something comes out wrong.", "Without a source, a wrong answer looks exactly like a right one. That’s the core problem with dropping a general-purpose model on a sales page."] },
     { h: "1. Decide what the bot is allowed to know", p: ["Start with a list, not a crawl. Which pages are the truth about your product? Usually: pricing, features or product pages, integrations, security, docs, and an FAQ.", "Leave out pages that are stale or speculative: old blog posts with retired pricing, launch announcements for features you renamed, careers pages."], list: ["Pricing page (current plans only)", "Product and feature pages", "Integrations and security pages", "Docs or help center", "FAQ"], tip: "If two pages disagree, the bot will eventually quote the wrong one. Fix or remove the old page before you blame the model." },
     { h: "2. Make the pages readable to a crawler", p: ["Most site chat tools fetch your HTML and keep the text. Three things break that:"], list: ["Text rendered only by JavaScript after load. The crawler sees an empty shell.", "Answers locked in PDFs or images, like a pricing table that’s a screenshot.", "Key facts only in tooltips, tabs, or accordions that aren’t in the HTML."], ordered: false },
-    { h: "3. Retrieve first, then answer", p: ["The pattern that works: for each question, find the few pages that match, pass only those to the model, number them, and require the model to say which numbers it used.", "This is retrieval-augmented generation in plain terms. The important part isn’t the search; it’s the rule that the answer must come from what was retrieved."], code: `You are Acme's website assistant.
+    { h: "3. Retrieve first, then answer", p: ["The pattern that works: for each question, find the few pages that match, pass only those to the model, number them, and require the model to say which numbers it used.", "This is retrieval-augmented generation in plain terms. The important part isn’t the search; it’s the rule that the answer must come from what was retrieved."], code: `You are Northpoint Ops' website assistant.
 Answer ONLY from the SOURCES below.
 If they don't answer the question, say so in one sentence.
 End with: SOURCES: <numbers you used>, or SOURCES: none.
 
 SOURCES:
-[1] Pricing (https://acme.com/pricing): ...
-[2] Integrations (https://acme.com/integrations): ...` },
+[1] Pricing (https://northpoint.example/pricing): ...
+[2] Integrations (https://northpoint.example/integrations): ...` },
     { h: "4. Turn source numbers into links", p: ["Parse the numbers the model returns and render them as links under the answer. Keep the link to the exact page, not your homepage. Cap it at two or three; more looks like a search result."] },
     { h: "5. Make “I don’t know” a valid answer", p: ["A bot that never refuses will invent. Tell it explicitly that saying “I couldn’t find that” is correct when sources are silent, and give it somewhere to send the visitor: a contact form or a person.", "Then treat every “I don’t know” as a to-do. Either the page is missing, or the crawler couldn’t read it."] },
     { h: "6. Add facts the pages don’t say", p: ["Some truths aren’t on any page: “we don’t offer SSO yet,” “annual billing is available on request.” Keep them as short, authoritative statements that override page text when they conflict."] },
@@ -50,7 +50,7 @@ A: There are no overage fees. If you're consistently
     { h: "Say what isn’t included", p: ["The most useful line on a pricing page is often a “not included” line: no SSO, no phone support, no native CRM app. It saves a sales call for both sides, and it stops a bot from guessing yes."] },
     { h: "One source of truth", p: ["Old pricing lives forever in blog posts, launch announcements, and cached docs. Search your own site for every old price and fix or remove those pages. A chatbot will find them; so will buyers."], tip: "In Waylo, a Fact like “The only current plans are Trial, Starter, and Growth” wins over stale page text when they conflict." },
     { h: "A quick checklist", list: ["Every plan has countable limits", "Trial terms: length, card or no card", "Limit behavior stated plainly", "Cancellation: where and how", "“Not included” line", "FAQ in full sentences under the table", "No old prices anywhere else on the site"] },
-    { h: "Then test it", p: ["Ask your own website chat the seven questions at the top of this page. If any answer is “I don’t know” or vague, the page needs the fix, not the bot. Waylo’s [pricing page](/pricing) is written this way, and the [Acme demo](/demo) shows a pricing answer with its source."] }] },
+    { h: "Then test it", p: ["Ask your own website chat the seven questions at the top of this page. If any answer is “I don’t know” or vague, the page needs the fix, not the bot. Waylo’s [pricing page](/pricing) is written this way, and the [Northpoint Ops demo](/demo) shows a pricing answer with its source."] }] },
 
 { slug: "route-website-leads-to-slack", tag: "Sales ops", readMin: 5, updated: "Nov 11, 2026",
   title: "Routing website leads to Slack without a CRM project",

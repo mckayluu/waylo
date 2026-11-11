@@ -15,9 +15,9 @@ export function Rich({ s }: { s: string }) {
     : p)}</>;
 }
 const SLACK: [string, string, string, string, string[]][] = [
-  ["handoff.requested", "👋", "Visitor wants a person", "on Acme: sam@example.com", ["Can someone walk us through onboarding?", "Last question: Does Growth cover 3 sites?"]],
-  ["conversation.high_intent", "🔥", "High-intent visitor", "on Acme: Anonymous — signals: pricing, demo, high-intent", ["Can we get a demo next week?"]],
-  ["lead.created", "✉️", "New demo request", "on Acme from Sam (sam@example.com)", ["Want a walkthrough before we pick a plan."]],
+  ["handoff.requested", "👋", "Visitor wants a person", "on Brightfield: sam@example.com", ["Can someone walk us through onboarding?", "Last question: Does Growth cover 3 sites?"]],
+  ["conversation.high_intent", "🔥", "High-intent visitor", "on Brightfield: Anonymous — signals: pricing, demo, high-intent", ["Can we get a demo next week?"]],
+  ["lead.created", "✉️", "New demo request", "on Brightfield from Sam (sam@example.com)", ["Want a walkthrough before we pick a plan."]],
 ];
 export function SlackFormats() {
   return <div className="grid gap-3">{SLACK.map(([e, em, t, rest, q]) => <div key={e} className="rounded-xl bg-white p-4 text-sm text-stone-800 ring-1 ring-stone-200 shadow-sm"><div className="flex items-center justify-between"><p className="text-xs font-semibold text-stone-900"># sales-leads</p><p className="font-mono text-[11px] text-indigo-700">{e}</p></div>

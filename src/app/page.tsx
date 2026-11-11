@@ -7,13 +7,14 @@ import { Footer } from "@/components/marketing/Footer";
 import { Section, Shell } from "@/components/marketing/Section";
 import { Code } from "@/components/marketing/Code";
 import { FactsBlock } from "@/components/marketing/Page";
-import { ProofBar, WorkflowStrip, PhotoBand, PHOTOS, CrawlVisual, SignalsVisual, HandoffVisual, GuidanceVisual, Chip } from "@/components/marketing/Visuals";
+import { ValueProps, WorkflowStrip, PhotoBand, PHOTOS, CrawlVisual, SignalsVisual, HandoffVisual, GuidanceVisual, Chip } from "@/components/marketing/Visuals";
 import { Shot, ShotNote } from "@/components/marketing/Shots";
 import { ProductTour } from "@/components/marketing/ProductTour";
 import { tourSteps } from "@/lib/tour";
+import { MSG } from "@/lib/messaging";
 import { JsonLd, orgLd, appLd, faqLd, FAQS, DEFINITION } from "@/lib/seo";
 
-export const metadata: Metadata = { title: { absolute: "Waylo — AI website chat that shows its sources" }, description: "Waylo is AI website chat that crawls your site, answers visitors with cited source links, flags buying intent, and posts warm leads to Slack or a CRM webhook with a link to the full conversation. One-line install.", alternates: { canonical: "/" } };
+export const metadata: Metadata = { title: { absolute: "Waylo — website chat that shows its receipts" }, description: "Waylo is AI website chat that crawls your site, answers visitors with cited source links, flags buying intent, and posts warm leads to Slack or a CRM webhook with a link to the full conversation. One-line install.", alternates: { canonical: "/" } };
 
 const features = [
   ["Cited source chips", "Every reply links the exact pages it used, so buyers can verify it and your team can audit it."],
@@ -32,8 +33,8 @@ function ProductShot() {
   return (
     <figure className="w-glow overflow-hidden rounded-2xl border border-white/20 bg-white">
       <div className="flex items-center gap-1.5 border-b border-stone-200 bg-stone-100 px-4 py-2.5"><span className="h-2.5 w-2.5 rounded-full bg-stone-300" /><span className="h-2.5 w-2.5 rounded-full bg-stone-300" /><span className="h-2.5 w-2.5 rounded-full bg-stone-300" /><span className="ml-3 text-xs text-stone-500">waylo-j5hv.onrender.com/demo</span></div>
-      <Image src="/product/demo-acme-answer.webp" alt="Screenshot of the Waylo chat on the Acme demo site answering a pricing question with an Acme Pricing source chip" width={1920} height={1072} priority sizes="(min-width:1024px) 620px, 100vw" className="h-auto w-full" />
-      <figcaption className="border-t border-stone-200 bg-white px-4 py-2 text-[11px] text-stone-500">Real screenshot · the <Link href="/demo" className="font-medium text-teal-700 hover:underline">/demo</Link> page. Acme is a sample company; the answer and its source chip come from Acme’s own pricing page.</figcaption>
+      <Image src="/product/demo-acme-answer.webp" alt="Screenshot of the Waylo chat on the Northpoint Ops demo site answering a pricing question with a Northpoint Ops Pricing source chip" width={1920} height={1072} priority sizes="(min-width:1024px) 620px, 100vw" className="h-auto w-full" />
+      <figcaption className="border-t border-stone-200 bg-white px-4 py-2 text-[11px] text-stone-500">Real screenshot · the <Link href="/demo" className="font-medium text-teal-700 hover:underline">/demo</Link> page. Northpoint Ops is a sample company; the answer and its source chip come from Northpoint Ops’ own pricing page.</figcaption>
     </figure>
   );
 }
@@ -56,8 +57,8 @@ export default function Home() {
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#F59E0B]" />Early access · AI website chat with cited answers</p>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">Answer every visitor. <span className="w-text-grad-light">Catch every buyer.</span></h1>
-              <p className="mt-5 max-w-xl text-lg text-white/90">Waylo is AI chat for your website. It learns your public pages, answers visitors with links to the exact source, spots pricing, integration, and demo intent, and posts warm leads to Slack with the question and a link to the full transcript.</p>
+              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">{MSG.headline[0]} <span className="w-text-grad-light">{MSG.headline[1]}</span></h1>
+              <p className="mt-5 max-w-xl text-lg text-white/90">{MSG.sub}</p>
               <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass px-5 py-3 text-base">See how it works</Link></div><p className="mt-3 text-xs text-white/70">500 AI messages free · no card · early access</p>
               <dl className="mt-8 grid max-w-lg grid-cols-4 gap-3 border-t border-white/15 pt-6">{stats.map(([v, l]) => <div key={l}><dt className="text-xl font-semibold">{v}</dt><dd className="text-xs text-white/70">{l}</dd></div>)}</dl>
             </div>
@@ -68,7 +69,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <div className="relative z-10 -mt-10 px-5"><div className="mx-auto max-w-6xl shadow-xl shadow-indigo-950/10"><ProofBar /></div></div>
+        <div className="relative z-10 -mt-10 px-5"><div className="mx-auto max-w-6xl shadow-xl shadow-indigo-950/10"><ValueProps items={MSG.props} /></div></div>
         
         <Section id="tour" eyebrow="Self-serve" title="Set it up yourself in eight screens" sub="No call, no onboarding meeting. This is the real app, in order, from signup to a cited answer and a Slack alert." className="bg-white">
           <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">

@@ -28,13 +28,13 @@ export const PRODUCT: InfoDef[] = [
       ["Can I stop it answering about pricing?", "Yes. Add a rule such as “Never quote prices; offer to send a quote.” Rules apply to every reply."]] }],
   related: [["Citations & source chips", "/product/citations", "How answers link back to your pages."], ["Install", "/product/install", "One script tag, three modes."], ["How it works", "/how-it-works", "The whole loop on one page."]] },
 
-{ path: "/product/citations", crumb: "Citations & source chips", parent: P, eyebrow: "Citations", hero: "acmeHome",
+{ path: "/product/citations", crumb: "Citations & source chips", parent: P, eyebrow: "Citations", hero: "demoHome",
   title: "Every answer shows the page it came from",
   sub: "Numbered source chips under each reply link to the pages Waylo used. Buyers can check. Your team can audit.",
   answer: "After each answer, Waylo attaches up to three source chips, each linking to a page on your site that the answer used. If no page supports an answer, it doesn’t invent a source; it says it couldn’t find it.",
   metaTitle: "Cited answers and source chips", metaDesc: "Waylo answers website visitors with numbered source chips that link to the exact pages used. How citations work, what visitors see, and how you audit them.",
   blocks: [
-    { t: "shot", eyebrow: "What visitors see", h: "A short answer, then the receipts", shot: "widget", p: ["On the Acme demo, “How much does Acme cost per technician?” gets a two-sentence answer and a chip labeled **1 · Acme Pricing**. Click it and you land on the pricing page the numbers came from.", "That’s the whole idea: a visitor shouldn’t have to trust a chatbot. They can check it in one click."],
+    { t: "shot", eyebrow: "What visitors see", h: "A short answer, then the receipts", shot: "widget", p: ["On the Northpoint Ops demo, “How much does Northpoint Ops cost per technician?” gets a two-sentence answer and a chip labeled **1 · Northpoint Ops Pricing**. Click it and you land on the pricing page the numbers came from.", "That’s the whole idea: a visitor shouldn’t have to trust a chatbot. They can check it in one click."],
       bullets: [["Up to 3 chips", "Per answer, numbered in the order used."], ["Absolute links", "Chips open the real page on your domain."], ["No chip, no claim", "When nothing supports an answer, it says so."]] },
     { t: "prose", eyebrow: "Why it matters", h: "Cited answers change how people read chat", p: ["Most website bots answer confidently and you can’t tell where the words came from. When the answer is wrong, the visitor finds out later, usually on a sales call.", "Showing the source does two things. Visitors trust correct answers more because they can verify them. And wrong answers become easy to spot and fix, because you can see which page the model leaned on.", "It also tells you which pages do the selling. The Content view counts how often each page was cited."],
       aside: { title: "How Waylo picks sources", items: ["Retrieves the pages that best match the question", "The model must list which numbered sources it used", "Waylo turns those numbers into chips", "Guidance facts can answer without a page; those show no chip"] } },
@@ -69,7 +69,7 @@ export const PRODUCT: InfoDef[] = [
       ["Test", "**Send test** posts a check message so you know the webhook works."], ["Delivery log", "Recent posts with target, event, and HTTP status."]] },
     { t: "code", eyebrow: "CRM and everything else", h: "The same events as JSON", p: ["Point the outbound webhook at Zapier, Make, n8n, or your own endpoint, and map fields into HubSpot, Salesforce, a sheet, or a second Slack channel.", "The conversation summary includes signals, themes, visitor type, the last question, message count, and an `adminUrl` back to Waylo."], label: "POST · Content-Type: application/json", code: `{
   "event": "handoff.requested",
-  "site": "Acme",
+  "site": "Northpoint Ops",
   "sentAt": "2026-11-11T17:02:11.000Z",
   "data": {
     "handoff": { "email": "sam@example.com", "note": "…", "status": "open" },
@@ -114,7 +114,7 @@ export const PRODUCT: InfoDef[] = [
       ["Assistant name", "Shown in the chat header. Up to 40 characters."], ["Accent color", "Any hex color for the chat UI."], ["Greeting", "First message in the chat. Up to 300 characters."],
       ["`data-color`", "Launcher button color."], ["`data-position`", "`right` (default) or `left`."], ["`data-mode`", "`launcher`, `sidebar`, or `track`."],
       ["`data-open`", "Open the chat on page load. Also a toggle in Install."], ["Your own button", "`Waylo.open()`, `close()`, `toggle()` in launcher mode."]] },
-    { t: "shot", eyebrow: "On the demo", h: "Acme’s chat says Acme", shot: "acmeHome", p: ["The /demo site uses its own name, color, and greeting, and the chat answers as Acme. Visitors never see Waylo’s pitch on a customer site.", "Your workspace starts with a neutral greeting; change it before you publish."] },
+    { t: "shot", eyebrow: "On the demo", h: "Northpoint Ops’ chat says Northpoint Ops", shot: "demoHome", p: ["The /demo site uses its own name, color, and greeting, and the chat answers as Northpoint Ops. Visitors never see Waylo’s pitch on a customer site.", "Your workspace starts with a neutral greeting; change it before you publish."] },
     { t: "prose", eyebrow: "Voice", h: "Tone lives in Guidance, not in a slider", p: ["Want shorter answers, no exclamation marks, or a rule against comparing yourselves to competitors? Write it as a **Rule**. Want a specific way to handle security questions? Write a **Skill**.", "A **company profile** in Settings tells Waylo who you are and who you serve, and is added to every answer."] },
     { t: "limits", items: ["The widget footer reads “waylo · answers from this site.” No white-label option today.", "No custom CSS or font control inside the chat panel.", "One name, color, and greeting per workspace, not per page."] }],
   related: [["Install", "/product/install", "Modes and attributes."], ["AI chat", "/product/ai-chat", "Guidance and answers."], ["Embed modes docs", "/docs/embed-modes", "Which mode fits which page."]] },

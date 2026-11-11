@@ -14,7 +14,7 @@ export const USECASES: InfoDef[] = [
     { t: "faq", items: [["Can the client see the chat history?", "Yes, invite them as a Viewer."], ["Can I keep a client from changing guidance?", "Viewers can’t edit. Editors and Owners can."], ["Is there agency pricing?", "Not yet. Each client workspace picks its own plan; the [Trial](/signup) is free for 500 AI messages."]] }],
   related: [["Branding", "/product/branding", "Per-client look and voice."], ["Slack routing", "/product/slack-routing", "Client channels."], ["Pricing", "/pricing", "Per workspace."]] },
 
-{ path: "/use-cases/ecommerce", crumb: "E-commerce", parent: U, eyebrow: "For e-commerce", hero: "acmeHome",
+{ path: "/use-cases/ecommerce", crumb: "E-commerce", parent: U, eyebrow: "For e-commerce", hero: "demoHome",
   title: "Answer pre-purchase questions from your policy and product pages",
   sub: "Shipping, returns, sizing, materials, compatibility: the questions that stall a cart. Waylo answers them from your pages and links the policy.",
   answer: "Waylo works for stores whose pre-purchase answers live on public pages: shipping and returns policies, size guides, product descriptions, FAQs. It answers from those pages with links. It doesn’t see orders, inventory, or customer accounts, so it isn’t an order-status bot.",

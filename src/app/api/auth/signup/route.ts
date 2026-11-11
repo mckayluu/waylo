@@ -6,7 +6,7 @@ import { usePostgres } from "@/lib/db";
 import { rateLimit } from "@/lib/guard";
 import { EMAIL_RE } from "@/lib/signals";
 export const dynamic = "force-dynamic";
-const RESERVED = new Set(["default", "waylo", "acme-demo", "admin", "api", "demo", "www", "app", "widget", "signup", "login"]);
+const RESERVED = new Set(["default", "waylo", "acme-demo", "northpoint-demo", "admin", "api", "demo", "www", "app", "widget", "signup", "login"]);
 const slugify = (s: string) => s.toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\.[a-z.]+(\/.*)?$/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 32);
 // New customer: create a workspace + its Owner member, then sign them in.
 export async function POST(req: Request) {

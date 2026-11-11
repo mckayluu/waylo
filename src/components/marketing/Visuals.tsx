@@ -40,7 +40,7 @@ export function SignalsVisual() {
 export function HandoffVisual() {
   return <Frame title="#sales-leads · Slack">
     <div className="flex gap-3"><img src="/brand/mark.svg" alt="" width={32} height={32} className="h-8 w-8 rounded-lg" /><div><p className="font-semibold text-stone-900">Waylo <span className="ml-1 rounded bg-stone-100 px-1 text-[10px] text-stone-500">APP</span></p>
-      <p className="mt-1 text-stone-700"><span className="font-semibold text-amber-700">Hot lead</span> · Dana Kim, dana@acme.co</p>
+      <p className="mt-1 text-stone-700"><span className="font-semibold text-amber-700">Hot lead</span> · Dana Kim, dana@brightfield.co</p>
       <p className="text-stone-600">Asked about HubSpot sync and Starter pricing. Requested a demo.</p>
       <div className="mt-2 flex flex-wrap gap-1.5"><Chip t="amber">demo</Chip><Chip t="indigo">integration</Chip><Chip>3 pages viewed</Chip></div>
       <p className="mt-2 text-xs text-stone-500">Open in Waylo → full transcript · also sent to your webhook</p></div></div>
@@ -89,3 +89,6 @@ export const PHOTOS = {
   dashboard: { src: "/marketing/dashboard.webp", alt: "Analytics dashboard on a laptop screen", tag: "Signals", t: "indigo" as Tone, caption: "Visitor journeys and intent signals show which pages actually start buying conversations." },
   workshop: { src: "/marketing/workshop.webp", alt: "Marketing team collaborating at a whiteboard", tag: "Guidance", t: "teal" as Tone, caption: "Marketing owns the voice: facts, rules, and skills keep answers on-message and on-brand." },
 };
+export function ValueProps({ items }: { items: { k: string; d: string; href: string; t: Tone }[] }) {
+  return <div className="grid gap-px overflow-hidden rounded-2xl bg-stone-200 ring-1 ring-stone-200 md:grid-cols-3">{items.map((p, i) => <Link key={p.k} href={p.href} className="group bg-white px-5 py-5 hover:bg-stone-50"><p className={`font-mono text-[11px] font-semibold ${p.t === "amber" ? "text-amber-700" : p.t === "indigo" ? "text-indigo-700" : "text-teal-700"}`}>0{i + 1}</p><p className="mt-1 text-lg font-semibold tracking-tight text-stone-900 group-hover:text-teal-800">{p.k}</p><p className="mt-1.5 text-sm leading-6 text-stone-600">{p.d}</p></Link>)}</div>;
+}

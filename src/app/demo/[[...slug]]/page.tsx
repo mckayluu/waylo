@@ -1,13 +1,13 @@
 import Script from "next/script";
 import { notFound } from "next/navigation";
 
-// Acme Co is a fictional customer site used to demo the Waylo launcher embed.
+// Northpoint Ops is a fictional customer site used to demo the Waylo launcher embed.
 // Plain <a> links on purpose: full page loads, like a typical marketing site, so each view is tracked as a journey step.
 const NAV = [["features", "Features"], ["pricing", "Pricing"], ["case-studies", "Customers"], ["contact", "Contact"]] as const;
-const TITLES: Record<string, string> = { "": "Acme Co — Field service scheduling", features: "Acme Co — Features", pricing: "Acme Co — Pricing", "case-studies": "Acme Co — Customers", contact: "Acme Co — Contact" };
+const TITLES: Record<string, string> = { "": "Northpoint Ops — Field service scheduling", features: "Northpoint Ops — Features", pricing: "Northpoint Ops — Pricing", "case-studies": "Northpoint Ops — Customers", contact: "Northpoint Ops — Contact" };
 
 export function generateStaticParams() { return Object.keys(TITLES).map((k) => ({ slug: k ? [k] : [] })); }
-export function generateMetadata({ params }: { params: { slug?: string[] } }) { return { title: TITLES[params.slug?.[0] || ""] || "Acme Co", robots: { index: false } }; }
+export function generateMetadata({ params }: { params: { slug?: string[] } }) { return { title: TITLES[params.slug?.[0] || ""] || "Northpoint Ops", robots: { index: false } }; }
 
 const ink = "text-slate-900", muted = "text-slate-600";
 
@@ -30,7 +30,7 @@ const Board = () => <div className="rounded-xl border border-slate-200 bg-white 
 
 function Home() {
   return <>
-    <Hero kicker="For HVAC, plumbing & electrical shops" title="Dispatch the day in ten minutes, not an hour." sub="Acme puts jobs, techs, and customer texts on one board. Drag a job, and the customer gets an updated arrival window automatically.">
+    <Hero kicker="For HVAC, plumbing & electrical shops" title="Dispatch the day in ten minutes, not an hour." sub="Northpoint Ops puts jobs, techs, and customer texts on one board. Drag a job, and the customer gets an updated arrival window automatically.">
       <Board /></Hero>
     <div className="mx-auto -mt-px flex max-w-6xl flex-wrap gap-3 px-5 pt-6"><Btn href="/demo/pricing">See pricing</Btn><Btn ghost href="/demo/contact">Book a walkthrough</Btn></div>
     <section className="px-5 py-12"><div className="mx-auto max-w-6xl">
@@ -38,7 +38,7 @@ function Home() {
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.3fr]">
         <img src="/marketing/workshop.webp" alt="Technician reviewing a job on a tablet" className="h-72 w-full rounded-xl object-cover lg:h-full" />
         <div><H2 k="What changes" t="Less phone tag, fewer missed windows" />
-          <ol className="divide-y divide-slate-200">{[["Morning board", "Unassigned jobs sit on the left; drag them to a tech and Acme checks drive time and skills."], ["Customer texts", "Arrival windows, “on my way” and invoice links go out by SMS — no app for the customer."], ["Job notes & photos", "Techs log parts, photos and signatures offline; it syncs when they’re back in signal."], ["Same-day invoicing", "Close the job on site and take card payment before the truck leaves the driveway."]].map(([t, d], i) =>
+          <ol className="divide-y divide-slate-200">{[["Morning board", "Unassigned jobs sit on the left; drag them to a tech and Northpoint Ops checks drive time and skills."], ["Customer texts", "Arrival windows, “on my way” and invoice links go out by SMS — no app for the customer."], ["Job notes & photos", "Techs log parts, photos and signatures offline; it syncs when they’re back in signal."], ["Same-day invoicing", "Close the job on site and take card payment before the truck leaves the driveway."]].map(([t, d], i) =>
             <li key={t} className="grid grid-cols-[2rem_1fr] gap-3 py-4"><span className="text-sm font-semibold tabular-nums text-orange-600">0{i + 1}</span><span><b className={ink}>{t}</b><span className={`mt-1 block text-sm ${muted}`}>{d}</span></span></li>)}</ol></div>
       </div></div></section>
     <section className="bg-slate-900 px-5 py-10 text-white"><div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-3">{[["38%", "fewer “where’s my tech?” calls"], ["2.1 days", "faster average payment"], ["11 min", "median time to plan a 15-job day"]].map(([n, l]) => <div key={l}><p className="text-3xl font-bold text-orange-400">{n}</p><p className="mt-1 text-sm text-slate-300">{l}</p></div>)}</div></section>
@@ -75,7 +75,7 @@ function Pricing() {
 
 function Cases() {
   return <>
-    <Hero kicker="Customers" title="Shops that stopped running dispatch off a whiteboard." sub="A few of the 1,400+ HVAC, plumbing, and electrical companies on Acme." />
+    <Hero kicker="Customers" title="Shops that stopped running dispatch off a whiteboard." sub="A few of the 1,400+ HVAC, plumbing, and electrical companies on Northpoint Ops." />
     <section className="px-5 py-12"><div className="mx-auto max-w-6xl">
       <figure className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center"><img src="/marketing/team.webp" alt="Northwind Plumbing office team" className="h-72 w-full rounded-xl object-cover" />
         <div><p className="text-xs font-semibold uppercase tracking-wider text-orange-600">Northwind Plumbing · 22 techs</p><blockquote className={`mt-2 text-2xl font-semibold leading-snug ${ink}`}>“New techs used to shadow for two weeks before running their own day. Now it’s about a week — the checklists do half the teaching.”</blockquote><figcaption className={`mt-3 text-sm ${muted}`}>Priya Shah, Operations Manager — onboarding time down 40%</figcaption></div></figure>
@@ -93,7 +93,7 @@ function Contact() {
         {[["Name", "text"], ["Work email", "email"], ["Company", "text"], ["Number of technicians", "number"]].map(([l, t]) => <label key={l} className="block text-sm font-medium text-slate-700">{l}<input type={t} className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" /></label>)}
         <button type="button" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Request walkthrough</button>
         <p className="text-xs text-slate-400">Demo form — nothing is submitted. Use the chat’s Contact tab to see a real lead come through.</p></form>
-      <dl className="space-y-5 text-sm">{[["Sales", "sales@acme.example · (555) 010-2290"], ["Support", "Mon–Fri, 6am–6pm PT · support@acme.example"], ["Office", "1200 Market St, Suite 400, Denver, CO"]].map(([k, v]) => <div key={k}><dt className={`font-semibold ${ink}`}>{k}</dt><dd className={muted}>{v}</dd></div>)}</dl>
+      <dl className="space-y-5 text-sm">{[["Sales", "sales@northpoint.example · (555) 010-2290"], ["Support", "Mon–Fri, 6am–6pm PT · support@northpoint.example"], ["Office", "1200 Market St, Suite 400, Denver, CO"]].map(([k, v]) => <div key={k}><dt className={`font-semibold ${ink}`}>{k}</dt><dd className={muted}>{v}</dd></div>)}</dl>
     </div></section>
   </>;
 }
@@ -105,15 +105,15 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <div className="bg-indigo-700 px-5 py-2 text-xs text-white"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
-        <span><b>Waylo demo</b> — Acme Co is a fictional customer site with Waylo installed. Click around, then open the chat bottom-right.</span>
+        <span><b>Waylo demo</b> — Northpoint Ops is a fictional customer site with Waylo installed. Click around, then open the chat bottom-right.</span>
         <span className="flex gap-4"><a href="/admin/tracking" className="underline decoration-white/50 hover:decoration-white">See your journey in Admin →</a><a href="/" className="text-white/80 hover:text-white">Back to Waylo</a></span></div></div>
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-5 backdrop-blur"><nav className="mx-auto flex max-w-6xl items-center gap-5 overflow-x-auto py-3 text-sm">
-        <a href="/demo" className="flex shrink-0 items-center gap-2 font-bold"><span className="grid h-7 w-7 place-items-center rounded-md bg-orange-600 text-xs text-white">A</span>Acme</a>
+        <a href="/demo" className="flex shrink-0 items-center gap-2 font-bold"><span className="grid h-7 w-7 place-items-center rounded-md bg-orange-600 text-xs text-white">N</span>Northpoint Ops</a>
         {NAV.map(([k, l]) => <a key={k} href={`/demo/${k}`} className={`shrink-0 ${k === key ? "font-semibold text-slate-900" : "text-slate-600 hover:text-slate-900"}`}>{l}</a>)}
         <span className="ml-auto shrink-0"><Btn href="/demo/contact">Book a walkthrough</Btn></span></nav></header>
       <main>{<View />}</main>
-      <footer className="border-t border-slate-200 px-5 py-8 pb-24 text-xs text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3"><span>© 2026 Acme Co (fictional). Chat by Waylo, embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code>.</span><a href="/demo/pricing" className="hover:text-slate-800">Pricing</a></div></footer>
-      <Script src="/waylo.js" data-site="acme-demo" data-mode="launcher" strategy="afterInteractive" />
+      <footer className="border-t border-slate-200 px-5 py-8 pb-24 text-xs text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3"><span>© 2026 Northpoint Ops (fictional). Chat by Waylo, embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code>.</span><a href="/demo/pricing" className="hover:text-slate-800">Pricing</a></div></footer>
+      <Script src="/waylo.js" data-site="northpoint-demo" data-mode="launcher" strategy="afterInteractive" />
     </div>
   );
 }

@@ -173,7 +173,7 @@ Set `RESEND_API_KEY` (and `WAYLO_FROM_EMAIL`, default `Waylo <onboarding@resend.
 ## Workspaces (multi-tenant)
 Every customer is a workspace (`workspaces` table; data rows carry `workspace_id`, kv keys are `<workspace>:<key>`).
 - **Admin**: the session cookie carries `ws`; all store calls are scoped to it (`src/lib/tenant.ts`). Sessions without `ws` (env owner) use `default`.
-- **Embed**: `data-site` → workspace id (`waylo` is an alias for `default`). Unknown sites get 404. `acme-demo` is the in-memory /demo mini-site and is never stored.
+- **Embed**: `data-site` → workspace id (`waylo` is an alias for `default`). Unknown sites get 404. `northpoint-demo` is the in-memory /demo mini-site (Northpoint Ops) and is never stored; `acme-demo` is kept as an alias.
 - **Signup**: `/signup` → `/admin/signup` creates a workspace + Owner (Postgres only).
 - **Billing**: Stripe Checkout carries `metadata.workspace`; webhooks route by metadata, then by linked customer/subscription.
 - **Migrate**: `npm start` runs `scripts/db-migrate.mjs` first (applies `migrations/002_workspaces.sql`, backfills `default`).

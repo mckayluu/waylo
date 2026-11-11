@@ -5,7 +5,7 @@ import { withSite, siteParam, isDemo } from "@/lib/site";
 import { currentSession } from "@/lib/auth";
 import { DEMO_BRANDING } from "@/lib/demoKnowledge";
 // Public (widget) reads branding for ?site=; admin (no site param) reads the signed-in workspace.
-// acme-demo must NOT fall through to the default (Waylo) workspace branding.
+// northpoint-demo (and alias acme-demo) must NOT fall through to the default (Waylo) workspace branding.
 export async function GET(req: Request) {
   const s = siteParam(req);
   if (isDemo(s)) return NextResponse.json(DEMO_BRANDING);

@@ -9,7 +9,7 @@ import { withSite, siteParam, isDemo } from "@/lib/site";
 export const dynamic = "force-dynamic";
 const VID = /^[a-zA-Z0-9_-]{6,64}$/;
 
-// /demo (site=acme-demo) is a marketing mini-site: answered from Acme knowledge and kept in memory only,
+// /demo (site=northpoint-demo, alias acme-demo) is a marketing mini-site: answered from Northpoint Ops knowledge and kept in memory only,
 // so demo chats never land in any customer workspace inbox.
 const g = globalThis as unknown as { __wayloDemo?: Map<string, Conversation> };
 const demoConvs = (g.__wayloDemo ||= new Map());
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 async function handle(req: Request, b: any, demo: boolean) {
   const { conversationId, text, visitorId, stream } = b;
   if (!text || typeof text !== "string") return NextResponse.json({ error: "text required" }, { status: 400 });
-  const site = demo ? "acme-demo" : undefined;
+  const site = demo ? "northpoint-demo" : undefined;
   const getConversation = demo ? async (id: string) => demoConvs.get(id) : getConv;
   const upsertConversation = demo ? async (c: Conversation) => { demoConvs.delete(c.id); demoConvs.set(c.id, c); if (demoConvs.size > 500) demoConvs.delete(demoConvs.keys().next().value!); return c; } : upsertConv;
   const now = new Date().toISOString();

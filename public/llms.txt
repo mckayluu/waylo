@@ -13,10 +13,12 @@ Site: https://waylo-j5hv.onrender.com · Contact: https://waylo-j5hv.onrender.co
 - Embed modes: launcher (default), sidebar, track (analytics only).
 - Pricing: Trial $0 (1 site, 500 AI messages); Starter $79/mo (3,000 messages, webhooks, handoff); Growth $249/mo (3 sites, 15,000 messages, Audiences).
 - AI model: OpenAI API (gpt-4o-mini by default).
+- Public /demo (https://waylo-j5hv.onrender.com/demo) is a fictional field-service company, Northpoint Ops; the chat answers from that site’s pages, not Waylo’s pricing.
 - Not available today: SSO/SAML, SOC 2 report, native CRM apps, live agent chat, white-label, JavaScript-rendered page or PDF indexing.
 
 ## Pages
 - [Home](https://waylo-j5hv.onrender.com/)
+- [Live demo (Northpoint Ops)](https://waylo-j5hv.onrender.com/demo)
 - [Features](https://waylo-j5hv.onrender.com/features)
 - [Use cases](https://waylo-j5hv.onrender.com/use-cases)
 - [Pricing](https://waylo-j5hv.onrender.com/pricing)

@@ -1,11 +1,11 @@
 import Image from "next/image";
 // Real product screenshots. Admin shots were captured from a local Waylo build with
-// sample data (anonymous/sample visitors, our own site crawled); Acme shots are the public /demo page.
+// sample data (anonymous/sample visitors, our own site crawled); demo-site shots are the public /demo page (Northpoint Ops).
 export const SHOTS = {
-  answer: { src: "/product/demo-acme-answer.webp", w: 1920, h: 1072, where: "waylo-j5hv.onrender.com/demo", alt: "Waylo chat on the Acme demo site answering a pricing question with a numbered source chip", caption: "Live /demo: Acme is a sample company. The answer quotes Acme’s pricing page and links it." },
+  answer: { src: "/product/demo-acme-answer.webp", w: 1920, h: 1072, where: "waylo-j5hv.onrender.com/demo", alt: "Waylo chat on the Northpoint Ops demo site answering a pricing question with a numbered source chip", caption: "Live /demo: Northpoint Ops is a sample company. The answer quotes Northpoint Ops’ pricing page and links it." },
   widget: { src: "/product/widget-answer.webp", w: 422, h: 624, where: "Chat widget", alt: "Close-up of the Waylo chat widget: AI Chat and Contact tabs, a cited answer, thumbs feedback, and Talk to a person", caption: "The widget: AI Chat and Contact tabs, source chip, 👍/👎, “Talk to a person”." },
-  acmeHome: { src: "/product/demo-acme-home.webp", w: 1920, h: 1072, where: "waylo-j5hv.onrender.com/demo", alt: "Acme demo site with the Waylo launcher button in the corner", caption: "Launcher mode: one round button bottom-right, chat loads only when opened." },
-  acmePricing: { src: "/product/demo-acme-pricing.webp", w: 1920, h: 1072, where: "waylo-j5hv.onrender.com/demo/pricing", alt: "Acme demo pricing page", caption: "The page the answer cited. Visitors can click through and check." },
+  demoHome: { src: "/product/demo-acme-home.webp", w: 1920, h: 1072, where: "waylo-j5hv.onrender.com/demo", alt: "Northpoint Ops demo site with the Waylo launcher button in the corner", caption: "Launcher mode: one round button bottom-right, chat loads only when opened." },
+  demoPricing: { src: "/product/demo-acme-pricing.webp", w: 1920, h: 1072, where: "waylo-j5hv.onrender.com/demo/pricing", alt: "Northpoint Ops demo pricing page", caption: "The page the answer cited. Visitors can click through and check." },
   home: { src: "/product/admin-home.webp", w: 1440, h: 900, where: "Admin → Home", alt: "Waylo admin home with the go-live checklist, conversation, question, contact form and high-intent counts, and a 14-day questions chart", caption: "Admin home: go-live checklist, today’s numbers, questions over 14 days." },
   conv: { src: "/product/admin-conv.webp", w: 1440, h: 900, where: "Admin → Conversation", alt: "A conversation in the Waylo admin with transcript, source chips, contact form, visitor journey and signals", caption: "One conversation: transcript with sources, the contact form, the page journey, signals." },
   tracking: { src: "/product/admin-tracking.webp", w: 1440, h: 900, where: "Admin → Tracking → visitor", alt: "Visitor journey in the Waylo admin showing pageviews, referrer and questions in order", caption: "Visitor journey: pages, referrer, and questions in the order they happened." },
@@ -25,5 +25,5 @@ export function Shot({ k, className = "", crop, priority }: { k: ShotKey; classN
   </figure>;
 }
 export function ShotNote() {
-  return <p className="mt-3 text-xs text-stone-500">Screenshots are the real product. Admin views use sample data (anonymous test visitors, Waylo’s own site crawled); Acme is the sample company on <a href="/demo" className="text-teal-700 underline">/demo</a>.</p>;
+  return <p className="mt-3 text-xs text-stone-500">Screenshots are the real product. Admin views use sample data (anonymous test visitors, Waylo’s own site crawled); Northpoint Ops is the sample company on <a href="/demo" className="text-teal-700 underline">/demo</a>.</p>;
 }
