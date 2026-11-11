@@ -1,5 +1,7 @@
 import Script from "next/script";
 import { notFound } from "next/navigation";
+import { ProductTour } from "@/components/marketing/ProductTour";
+import { tourSteps } from "@/lib/tour";
 
 // Northpoint Ops is a fictional customer site used to demo the Waylo launcher embed.
 // Plain <a> links on purpose: full page loads, like a typical marketing site, so each view is tracked as a journey step.
@@ -112,6 +114,10 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
         {NAV.map(([k, l]) => <a key={k} href={`/demo/${k}`} className={`shrink-0 ${k === key ? "font-semibold text-slate-900" : "text-slate-600 hover:text-slate-900"}`}>{l}</a>)}
         <span className="ml-auto shrink-0"><Btn href="/demo/contact">Book a walkthrough</Btn></span></nav></header>
       <main>{<View />}</main>
+      <section aria-labelledby="waylo-tour" className="border-t-4 border-indigo-700 bg-slate-50 px-5 py-12"><div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1.6fr] lg:items-start">
+        <div><p className="text-xs font-semibold uppercase tracking-[0.08em] text-indigo-700">Waylo · not part of Northpoint Ops</p><h2 id="waylo-tour" className="mt-2 text-2xl font-semibold tracking-tight">Want this chat on your site?</h2><p className="mt-3 text-sm leading-6 text-slate-600">Try the chat bottom-right first. Then flip through the eight screens it takes to set up yourself: sign up, crawl, brand, paste one tag. Screens are the real app on a test workspace.</p>
+          <div className="mt-5 flex flex-wrap gap-3"><a href="/signup" className="rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-800">Start free trial</a><a href="/how-it-works" className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-100">See how it works</a></div></div>
+        <ProductTour steps={tourSteps()} compact /></div></section>
       <footer className="border-t border-slate-200 px-5 py-8 pb-24 text-xs text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3"><span>© 2026 Northpoint Ops (fictional). Chat by Waylo, embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code>.</span><a href="/demo/pricing" className="hover:text-slate-800">Pricing</a></div></footer>
       <Script src="/waylo.js" data-site="northpoint-demo" data-mode="launcher" strategy="afterInteractive" />
     </div>
