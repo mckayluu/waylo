@@ -13,25 +13,23 @@ export const HOW: InfoDef = { path: "/how-it-works", crumb: "How it works", eyeb
 export const SECURITY: InfoDef = { path: "/security", crumb: "Security and data", eyebrow: "Security and data", hero: "settings",
   title: "What Waylo stores, where it goes, and who can see it",
   sub: "This page explains how Waylo handles data today. It also lists what we don’t have yet.",
-  answer: "Waylo stores your crawled page text, guidance, conversations, journeys, leads, and settings in Postgres on Supabase, kept separate by workspace. The app is hosted on Render. Visitor messages and matching page text go to OpenAI’s API to write replies. Admin access uses hashed passwords, signed session cookies, and Owner, Editor, and Viewer roles. Waylo has no SSO, SOC 2 report, or DPA.",
+  answer: "Waylo stores your crawled page text, guidance, conversations, journeys, leads, and settings in Postgres on Supabase, kept separate by workspace. The app is hosted on Render. Visitor messages and matching page text go to OpenAI’s API to write replies. Billing runs through Stripe and account email through Resend. Admin access uses hashed passwords, signed session cookies, and Owner, Editor, and Viewer roles. Waylo has no SSO, SOC 2 report, or DPA.",
   metaTitle: "Security and data handling", metaDesc: "How Waylo handles data. What’s stored, which subprocessors see it, workspace isolation, roles, rate limits, allowed origins, and what isn’t available.",
   blocks: [
     { t: "spec", eyebrow: "Data", h: "What’s stored", sub: "Per workspace. Other workspaces can’t read it.", rows: [
       ["Crawled pages", "URL, title, and readable text (up to 40,000 characters per page) of public pages you crawl."], ["Guidance", "Facts, rules, skills, and company profile you write."],
       ["Conversations", "Visitor and Waylo messages, sources, 👍/👎, signals, and any name or email the visitor gives."], ["Journeys", "Page path, title, referrer, and time for each page view, tied to a random visitor ID."],
       ["Leads and handoffs", "Name, email, message, consent, and status."], ["Account", "Member emails, roles, password hashes, billing status from Stripe."]] },
-    { t: "table", eyebrow: "Subprocessors", h: "Who else touches data", head: ["Service", "What it gets", "Why"], rows: [
-      ["OpenAI (API)", "Visitor messages, matching page text, guidance", "To write each reply. API data isn’t used for training by default under OpenAI’s API terms."],
-      ["Render", "Requests and responses", "Hosts the app."], ["Supabase", "Everything stored above", "Managed Postgres database."], ["Stripe", "Billing email and subscription", "Checkout and the billing portal."],
-      ["Resend", "Member email addresses", "Invite and password-reset emails."], ["Your Slack or webhook", "What you set it to receive", "Alerts you set up."]],
-      note: "Visitor browsers get a random ID in localStorage (`waylo_vid`). The admin uses one session cookie." },
+    { t: "table", eyebrow: "Subprocessors", h: "Subprocessors", sub: "Waylo uses five outside services to run the product.", head: ["Service", "What it does for Waylo"], rows: [
+      ["Supabase", "Database"], ["Render", "Hosting"], ["OpenAI", "AI answers"], ["Stripe", "Billing"], ["Resend", "Email"]],
+      note: "Slack and webhook alerts go only to the URLs you add. Visitor browsers get a random ID in localStorage (`waylo_vid`), and the admin uses one session cookie." },
     { t: "spec", eyebrow: "Controls", h: "How access is limited", rows: [
       ["Passwords", "Hashed with scrypt. Reset links expire after 1 hour."], ["Sessions", "Signed, httpOnly cookie, 14 days."],
       ["Roles", "Viewer reads. Editor changes content, guidance, settings, and crawls. Owner also manages members, integrations, and deletions."], ["Workspace isolation", "Every read and write is scoped to the signed-in workspace."],
       ["Allowed origins", "List your domains and the public chat API refuses requests from other sites."], ["Rate limits", "Per-IP limits on chat, tracking, contact, handoff, and login."],
       ["Crawler", "Reads public pages and linked documents on your own domain. It honors `robots.txt` and refuses private and local addresses."], ["Demo", "Chats on /demo are kept in memory only and never stored in a workspace."]] },
-    { t: "limits", h: "What we don’t have", items: ["No SSO or SAML. Sign-in is email and password.", "No SOC 2 or ISO 27001 report.", "No DPA.", "No data export or per-conversation delete in the admin. Ask through [Help and support](/contact).", "The app runs on Render’s free tier during early access, so expect slow first loads.", "No redaction of personal data before text goes to the model."] },
-    { t: "faq", items: [["Can visitors’ data be deleted?", "Yes. Ask through [Help and support](/contact)."], ["Does Waylo read pages behind a login?", "No. The crawler fetches public pages without cookies."], ["Will Waylo show one customer’s content to another?", "No. Each workspace has its own index, guidance, and conversations. The chat answers only from the workspace named in the script tag."]] }],
+    { t: "limits", h: "What we don’t have", items: ["No SSO or SAML. Sign-in is email and password.", "No SOC 2 or ISO 27001 report.", "No DPA.", "No data export or per-conversation delete in the admin.", "The app runs on Render’s free tier during early access, so expect slow first loads.", "No redaction of personal data before text goes to the model."] },
+    { t: "faq", items: [["Does Waylo read pages behind a login?", "No. The crawler fetches public pages without cookies."], ["Will Waylo show one customer’s content to another?", "No. Each workspace has its own index, guidance, and conversations. The chat answers only from the workspace named in the script tag."]] }],
   related: [["Privacy Policy", "/privacy", "The formal version."], ["Terms", "/terms", "Service terms."], ["FAQ", "/faq#data", "Data and AI questions."]] };
 
 export const INTEGRATIONS: InfoDef = { path: "/integrations", crumb: "Integrations", eyebrow: "Integrations", hero: "integrations",

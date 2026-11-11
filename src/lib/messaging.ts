@@ -1,6 +1,6 @@
 // Positioning (from App Boss's messaging plan, in our own words). Only shipped behavior goes here.
 // HOLD until shipped: "try it on your own URL without signing up", "nightly answer checks",
-// "unlimited seats" (seats are 1 / 5 / unlimited today). Add them to `later` slots when live.
+// seat counts (still being checked). Add them to `later` slots when confirmed.
 export const MSG = {
   headline: ["Website chat", "that shows its receipts."] as const,
   sub: "Waylo reads your public pages, answers every visitor with a link to the page it used, and tells you who’s ready to buy. Start free and set it up yourself.",

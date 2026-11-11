@@ -14,7 +14,7 @@ Site: https://waylo-j5hv.onrender.com · Help and support: https://waylo-j5hv.on
 - Pricing: Trial $0 (1 site, 500 AI messages, 100 pages); Starter $79/mo (3,000 messages a month, 500 pages, Slack and webhooks); Growth $249/mo (3 sites, 15,000 messages a month, 2,000 pages, Audiences). No overage fees. At the limit the chat pauses and shows the contact form.
 - AI model: OpenAI API (gpt-4o-mini by default).
 - Public /demo (https://waylo-j5hv.onrender.com/demo) is a fictional field-service company, Northpoint Ops. Its chat answers from that site’s pages.
-- Hosting and processors: Postgres on Supabase, app hosted on Render, replies written by OpenAI.
+- Subprocessors: Supabase (database), Render (hosting), OpenAI (AI answers), Stripe (billing), Resend (email).
 - Not available today: SSO/SAML, SOC 2 report, DPA, native CRM apps, live agent chat, white-label, agency pricing, JavaScript-rendered pages, scanned PDFs.
 
 ## Pages

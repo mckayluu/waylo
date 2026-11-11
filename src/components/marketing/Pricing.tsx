@@ -1,7 +1,7 @@
 export const plans = [
   { name: "Trial", price: "$0", per: "14 days", blurb: "For trying Waylo on your own site and real visitors.", features: ["1 website", "500 AI messages total", "1 member", "Site crawl and cited answers", "Visitor journeys and signals", "Contact form and leads"], cta: "Start free trial", tier: "trial" },
-  { name: "Starter", price: "$79", per: "/mo", blurb: "For one site that wants leads sent to Slack or a CRM.", features: ["1 website", "3,000 AI messages / mo", "Up to 5 members with roles", "Slack and CRM webhooks", "Contact and demo handoff", "Guidance with facts, rules, and skills"], cta: "Subscribe to Starter", tier: "starter", featured: true },
-  { name: "Growth", price: "$249", per: "/mo", blurb: "For teams running up to three sites who want Audiences.", features: ["Everything in Starter", "Up to 3 websites", "15,000 AI messages / mo", "Unlimited members", "Audiences", "Priority support"], cta: "Subscribe to Growth", tier: "growth" },
+  { name: "Starter", price: "$79", per: "/mo", blurb: "For one site that wants leads sent to Slack or a CRM.", features: ["1 website", "3,000 AI messages / mo", "Owner, Editor, and Viewer roles", "Slack and CRM webhooks", "Contact and demo handoff", "Guidance with facts, rules, and skills"], cta: "Subscribe to Starter", tier: "starter", featured: true },
+  { name: "Growth", price: "$249", per: "/mo", blurb: "For teams running up to three sites who want Audiences.", features: ["Everything in Starter", "Up to 3 websites", "15,000 AI messages / mo", "Audiences", "Priority support"], cta: "Subscribe to Growth", tier: "growth" },
 ];
 export function PricingCards() {
   return (
