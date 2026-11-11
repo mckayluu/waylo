@@ -1,18 +1,37 @@
+import Link from "next/link";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
-import { Shell } from "@/components/marketing/Section";
-import { pageMeta } from "@/lib/seo";
+import { Shell, Section } from "@/components/marketing/Section";
+import { JsonLd, crumbsLd, pageMeta } from "@/lib/seo";
 import { ContactForm } from "./ContactForm";
-import Link from "next/link";
-export const metadata = pageMeta("/contact", "Contact Waylo", "Get in touch with McKay about early access, a setup call, a custom plan, or a question about Waylo. Or start a free trial — no card required.");
-export default function Contact() {
+export const metadata = pageMeta("/contact", "Help & support", "Waylo help: the product tour, install guide, troubleshooting, embed modes, FAQ, and a support form for when something isn’t working.");
+const paths: [string, string, string, string][] = [
+  ["Setting up", "Product tour", "/how-it-works", "Every screen from signup to a live, cited answer."],
+  ["Setting up", "Install guide", "/docs/install", "Snippet, allowed origins, CMS and GTM notes."],
+  ["Setting up", "Install checklist", "/docs/install#checklist", "The go-live steps in order."],
+  ["Something’s off", "Troubleshooting", "/docs/install#troubleshooting", "Widget not showing, domain not allowed, slow first load."],
+  ["Something’s off", "Why an answer was wrong", "/product/citations", "Check the cited page, then fix it or add a Fact."],
+  ["Something’s off", "Crawl limits", "/product/ai-chat", "JavaScript-only pages, PDFs, 100-page cap."],
+  ["Reference", "Embed modes", "/docs/embed-modes", "Launcher, sidebar, track."],
+  ["Reference", "Slack & webhook events", "/product/slack-routing", "What posts, when, and the JSON payload."],
+  ["Reference", "FAQ", "/faq", "Pricing, data, limits, install."],
+  ["Account", "Billing & plans", "/pricing", "Change or cancel from Admin → Billing."],
+  ["Account", "Security & data", "/security", "What’s stored and who processes it."],
+  ["Account", "Changelog", "/changelog", "What shipped recently."],
+];
+export default function Help() {
+  const groups = [...new Set(paths.map(p => p[0]))];
   return <Shell><Header /><main>
-    <section className="w-gradient relative overflow-hidden px-5 pb-16 pt-10 text-white sm:pt-12"><div className="w-grid-bg absolute inset-0 opacity-60" aria-hidden /><div className="relative mx-auto max-w-5xl">
-      <nav aria-label="Breadcrumb" className="text-xs text-white/70"><Link href="/" className="hover:text-white">Home</Link> / <span>Contact</span></nav>
-      <p className="mt-5 text-xs font-semibold uppercase tracking-[0.08em] text-amber-300">Contact</p>
-      <h1 className="mt-2 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">Talk to McKay</h1>
-      <p className="mt-4 max-w-2xl text-lg text-white/85">Questions, a setup call, a custom plan, or a security review — send a note and you’ll hear back from the founder. You can also <Link href="/signup" className="underline decoration-amber-300/80 underline-offset-4 hover:text-white">start a free trial</Link> without waiting.</p>
+    <JsonLd data={[crumbsLd([["Help & support", "/contact"]])]} />
+    <section className="w-gradient relative overflow-hidden px-5 pb-16 pt-10 text-white sm:pt-12"><div className="w-grid-bg absolute inset-0 opacity-60" aria-hidden /><div className="relative mx-auto max-w-6xl">
+      <nav aria-label="Breadcrumb" className="text-xs text-white/70"><Link href="/" className="hover:text-white">Home</Link> / <span>Help & support</span></nav>
+      <p className="mt-5 text-xs font-semibold uppercase tracking-[0.08em] text-amber-300">Help & support</p>
+      <h1 className="mt-2 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">Find the answer, then get back to it</h1>
+      <p className="mt-4 max-w-2xl text-lg text-white/85">Waylo is self-serve. Most questions are answered in the tour, the install guide, or the FAQ. If something is broken, use the support form below.</p>
+      <div className="mt-6 flex flex-wrap gap-3"><Link href="/how-it-works" className="w-btn-accent px-5 py-2.5">See how it works</Link><Link href="/signup" className="w-btn-glass px-5 py-2.5">Start free trial</Link></div>
     </div></section>
-    <div className="mx-auto max-w-xl px-5 py-12"><ContactForm /></div>
+    <Section className="pt-10"><div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">{groups.map(g => <div key={g}><p className="w-eyebrow-amber">{g}</p><ul className="mt-3 divide-y divide-stone-200 border-y border-stone-200">{paths.filter(p => p[0] === g).map(([, l, h, d]) => <li key={h}><Link href={h} className="block py-3 hover:text-teal-800"><span className="font-semibold text-stone-900">{l} →</span><span className="mt-0.5 block text-sm leading-6 text-stone-600">{d}</span></Link></li>)}</ul></div>)}</div></Section>
+    <Section id="support" eyebrow="Support form" title="Something not working?" sub="For bugs and account problems only. Tell us the page, what you expected, and what happened. Replies come by email." className="bg-white">
+      <div className="max-w-xl"><ContactForm /></div></Section>
   </main><Footer /></Shell>;
 }

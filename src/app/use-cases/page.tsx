@@ -29,7 +29,7 @@ export default function UseCases() {
           <ol className="mt-4 border-l-2 border-amber-300 pl-4">{c.scenario.map(([who, what]) => <li key={who} className="py-2"><div><p className="text-sm font-semibold text-stone-900">{who}</p><p className="text-sm text-stone-600">{what}</p></div></li>)}</ol></div>
       </div>
     </Section>)}
-    <Section className="bg-white"><MiniCTA title="Not sure which setup fits?" body="Tell us about your site and we’ll set Waylo up with you during early access." /></Section>
+    <Section className="bg-white"><MiniCTA title="Not sure which setup fits?" body="Start the Trial, crawl your site, and try each embed mode. It’s free for 500 AI messages." /></Section>
     <Section eyebrow="The Waylo loop" title="Crawl, answer, signal, hand off" className="bg-white"><WorkflowStrip /></Section>
     <Section><p className="mx-auto max-w-3xl text-center text-sm text-stone-600">Explore <Link href="/features" className="text-teal-700 underline">all features</Link>, <Link href="/pricing" className="text-teal-700 underline">pricing</Link>, or the <Link href="/faq" className="text-teal-700 underline">FAQ</Link>.</p><div className="mt-10"><CTA /></div></Section>
   </MarketingPage>;

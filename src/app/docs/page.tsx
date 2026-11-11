@@ -31,6 +31,6 @@ export default function Docs() {
     <h2 id="guides">Guides</h2>
     <div className="not-prose mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{cards.map(([t, d, h, c]) => <Link key={h} href={h} className={`w-card block border-t-4 p-5 transition hover:-translate-y-0.5 ${c === "teal" ? "border-t-teal-600" : c === "amber" ? "border-t-amber-500" : "border-t-indigo-600"}`}><p className="font-semibold text-stone-900">{t} →</p><p className="mt-1 text-sm text-stone-600">{d}</p></Link>)}</div>
     <Callout t="indigo" title="What Waylo reads">Waylo answers from your public HTML pages plus facts you add in Guidance. JavaScript-only pages and PDFs aren’t supported yet.</Callout>
-    <p className="mt-10 text-sm text-stone-500">Questions? <a href="/contact">Contact us</a>.</p>
+    <p className="mt-10 text-sm text-stone-500">Questions? Try the <a href="/faq">FAQ</a> or <a href="/contact">Help &amp; support</a>.</p>
   </DocsLayout>;
 }

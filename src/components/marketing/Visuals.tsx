@@ -60,7 +60,7 @@ export function ModesVisual() {
   </div><p className="mt-3 font-mono text-sm font-semibold text-stone-900">{m}</p><p className="text-xs text-stone-500">{d}</p><span className="mt-2 inline-block"><Chip t={t}>data-mode=&quot;{m}&quot;</Chip></span></div>)}</div>;
 }
 export function MiniCTA({ title, body }: { title: string; body: string }) {
-  return <div className="w-card-lg flex flex-col items-start justify-between gap-4 border-l-4 border-l-amber-500 p-6 sm:flex-row sm:items-center"><div><p className="font-semibold text-stone-900">{title}</p><p className="mt-1 text-sm text-stone-600">{body}</p></div><div className="flex gap-2"><Link href="/demo" className="w-btn-accent">Try the demo</Link><Link href="/signup" className="w-btn">Start free trial</Link></div></div>;
+  return <div className="w-card-lg flex flex-col items-start justify-between gap-4 border-l-4 border-l-amber-500 p-6 sm:flex-row sm:items-center"><div><p className="font-semibold text-stone-900">{title}</p><p className="mt-1 text-sm text-stone-600">{body}</p></div><div className="flex gap-2"><Link href="/signup" className="w-btn-accent">Start free trial</Link><Link href="/how-it-works" className="w-btn-ghost">See how it works</Link></div></div>;
 }
 /* ---- Density chunk: photo bands, workflow strip, proof bar ---- */
 export function PhotoBand({ items }: { items: { src: string; alt: string; tag: string; t: Tone; caption: string }[] }) {

@@ -39,7 +39,7 @@ export const FAQS: [string, string][] = [
   ["Does Waylo work with my CRM?", "Through a JSON webhook. Point it at Zapier, Make, or your own endpoint and map the fields into HubSpot, Salesforce, or any CRM. There are no native CRM apps today."],
   ["Which AI model does Waylo use?", "OpenAI’s API (gpt-4o-mini by default). The visitor’s messages and the relevant crawled page text are sent to OpenAI to write each reply. See the Privacy Policy."],
   ["How much does Waylo cost?", "Trial is free (500 AI messages), Starter is $79/month (3,000 messages), and Growth is $249/month (3 sites, 15,000 messages, Audiences)."],
-  ["Is Waylo available now?", "Yes, in early access. Start a free Trial at /signup (no card), and McKay will help set up your first site."],
+  ["Is Waylo available now?", "Yes, in early access. Start a free Trial at /signup (no card) and set it up yourself; the product tour at /how-it-works shows every step."],
 ];
 
 export const FAQ_GROUPS: { id: string; title: string; items: [string, string][] }[] = [

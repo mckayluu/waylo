@@ -1,7 +1,7 @@
 export const plans = [
   { name: "Trial", price: "$0", per: "14 days", blurb: "Crawl your site and see cited answers and signals on real traffic.", features: ["1 website", "500 AI messages total", "1 member", "Site crawl + cited answers", "Visitor journeys & signals", "Contact form & leads"], cta: "Start free trial", tier: "trial" },
   { name: "Starter", price: "$79", per: "/mo", blurb: "For one site that needs leads routed to Slack or a CRM.", features: ["1 website", "3,000 AI messages / mo", "Up to 5 members & roles", "Slack + CRM webhooks", "Contact & demo handoff", "Guidance: facts, rules, skills"], cta: "Subscribe to Starter", tier: "starter", featured: true },
-  { name: "Growth", price: "$249", per: "/mo", blurb: "For up to three sites, with audiences and a setup call.", features: ["Everything in Starter", "Up to 3 websites", "15,000 AI messages / mo", "Unlimited members", "Audiences", "Priority support", "Done-with-you setup call"], cta: "Subscribe to Growth", tier: "growth" },
+  { name: "Growth", price: "$249", per: "/mo", blurb: "For up to three sites, with Audiences and priority support.", features: ["Everything in Starter", "Up to 3 websites", "15,000 AI messages / mo", "Unlimited members", "Audiences", "Priority support"], cta: "Subscribe to Growth", tier: "growth" },
 ];
 export function PricingCards() {
   return (
@@ -18,7 +18,7 @@ export function PricingCards() {
           </div>
         ))}
       </div>
-      <p className="mt-6 text-center text-xs text-stone-500">Early access pricing. Secure checkout by Stripe — manage or cancel anytime from Billing in your admin. Questions? <a href="/contact" className="underline">Contact us</a></p>
+      <p className="mt-6 text-center text-xs text-stone-500">Early access pricing. Secure checkout by Stripe — manage or cancel anytime from Billing in your admin. Questions? See the <a href="/faq" className="underline">FAQ</a> or <a href="/how-it-works" className="underline">how it works</a>.</p>
     </>
   );
 }

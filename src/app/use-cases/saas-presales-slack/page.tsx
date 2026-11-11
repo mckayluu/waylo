@@ -41,7 +41,7 @@ export default function SaasPresalesSlack() {
         <SlackFormats />
       </div>
     </Section>
-    <Section eyebrow="Setup" title="What you need" sub="Most SaaS sites are set up in an afternoon. During early access we do the first one with you.">
+    <Section eyebrow="Setup" title="What you need" sub="Most SaaS sites are set up in an afternoon, self-serve.">
       <ol className="grid gap-x-10 gap-y-3 text-sm text-stone-700 sm:grid-cols-[auto_1fr]">
         {([["1", "Paste the script tag, launcher on marketing pages, sidebar on docs."], ["2", "Let Waylo crawl your pricing, docs, security, and integrations pages."], ["3", "Add rules: what you don't support, when to hand off, which questions always go to a person."], ["4", "Paste a Slack incoming webhook in Admin → Integrations."], ["5", "Ask it your five hardest pre-sales questions before going live."]] as const).map(([n, d]) => <li key={n} className="contents"><span className="font-mono text-teal-700">{n}</span><span>{d}</span></li>)}
       </ol>
@@ -51,7 +51,7 @@ export default function SaasPresalesSlack() {
     <Section eyebrow="Questions" title="Before you set it up" className="bg-white">
       <div className="max-w-3xl divide-y divide-stone-200 border-y border-stone-200">{faq.map(([q, a]) => <div key={q} className="py-4"><p className="font-medium">{q}</p><p className="mt-1 text-sm text-stone-600">{a}</p></div>)}</div>
       <p className="mt-6 text-sm text-stone-500">Customer stories will be added after the first installs.</p><div className="mt-6 grid max-w-4xl gap-5 md:grid-cols-2"><Shot k="tracking" crop="h-52" /><Shot k="integrations" crop="h-52" /></div>
-      <div className="mt-6 flex flex-wrap gap-3"><Link href="/demo" className="w-btn-accent px-4 py-2">Try the live demo</Link><Link href="/contact" className="w-btn px-4 py-2">Book a setup call</Link></div>
+      <div className="mt-6 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-4 py-2">Start free trial</Link><Link href="/how-it-works" className="w-btn-ghost px-4 py-2">See how it works</Link></div>
     </Section>
   </MarketingPage>;
 }

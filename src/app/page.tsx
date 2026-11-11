@@ -9,6 +9,8 @@ import { Code } from "@/components/marketing/Code";
 import { FactsBlock } from "@/components/marketing/Page";
 import { ProofBar, WorkflowStrip, PhotoBand, PHOTOS, CrawlVisual, SignalsVisual, HandoffVisual, GuidanceVisual, Chip } from "@/components/marketing/Visuals";
 import { Shot, ShotNote } from "@/components/marketing/Shots";
+import { ProductTour } from "@/components/marketing/ProductTour";
+import { tourSteps } from "@/lib/tour";
 import { JsonLd, orgLd, appLd, faqLd, FAQS, DEFINITION } from "@/lib/seo";
 
 export const metadata: Metadata = { title: { absolute: "Waylo — AI website chat that shows its sources" }, description: "Waylo is AI website chat that crawls your site, answers visitors with cited source links, flags buying intent, and posts warm leads to Slack or a CRM webhook with a link to the full conversation. One-line install.", alternates: { canonical: "/" } };
@@ -56,7 +58,7 @@ export default function Home() {
               <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#F59E0B]" />Early access · AI website chat with cited answers</p>
               <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">Answer every visitor. <span className="w-text-grad-light">Catch every buyer.</span></h1>
               <p className="mt-5 max-w-xl text-lg text-white/90">Waylo is AI chat for your website. It learns your public pages, answers visitors with links to the exact source, spots pricing, integration, and demo intent, and posts warm leads to Slack with the question and a link to the full transcript.</p>
-              <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/demo" className="w-btn-glass px-5 py-3 text-base">Try the live demo</Link></div><p className="mt-3 text-xs text-white/70">500 AI messages free · no card · early access</p>
+              <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass px-5 py-3 text-base">See how it works</Link></div><p className="mt-3 text-xs text-white/70">500 AI messages free · no card · early access</p>
               <dl className="mt-8 grid max-w-lg grid-cols-4 gap-3 border-t border-white/15 pt-6">{stats.map(([v, l]) => <div key={l}><dt className="text-xl font-semibold">{v}</dt><dd className="text-xs text-white/70">{l}</dd></div>)}</dl>
             </div>
             <div id="product" className="relative scroll-mt-20">
@@ -68,19 +70,19 @@ export default function Home() {
         </section>
         <div className="relative z-10 -mt-10 px-5"><div className="mx-auto max-w-6xl shadow-xl shadow-indigo-950/10"><ProofBar /></div></div>
         
-        <Section id="early-access" eyebrow="Early access" title="Waylo is new. The first installs are done with you." sub="Right now it runs on a small free-tier stack and billing is in test mode until the first paying sites go live. In exchange, McKay sets up your first site with you." className="bg-white">
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-            <ol className="border-l-2 border-teal-600 pl-5">{([["30-minute call", "We look at your site together and pick which pages Waylo should answer from."], ["Crawl + guidance", "Waylo crawls your public pages. We add the facts it shouldn’t guess at — pricing rules, what you don’t support, who to hand off to."], ["Install", "One script tag before </body>, or a GTM tag. Launcher, sidebar, or track-only."], ["Slack handoff", "High-intent visitors, contact forms, and “talk to a person” requests post to the channel you pick, with a link to the transcript."], ["First week review", "We read the real conversations, fix the answers it got wrong, and fill gaps where it said “I don’t know.”"]] as const).map(([h, d], i) => <li key={h} className="relative pb-5 last:pb-0"><span className="absolute -left-[29px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-700 text-[10px] font-semibold text-white">{i + 1}</span><p className="font-semibold text-stone-900">{h}</p><p className="mt-0.5 text-sm text-stone-600">{d}</p></li>)}</ol>
-            <div className="rounded-xl border border-stone-200 bg-stone-50 p-5 text-sm text-stone-700">
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">What to expect</p>
+        <Section id="tour" eyebrow="Self-serve" title="Set it up yourself in eight screens" sub="No call, no onboarding meeting. This is the real app, in order, from signup to a cited answer and a Slack alert." className="bg-white">
+          <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
+            <ProductTour steps={tourSteps()} compact />
+            <div className="rounded-xl border border-stone-200 bg-stone-50 p-5 text-sm text-stone-700 lg:self-start">
+              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-700">Early access, plainly</p>
               <ul className="mt-3 space-y-2">
                 <li className="flex gap-2"><span className="text-teal-700">✓</span>Free Trial: 500 AI messages, no card.</li>
-                <li className="flex gap-2"><span className="text-teal-700">✓</span>Starter $79/mo and Growth $249/mo when you’re ready.</li>
-                <li className="flex gap-2"><span className="text-teal-700">✓</span>Direct line to the person building it.</li>
-                <li className="flex gap-2"><span className="text-amber-600">–</span>No custom domain or status page yet. Some rough edges.</li>
-                <li className="flex gap-2"><span className="text-amber-600">–</span>No customer logos yet. Customer stories will come after the first installs.</li>
+                <li className="flex gap-2"><span className="text-teal-700">✓</span>Starter $79/mo and Growth $249/mo when you’re ready. No contract.</li>
+                <li className="flex gap-2"><span className="text-teal-700">✓</span>Every step is in the admin; docs and FAQ cover the rest.</li>
+                <li className="flex gap-2"><span className="text-amber-600">–</span>Runs on a free hosting tier, so the odd first load is slow. Stripe is in test mode.</li>
+                <li className="flex gap-2"><span className="text-amber-600">–</span>No customer logos yet, and we won’t invent any.</li>
               </ul>
-              <Link href="/contact" className="w-btn-accent mt-5 inline-block px-4 py-2">Book a setup slot</Link>
+              <div className="mt-5 flex flex-wrap gap-2"><Link href="/signup" className="w-btn-accent px-4 py-2">Start free trial</Link><Link href="/how-it-works" className="w-btn-ghost px-4 py-2">Full tour</Link></div>
             </div>
           </div>
         </Section>
@@ -115,7 +117,7 @@ export default function Home() {
         <Section id="faq" className="w-mesh">
           <div className="grid gap-8 lg:grid-cols-[280px_1fr]"><div className="lg:sticky lg:top-24 lg:self-start"><p className="text-xs font-semibold uppercase tracking-wider text-amber-700">FAQ</p><h2 className="mt-1.5 text-2xl font-semibold tracking-tight sm:text-[2rem]">Questions, answered</h2><Link href="/faq" className="mt-3 inline-block text-sm font-medium text-teal-700 hover:underline">All questions →</Link></div><div className="divide-y divide-stone-200 border-y border-stone-200">{faqs.map(([q, a]) => <details key={q} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium"><h3>{q}</h3><span className="text-lg leading-none text-amber-700 transition group-open:rotate-45">+</span></summary><p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">{a}</p></details>)}</div></div>
         </Section>
-        <section className="px-5 pb-14 pt-4"><div className="w-gradient w-glow relative mx-auto grid max-w-6xl items-center gap-8 overflow-hidden rounded-3xl px-8 py-12 text-white md:grid-cols-[1.3fr_1fr]"><div className="w-grid-bg absolute inset-0 opacity-50" aria-hidden /><div className="relative"><h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Try it on the demo site</h2><p className="mt-3 text-white/85">Ask the Acme demo a pricing question and check the source chip. Then start a Trial on your own site — 500 AI messages, no card.</p><div className="mt-7 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/demo" className="w-btn-glass px-5 py-3 text-base">Try the live demo</Link><Link href="/contact" className="px-2 py-3 text-sm font-medium text-white/85 underline-offset-4 hover:underline">or contact McKay</Link></div></div><div className="relative hidden overflow-hidden rounded-2xl ring-1 ring-white/20 md:block"><Image src="/marketing/office.webp" alt="" width={1400} height={935} sizes="400px" className="h-56 w-full object-cover opacity-90" /></div></div></section>
+        <section className="px-5 pb-14 pt-4"><div className="w-gradient w-glow relative mx-auto grid max-w-6xl items-center gap-8 overflow-hidden rounded-3xl px-8 py-12 text-white md:grid-cols-[1.3fr_1fr]"><div className="w-grid-bg absolute inset-0 opacity-50" aria-hidden /><div className="relative"><h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Live on your site this afternoon</h2><p className="mt-3 text-white/85">Paste one script tag, crawl your pages, and watch the first cited answers come in. 500 AI messages free, no card.</p><div className="mt-7 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass px-5 py-3 text-base">See how it works</Link><Link href="/demo" className="px-2 py-3 text-sm font-medium text-white/85 underline-offset-4 hover:underline">or try the live demo</Link></div></div><div className="relative hidden overflow-hidden rounded-2xl ring-1 ring-white/20 md:block"><Image src="/marketing/office.webp" alt="" width={1400} height={935} sizes="400px" className="h-56 w-full object-cover opacity-90" /></div></div></section>
       </main>
       <Footer />
     </Shell>
