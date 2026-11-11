@@ -3,7 +3,7 @@ import type { Citation } from "./store";
 export type KPage = Citation & { keywords: RegExp; summary: string };
 export const KNOWLEDGE: KPage[] = [
   { title: "Pricing & Plans", url: "/docs/pricing", keywords: /\b(price|pricing|cost|plan|plans|free|quote|how much)\b/i,
-    summary: "Waylo has three self-serve plans with unlimited seats: **Trial** — $0 for 14 days, no card (1 site, 100 pages, 500 AI replies); **Starter** — $79/mo (1 site, 500 pages, 3,000 AI replies/mo, Slack + CRM webhooks, guidance, daily re-crawl); **Growth** — $249/mo (3 sites, 2,000 pages, 15,000 AI replies/mo, Audiences). Upgrade, switch or cancel any time in Billing. No overage charges: at the limit, chat falls back to your contact form." },
+    summary: "Waylo has three self-serve plans: **Trial** — $0 for 14 days, no card (1 site, 100 pages, 500 AI replies); **Starter** — $79/mo (1 site, 500 pages, 3,000 AI replies/mo, Slack + CRM webhooks, guidance, daily re-crawl); **Growth** — $249/mo (3 sites, 2,000 pages, 15,000 AI replies/mo, Audiences). Upgrade, switch or cancel any time in Billing. No overage charges: at the limit, chat falls back to your contact form." },
   { title: "Try Waylo", url: "/signup", keywords: /\b(demo|walkthrough|trial|try|call|meeting|sales|sign ?up|get started)\b/i,
     summary: "Waylo is fully self-serve: paste your website URL on the homepage to chat with your own site in about a minute, or **start the free 14-day trial** at /signup (no card). The live demo at /demo shows a finished install. There are no sales calls." },
   { title: "Installing the Sidebar", url: "/docs/install", keywords: /\b(install|embed|iframe|snippet|setup|set up|website|add)\b/i,
