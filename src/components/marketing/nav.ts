@@ -3,12 +3,16 @@ export type NavItem = { label: string; href: string; desc: string; icon: string;
 export type NavGroup = { id: string; label: string; href: string; blurb: string; items: NavItem[]; feature?: { title: string; body: string; href: string; cta: string; img: string } };
 export const NAV: NavGroup[] = [
   { id: "product", label: "Product", href: "/features", blurb: "Website chat that links its sources and sends serious leads to sales.", items: [
-    { label: "Cited answers", href: "/features#answers", desc: "Every reply links the pages it used", icon: "💬", t: "teal" },
-    { label: "Knowledge & crawl", href: "/features#knowledge", desc: "Crawl your site, add facts and rules", icon: "🗂", t: "indigo" },
-    { label: "Intent signals", href: "/features#signals", desc: "Pricing, demo, security, integration intent", icon: "📈", t: "amber" },
-    { label: "Lead handoff", href: "/features#handoff", desc: "Slack alerts and CRM webhooks", icon: "🤝", t: "teal" },
-    { label: "Control & guidance", href: "/features#control", desc: "Voice, skills, roles, brand color", icon: "🎛", t: "indigo" },
-    { label: "Embed modes", href: "/docs/embed-modes", desc: "Launcher, sidebar, or track-only", icon: "🧩", t: "amber" },
+    { label: "AI chat on your site", href: "/product/ai-chat", desc: "Answers only from your pages", icon: "💬", t: "teal" },
+    { label: "Citations & sources", href: "/product/citations", desc: "Every reply links its pages", icon: "¹", t: "indigo" },
+    { label: "Lead capture", href: "/product/lead-capture", desc: "Contact, demo, talk to a person", icon: "✉", t: "amber" },
+    { label: "Slack routing", href: "/product/slack-routing", desc: "High-intent visitors to a channel", icon: "#", t: "teal" },
+    { label: "Analytics & signals", href: "/product/analytics", desc: "Questions, journeys, intent", icon: "📈", t: "amber" },
+    { label: "Branding", href: "/product/branding", desc: "Name, color, greeting, voice", icon: "🎨", t: "indigo" },
+    { label: "Install", href: "/product/install", desc: "One script tag, three modes", icon: "</>", t: "teal" },
+    { label: "How it works", href: "/how-it-works", desc: "Crawl → answer → signal → hand off", icon: "↻", t: "indigo" },
+    { label: "Integrations", href: "/integrations", desc: "Slack, JSON webhook, CMS, GTM", icon: "⇄", t: "amber" },
+    { label: "Security & data", href: "/security", desc: "What’s stored and where", icon: "🔒", t: "teal" },
   ], feature: { title: "Try the live demo", body: "Ask a real question and watch the cited answer and signal appear.", href: "/demo", cta: "Open demo", img: "/marketing/laptop.webp" } },
   { id: "solutions", label: "Solutions", href: "/use-cases", blurb: "How marketing, sales, SaaS, and agency teams set Waylo up.", items: [
     { label: "Marketing teams", href: "/solutions/marketing", desc: "See which questions come before a demo", icon: "📣", t: "teal" },
