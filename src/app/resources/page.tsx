@@ -6,27 +6,27 @@ import { Chip } from "@/components/marketing/Visuals";
 import { JsonLd, crumbsLd, faqLd, pageMeta } from "@/lib/seo";
 import { SOLUTIONS } from "@/lib/solutions";
 import { GUIDES } from "@/lib/pages/guides";
-export const metadata = pageMeta("/resources", "Resources: docs, install guide, embed modes, and FAQ", "Docs, guides, and answers: documentation, the one-line install guide, embed modes, the JavaScript API, FAQ, and guides by team.");
+export const metadata = pageMeta("/resources", "Resources: docs, install guide, embed modes, and FAQ", "Docs, guides, and answers. Documentation, the install guide, embed modes, the JavaScript API, the FAQ, and guides by team.");
 type R = { h: string; d: string; href: string; t: "teal" | "amber" | "indigo"; i: string; tag: string };
 const res: R[] = [
-  { h: "Documentation", d: "How Waylo crawls, answers, signals, and hands off — with setup for every feature.", href: "/docs", t: "teal", i: "📘", tag: "Docs" },
-  { h: "Install guide", d: "Add the one-line script tag, allow your domain, and verify it’s live in minutes.", href: "/docs/install", t: "amber", i: "⚡", tag: "Setup" },
-  { h: "Install checklist", d: "Script tag, data-site, mode, crawl check, a test question, and the Slack webhook — in order.", href: "/docs/install#checklist", t: "teal", i: "✓", tag: "Setup" },
-  { h: "Embed modes", d: "Launcher, sidebar, or track-only — choose the right mode per page.", href: "/docs/embed-modes", t: "indigo", i: "🧩", tag: "Setup" },
+  { h: "Documentation", d: "How Waylo crawls, answers, flags intent, and hands off, with setup steps for every feature.", href: "/docs", t: "teal", i: "📘", tag: "Docs" },
+  { h: "Install guide", d: "Add the script tag, allow your domain, and check that it’s live.", href: "/docs/install", t: "amber", i: "⚡", tag: "Setup" },
+  { h: "Install checklist", d: "Script tag, data-site, mode, crawl check, a test question, and the Slack webhook, in order.", href: "/docs/install#checklist", t: "teal", i: "✓", tag: "Setup" },
+  { h: "Embed modes", d: "Launcher, sidebar, or track-only. Choose a mode for each page.", href: "/docs/embed-modes", t: "indigo", i: "🧩", tag: "Setup" },
   { h: "JavaScript API", d: "Open, close, or toggle the chat from your own buttons.", href: "/docs/install#api", t: "teal", i: "</>", tag: "Developers" },
   { h: "CMS & platform notes", d: "Webflow, WordPress, Shopify, Squarespace, Wix, and Google Tag Manager.", href: "/docs/install#cms", t: "amber", i: "🛠", tag: "Setup" },
   { h: "Troubleshooting", d: "Widget not showing? Domain not allowed? Fixes for the common cases.", href: "/docs/install#troubleshooting", t: "indigo", i: "🩺", tag: "Support" },
   { h: "FAQ", d: "Answers on accuracy, sources, data, pricing, integrations, and rollout.", href: "/faq", t: "teal", i: "❓", tag: "Evaluate" },
-  { h: "Pricing", d: "Trial, Starter, and Growth — what’s included and how messages are counted.", href: "/pricing", t: "amber", i: "💳", tag: "Evaluate" },
-  { h: "Live demo", d: "Talk to Waylo on a real page and watch citations and signals appear.", href: "/demo", t: "indigo", i: "▶", tag: "Evaluate" },
+  { h: "Pricing", d: "Trial, Starter, and Growth. What’s included and how messages are counted.", href: "/pricing", t: "amber", i: "💳", tag: "Evaluate" },
+  { h: "Live demo", d: "Ask the fictional Northpoint Ops site a question and see the cited answer.", href: "/demo", t: "indigo", i: "▶", tag: "Evaluate" },
 ];
 const qa: [string, string][] = [
-  ["Where do I start with Waylo?", "Start with the install guide: add one script tag before </body>, allow your domain in the dashboard, and verify the widget loads. Then review crawled pages and add facts and rules."],
+  ["Where do I start with Waylo?", "Start with the install guide. Add one script tag before </body>, allow your domain in the admin, and check that the widget loads. Then review the crawled pages and add facts and rules."],
   ["Is there developer documentation?", "Yes. The docs cover embed attributes, embed modes, the JavaScript API for opening the chat from your own buttons, and CMS-specific install notes."],
-  ["Can I try Waylo before installing?", "Yes. The live demo page runs Waylo on a real page so you can see cited answers and signals before adding it to your site."],
+  ["Can I try Waylo before installing?", "Yes. The demo runs Waylo on a fictional company’s site, Northpoint Ops, so you can see cited answers before you add it to yours."],
 ];
 export default function Resources() {
-  return <MarketingPage eyebrow="Resources" crumb="Resources" title="Docs, guides, and answers" sub="Install steps, embed reference, the JavaScript API, troubleshooting, and the FAQ." answer="Waylo resources include product documentation, a one-line install guide, embed mode reference, the JavaScript API, an FAQ, pricing details, a live demo, and solution guides for marketing, sales, SaaS, and agency teams.">
+  return <MarketingPage eyebrow="Resources" crumb="Resources" title="Docs, guides, and answers" sub="Install steps, embed reference, the JavaScript API, troubleshooting, and the FAQ." answer="Waylo’s resources include the docs, an install guide, an embed mode reference, the JavaScript API, an FAQ, pricing details, a demo site, and guides for marketing, sales, SaaS, and agency teams.">
     <JsonLd data={[crumbsLd([["Resources", "/resources"]]), faqLd(qa)]} />
     <Section className="w-mesh" eyebrow="Library" title="Start where you are">
       <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr]">

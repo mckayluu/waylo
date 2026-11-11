@@ -1,20 +1,21 @@
 # Waylo
 
-> Waylo is an AI chat for B2B and SaaS websites. It learns a company's public web pages, answers visitor questions with links to its sources, detects buying intent, and hands warm leads to the team in Slack or a CRM. It installs with one script tag.
+> Waylo is AI chat for B2B and SaaS websites. It learns a company's public web pages and answers visitor questions with a link to the page behind each answer. It flags buying intent and can send warm leads to the team in Slack or a CRM. It installs with one script tag.
 
-Site: https://waylo-j5hv.onrender.com · Contact: https://waylo-j5hv.onrender.com/contact · Status: early access
+Site: https://waylo-j5hv.onrender.com · Help and support: https://waylo-j5hv.onrender.com/contact · Status: early access, self-serve
 
 ## Key facts
-- Answers are grounded in crawled public HTML pages plus facts the customer adds; every answer cites sources.
-- When content doesn't cover a question, Waylo says so and offers a handoff instead of guessing.
+- Answers come from crawled public pages (sitemap first, plus linked PDF and .docx files) and facts the customer adds. Every answer cites sources.
+- When content doesn't cover a question, Waylo says so and offers the contact form.
 - Buying-intent signals: pricing, integration, security, and demo interest.
-- Integrations: Slack incoming webhook and a JSON outbound webhook (route to HubSpot, Salesforce, etc. via Zapier, Make, or your own endpoint). No native CRM apps yet.
+- Integrations (Starter and up): Slack incoming webhook and a JSON outbound webhook. Route it to HubSpot, Salesforce, and others with Zapier, Make, or your own endpoint. No native CRM apps.
 - Install: `<script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="YOUR_SITE" async></script>` before </body>. Works with Webflow, WordPress, Shopify, Squarespace, Wix, Google Tag Manager.
 - Embed modes: launcher (default), sidebar, track (analytics only).
-- Pricing: Trial $0 (1 site, 500 AI messages); Starter $79/mo (3,000 messages, webhooks, handoff); Growth $249/mo (3 sites, 15,000 messages, Audiences).
+- Pricing: Trial $0 (1 site, 500 AI messages, 100 pages); Starter $79/mo (3,000 messages a month, 500 pages, Slack and webhooks); Growth $249/mo (3 sites, 15,000 messages a month, 2,000 pages, Audiences). No overage fees. At the limit the chat pauses and shows the contact form.
 - AI model: OpenAI API (gpt-4o-mini by default).
-- Public /demo (https://waylo-j5hv.onrender.com/demo) is a fictional field-service company, Northpoint Ops; the chat answers from that site’s pages, not Waylo’s pricing.
-- Not available today: SSO/SAML, SOC 2 report, native CRM apps, live agent chat, white-label, JavaScript-rendered page or PDF indexing.
+- Public /demo (https://waylo-j5hv.onrender.com/demo) is a fictional field-service company, Northpoint Ops. Its chat answers from that site’s pages.
+- Hosting and processors: Postgres on Supabase, app hosted on Render, replies written by OpenAI.
+- Not available today: SSO/SAML, SOC 2 report, DPA, native CRM apps, live agent chat, white-label, agency pricing, JavaScript-rendered pages, scanned PDFs.
 
 ## Pages
 - [Home](https://waylo-j5hv.onrender.com/)
