@@ -4,7 +4,9 @@ import type { Metadata } from "next";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { Shell } from "@/components/marketing/Section";
-import { JsonLd, orgLd, appLd } from "@/lib/seo";
+import { JsonLd, orgLd, appLd, faqLd } from "@/lib/seo";
+import { ProductTour } from "@/components/marketing/ProductTour";
+import { tourSteps } from "@/lib/tour";
 
 export const metadata: Metadata = { title: { absolute: "Waylo – Your website’s own AI chat" }, description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", alternates: { canonical: "/" }, openGraph: { title: "Waylo – Your website’s own AI chat", description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", url: "/", siteName: "Waylo", type: "website", images: [{ url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo – Your website’s own AI chat" }] }, twitter: { card: "summary_large_image", title: "Waylo – Your website’s own AI chat", description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", images: ["/brand/og.png"] } };
 
@@ -36,13 +38,34 @@ const helps: [string, string, string][] = [
   ["Sales teams", "Reps hear about serious visitors in Slack, along with the question they asked.", "/solutions/sales"],
   ["Support teams", "Repeat how-to questions get answered from your docs, with a link to the right article.", "/use-cases/support-deflection"],
 ];
+const stack = ["Slack", "CRM via webhooks", "Google Tag Manager", "Webflow", "WordPress", "Shopify", "Squarespace", "Wix"];
+const homeFaqs: [string, string][] = [
+  ["How do I know the answers are right?", "Waylo only answers from the public pages it reads on your site, and every answer links the page it used. If your pages don’t cover a question, it says it doesn’t know and offers your contact form."],
+  ["How do I set it up?", "Add your website and let Waylo read your pages. Then paste one line of code into your site or Google Tag Manager, and publish."],
+  ["Do I need a card to start?", "No. The 14-day Trial is free and needs no card. After that, Starter is $79 a month and Growth is $249 a month. Every plan has every feature."],
+  ["What happens to my data?", "It’s stored in a managed Postgres database on Supabase, kept separate by workspace. Waylo doesn’t train a model on your site. The Security page lists all five subprocessors."],
+  ["Can I try it before I sign up?", "Yes. Enter your website on the try page and ask it a few questions. You don’t need an account."],
+  ["Can I cancel anytime?", "Yes. Plans are month to month with no contract. You can change or cancel from Billing in the admin."],
+];
+function SampleChat() {
+  return (
+    <div className="w-tile w-tile-card mx-auto w-full max-w-md overflow-hidden p-0 shadow-xl shadow-navy-950/10 ring-1 ring-warm-200" role="img" aria-label="Sample chat. A visitor asks: Do I need a card to start? Waylo answers: No. The 14-day Trial is free and doesn’t ask for a card. You get 500 AI messages and every feature. Source: Pricing.">
+      <div className="flex items-center gap-3 bg-navy-900 px-5 py-4 text-white"><span className="grid h-8 w-8 place-items-center rounded-full bg-rasp-600 text-sm font-semibold">W</span><div><p className="text-sm font-semibold">Waylo</p><p className="text-xs text-white/60">Answers from this site</p></div></div>
+      <div className="space-y-4 px-5 py-6 text-[15px] leading-6">
+        <p className="ml-auto w-fit max-w-[80%] rounded-2xl rounded-br-md bg-navy-700 px-4 py-2.5 text-white">Do I need a card to start?</p>
+        <div className="max-w-[90%]"><p className="rounded-2xl rounded-bl-md bg-warm-100 px-4 py-3 text-warm-800">No. The 14-day Trial is free and doesn’t ask for a card. You get 500 AI messages and every feature.<sup className="ml-0.5 font-semibold text-rasp-700">1</sup></p>
+          <Link href="/pricing" className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs font-medium text-navy-700 ring-1 ring-warm-200 hover:ring-rasp-600"><span className="font-semibold text-rasp-700">1</span>Pricing · /pricing</Link></div>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
     <Shell>
       <Header />
       <main>
-        <JsonLd data={[orgLd, appLd]} />
+        <JsonLd data={[orgLd, appLd, faqLd(homeFaqs)]} />
         <section className="w-band-navy relative overflow-hidden px-5 pb-20 pt-12 sm:pb-24 sm:pt-16">
           <div aria-hidden className="pointer-events-none absolute -left-16 bottom-10 hidden h-32 w-32 -rotate-6 rounded-[26px] bg-navy-700 lg:block" />
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
@@ -72,6 +95,21 @@ export default function Home() {
           </div>
         </section>
 
+        <section id="tour" aria-labelledby="tour-h" className="w-band-paper scroll-mt-20 px-5 py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl">
+            <p className="w-pill">Product tour</p>
+            <h2 id="tour-h" className="w-h-lg mt-5 max-w-2xl font-semibold text-warm-900">See it from signup to first answer</h2>
+            <div className="mt-10"><ProductTour steps={tourSteps()} compact /></div>
+          </div>
+        </section>
+
+        <section aria-labelledby="sample-h" className="w-band-mist px-5 py-16 sm:py-20">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-[1fr_1fr]">
+            <div><p className="w-pill">Sample chat</p><h2 id="sample-h" className="w-h-lg mt-5 font-semibold text-warm-900">What your visitors see</h2><p className="mt-4 max-w-md text-lg leading-8 text-warm-600">A real question about Waylo, answered from our own pricing page. The link takes the visitor straight to the source.</p></div>
+            <SampleChat />
+          </div>
+        </section>
+
         <section aria-labelledby="helps" className="w-band-paper px-5 py-16 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <h2 id="helps" className="w-h-lg max-w-2xl font-semibold text-warm-900">Who Waylo helps</h2>
@@ -80,20 +118,34 @@ export default function Home() {
           </div>
         </section>
 
+        <section aria-labelledby="stack-h" className="w-band-navy px-5 py-14 sm:py-16">
+          <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[0.9fr_1.4fr]">
+            <div><h2 id="stack-h" className="w-h-lg font-semibold text-white">Works with your stack</h2><p className="mt-4 leading-7 text-white/80">Waylo works anywhere you can add a script tag. Slack and CRM alerts go out through webhooks.</p><Link href="/docs/install" className="mt-5 inline-block text-sm font-semibold text-blush hover:underline">Read the install guide →</Link></div>
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">{stack.map(t => <li key={t} className="rounded-2xl bg-white/[0.06] px-4 py-4 text-center text-sm font-semibold text-white ring-1 ring-white/10">{t}</li>)}</ul>
+          </div>
+        </section>
+
         <section aria-label="Setup and pricing" className="bg-card px-5 py-16 sm:py-20">
           <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-2">
             <div id="how" className="w-tile w-band-navy relative overflow-hidden p-8 sm:p-10">
               <div aria-hidden className="absolute -right-5 -top-5 h-24 w-24 rotate-6 rounded-[22px] bg-rasp-600" />
-              <h2 className="w-h-lg relative font-semibold text-white">Set it up yourself.</h2>
+              <h2 className="w-h-lg relative pr-10 font-semibold text-white">Set it up yourself.</h2>
               <p className="relative mt-4 text-lg leading-8 text-white/80">Add your website, paste one line of code, and publish. No call needed.</p>
               <Link href="/how-it-works" className="w-btn-accent w-btn-lg relative mt-8 inline-flex">See how it works</Link>
             </div>
             <div id="pricing" className="w-tile w-tile-blush relative overflow-hidden p-8 sm:p-10">
-              <div aria-hidden className="absolute -right-4 -top-4 h-20 w-20 -rotate-6 rounded-[18px] bg-navy-900" />
-              <h2 className="w-h-lg relative font-semibold text-warm-900">Simple monthly plans.</h2>
+              <div aria-hidden className="absolute -right-6 -top-6 h-16 w-16 -rotate-6 rounded-[16px] bg-navy-900" />
+              <h2 className="w-h-lg relative pr-10 font-semibold text-warm-900">Simple monthly plans.</h2>
               <p className="relative mt-4 text-lg leading-8 text-warm-700">Start free, no card. Every plan has every feature. Cancel anytime.</p>
               <Link href="/pricing" className="w-btn-ghost w-btn-lg relative mt-8 inline-flex bg-card">See pricing</Link>
             </div>
+          </div>
+        </section>
+
+        <section id="faq" aria-labelledby="faq-h" className="w-band-paper px-5 pt-16 sm:pt-20">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[320px_1fr]">
+            <div><h2 id="faq-h" className="w-h-lg font-semibold text-warm-900">Questions</h2><Link href="/faq" className="mt-4 inline-block text-sm font-semibold text-navy-700 hover:underline">All questions →</Link></div>
+            <div className="divide-y divide-warm-200 border-y border-warm-200">{homeFaqs.map(([q, a]) => <details key={q} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-warm-900"><h3>{q}</h3><span className="text-lg leading-none text-rasp-700 transition group-open:rotate-45">+</span></summary><p className="mt-2 max-w-2xl leading-7 text-warm-600">{a}{q.startsWith("What happens to my data") && <> <Link href="/security" className="font-semibold text-navy-700 hover:underline">Read the Security page →</Link></>}</p></details>)}</div>
           </div>
         </section>
 
