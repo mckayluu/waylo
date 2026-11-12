@@ -2,25 +2,23 @@
 // Northpoint Ops is the fictional demo company used across the site.
 import type { ReactNode } from "react";
 
+// Mirrors the conversation.high_intent post in src/lib/notify.ts:
+// ":fire: *High-intent visitor* on {site}: {name} — signals: {signals}\n>{lastQuestion} · <url|Open in Waylo>"
 export function SlackCard({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full max-w-sm rounded-2xl bg-white p-4 text-left text-[13px] leading-5 text-warm-800 shadow-2xl shadow-navy-950/25 ring-1 ring-warm-200 ${className}`} role="img" aria-label="Illustration of a Slack message from Waylo about a ready buyer on the fictional Northpoint Ops site">
+    <div className={`w-full max-w-sm rounded-2xl bg-white p-4 text-left text-[13px] leading-5 text-warm-800 shadow-2xl shadow-navy-950/25 ring-1 ring-warm-200 ${className}`} role="img" aria-label="Illustration of a Waylo Slack post: High-intent visitor on Northpoint Ops, Dana Ruiz, signals pricing, ready-to-buy, high-intent, with the visitor’s question and an Open in Waylo link. Northpoint Ops is fictional.">
       <p className="font-plex text-[11px] font-medium text-warm-500"># sales-leads</p>
       <div className="mt-2 flex gap-3">
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-navy-900 text-xs font-bold text-white">W</span>
         <div className="min-w-0">
           <p><span className="font-semibold text-warm-900">Waylo</span> <span className="rounded bg-warm-100 px-1 text-[10px] font-semibold text-warm-500">APP</span> <span className="text-[11px] text-warm-400">9:42 AM</span></p>
-          <p className="mt-0.5 font-semibold text-warm-900">Ready buyer on Northpoint Ops</p>
-          <p className="mt-1 border-l-2 border-rasp-600 pl-2 text-warm-700">“Can we get set up for 12 techs next week?”</p>
-          <p className="mt-2 flex flex-wrap gap-1.5"><Chip>pricing</Chip><Chip>ready-to-buy</Chip></p>
-          <p className="mt-2 text-[12px] text-warm-500">Read /pricing, then /features</p>
-          <span className="mt-2 inline-block rounded-md px-2.5 py-1 text-[12px] font-semibold text-navy-800 ring-1 ring-warm-300">Open in Waylo</span>
+          <p className="mt-0.5 text-warm-800"><span aria-hidden>🔥</span> <strong className="font-bold text-warm-900">High-intent visitor</strong> on Northpoint Ops: Dana Ruiz — signals: pricing, ready-to-buy, high-intent</p>
+          <p className="mt-1.5 border-l-4 border-warm-300 pl-2.5 text-warm-700">Can we get set up for 12 techs next week? · <span className="text-[#1264A3] hover:underline">Open in Waylo</span></p>
         </div>
       </div>
     </div>
   );
 }
-function Chip({ children }: { children: ReactNode }) { return <span className="rounded-full bg-rasp-50 px-2 py-0.5 text-[11px] font-medium text-rasp-700 ring-1 ring-rasp-100">{children}</span>; }
 
 export function ChatBubble({ className = "" }: { className?: string }) {
   return (
@@ -41,6 +39,7 @@ export function LeftCard({ className = "" }: { className?: string }) {
       <ul className="mt-2 space-y-1 text-warm-700"><li>/pricing</li><li>/features</li></ul>
       <p className="mt-3 rounded-lg bg-warm-50 px-2.5 py-1.5 text-[12px] italic text-warm-600">“Will this work with our setup?”</p>
       <p className="mt-2 text-[11px] font-semibold text-rasp-700">Left without asking</p>
+      <p className="mt-2 border-t border-warm-100 pt-2 font-plex text-[9px] uppercase tracking-[0.08em] text-warm-400">Illustration</p>
     </div>
   );
 }
