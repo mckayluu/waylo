@@ -5,11 +5,11 @@ import type { InfoDef } from "./types";
 import type { HeroArt } from "@/components/marketing/PageArt";
 // Hero photo + code-drawn card per page (the people are stock photos, not customers).
 export const ART: Record<string, HeroArt> = {
-  "/product/ai-chat": { photo: "cafe", overlay: "chat" }, "/product/citations": { photo: "twoWomen", overlay: "chat" }, "/product/lead-capture": { photo: "salesTeam", overlay: "slack" },
-  "/product/slack-routing": { photo: "laughing", overlay: "slack" }, "/product/analytics": { photo: "desk", overlay: "session" }, "/product/branding": { photo: "crafts", overlay: "chat" },
-  "/product/install": { photo: "pair", overlay: "chat" }, "/compare/generic-chatbots": { photo: "cafe", overlay: "chat" }, "/compare/live-chat": { photo: "headsets", overlay: "chat" },
-  "/use-cases/agencies": { photo: "pair", overlay: "chat" }, "/use-cases/ecommerce": { photo: "crafts", overlay: "chat" }, "/use-cases/b2b-services": { photo: "salesTeam", overlay: "slack" },
-  "/use-cases/support-deflection": { photo: "headsets", overlay: "chat" }, "/integrations": { photo: "salesTeam", overlay: "slack" }, "/how-it-works": { photo: "desk", overlay: "chat" },
+  "/product/ai-chat": { photo: "cafe", overlay: "chat", chat: "pricing" }, "/product/citations": { photo: "twoWomen", overlay: "chat", chat: "seats" }, "/product/lead-capture": { photo: "salesTeam", overlay: "slack" },
+  "/product/slack-routing": { photo: "laughing", overlay: "slack" }, "/product/analytics": { photo: "desk", overlay: "session" }, "/product/branding": { photo: "crafts", overlay: "chat", chat: "free" },
+  "/product/install": { photo: "pair", overlay: "chat", chat: "setup" }, "/compare/generic-chatbots": { photo: "cafe", overlay: "chat", chat: "switch" }, "/compare/live-chat": { photo: "headsets", overlay: "chat", chat: "hours" },
+  "/use-cases/agencies": { photo: "pair", overlay: "chat", chat: "walkthrough" }, "/use-cases/ecommerce": { photo: "crafts", overlay: "chat", chat: "annual" }, "/use-cases/b2b-services": { photo: "salesTeam", overlay: "slack" },
+  "/use-cases/support-deflection": { photo: "headsets", overlay: "chat", chat: "offline" }, "/integrations": { photo: "salesTeam", overlay: "slack" }, "/how-it-works": { photo: "desk", overlay: "chat", chat: "walkthrough" },
 };
 export const metaFor = (d: InfoDef) => pageMeta(d.path, d.metaTitle, d.metaDesc);
 export function InfoPage({ d }: { d: InfoDef }) {

@@ -3,7 +3,7 @@
 // The people in the photos are not Waylo customers. Northpoint Ops is the fictional demo company.
 import Image from "next/image";
 import Link from "next/link";
-import { SlackCard, ChatBubble, LeftCard } from "./HomeVisuals";
+import { SlackCard, ChatBubble, LeftCard, type ChatKey } from "./HomeVisuals";
 
 export type PhotoKey = "phone" | "desk" | "twoWomen" | "salesTeam" | "headset" | "crafts" | "pair" | "headsets" | "laughing" | "cafe";
 export const PEOPLE: Record<PhotoKey, { src: string; w: number; h: number; alt: string }> = {
@@ -19,7 +19,7 @@ export const PEOPLE: Record<PhotoKey, { src: string; w: number; h: number; alt: 
   cafe: { src: "/images/people/cafe-laptop.webp", w: 1200, h: 800, alt: "A smiling woman working on a laptop at a cafe" },
 };
 export type Overlay = "chat" | "slack" | "session" | "none";
-export type HeroArt = { photo: PhotoKey; overlay?: Overlay; pos?: string };
+export type HeroArt = { photo: PhotoKey; overlay?: Overlay; pos?: string; chat?: ChatKey };
 
 export function PhotoTile({ photo, className = "", pos = "object-center", sizes = "(min-width:1024px) 560px, 100vw", priority = false }: { photo: PhotoKey; className?: string; pos?: string; sizes?: string; priority?: boolean }) {
   const p = PEOPLE[photo];
@@ -34,7 +34,7 @@ export function HeroCollage({ art }: { art: HeroArt }) {
         <div aria-hidden className="absolute -right-4 -top-5 h-24 w-24 rotate-6 rounded-[24px] bg-rasp-600" />
         <div aria-hidden className="absolute -bottom-1 left-6 h-14 w-14 -rotate-6 rounded-[14px] bg-blush" />
         <PhotoTile photo={art.photo} pos={art.pos} priority className="h-[240px] sm:h-[320px]" sizes="(min-width:1024px) 520px, 100vw" />
-        {o === "chat" && <ChatBubble className="absolute -bottom-2 right-2 sm:-right-6" />}
+        {o === "chat" && <ChatBubble chat={art.chat} className="absolute -bottom-2 right-2 sm:-right-6" />}
         {o === "slack" && <SlackCard className="absolute -bottom-2 right-0 max-w-[300px] sm:-right-6" />}
         {o === "session" && <LeftCard className="absolute -bottom-2 right-2 sm:-right-6" />}
       </div>
