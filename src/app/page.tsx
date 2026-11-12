@@ -28,7 +28,7 @@ function HeroCollage() {
 const does: [string, string, string, string, string][] = [
   ["Answers you can trust.", "Waylo only answers from your site and links to the page it used. If your site doesn’t cover something, it says so instead of guessing.", "/product/admin-conv.webp", "object-[30%_30%]", "w-tile-blush"],
   ["See what people want.", "Every question shows up in your dashboard, so you learn what buyers care about and which pages leave them stuck.", "/product/admin-tracking.webp", "object-[15%_20%]", "w-tile-mist"],
-  ["Know when someone’s ready.", "When a visitor asks about pricing or says they’re ready to buy, you get a Slack message with the whole conversation.", "/product/admin-integrations.webp", "object-[38%_22%]", "w-tile-cream"],
+  ["Know when someone’s ready.", "When a visitor looks ready to buy or leaves their details, you get a Slack message with the whole conversation.", "/product/admin-integrations.webp", "object-[38%_22%]", "w-tile-cream"],
 ];
 const helps: [string, string, string][] = [
   ["SaaS companies", "Evaluators get answers from your pricing and docs pages without waiting on your team.", "/solutions/saas"],

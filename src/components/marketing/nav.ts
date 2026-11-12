@@ -16,7 +16,7 @@ export const NAV: NavGroup[] = [
   ], feature: { title: "Try the live demo", body: "Ask the fictional Northpoint Ops site a question and see the cited answer.", href: "/demo", cta: "Open demo", img: "/marketing/laptop.webp" } },
   { id: "solutions", label: "Solutions", href: "/use-cases", blurb: "How different teams use Waylo.", items: [
     { label: "Marketing teams", href: "/solutions/marketing", desc: "See which questions come before a demo", icon: "📣", t: "teal" },
-    { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts on pricing and demo interest", icon: "🎯", t: "amber" },
+    { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts when a buyer looks ready", icon: "🎯", t: "amber" },
     { label: "SaaS and docs", href: "/solutions/saas", desc: "Cited answers from docs and pricing", icon: "🧪", t: "indigo" },
     { label: "SaaS pre-sales to Slack", href: "/use-cases/saas-presales-slack", desc: "Cited answers, then a rep in Slack", icon: "#", t: "amber" },
     { label: "Agencies", href: "/use-cases/agencies", desc: "A workspace per client site", icon: "🏢", t: "teal" },

@@ -85,7 +85,7 @@ export function ProofBar() {
 }
 export const PHOTOS = {
   support: { src: "/marketing/support.webp", alt: "Team reviewing website conversations on laptops", tag: "Support deflection", t: "teal" as Tone, caption: "Waylo answers the repeat pre-sales questions from your docs, with sources. Your team takes the hard ones." },
-  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps see a Slack post about a lead who asked about pricing, with a link to the conversation." },
+  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps see a Slack post when a visitor looks ready to buy or leaves their details, with a link to the conversation." },
   dashboard: { src: "/marketing/dashboard.webp", alt: "Analytics dashboard on a laptop screen", tag: "Signals", t: "indigo" as Tone, caption: "Journeys and signals show which pages lead to buying questions." },
   workshop: { src: "/marketing/workshop.webp", alt: "Marketing team collaborating at a whiteboard", tag: "Guidance", t: "teal" as Tone, caption: "Marketing owns the voice. Facts, rules, and skills keep answers in your words." },
 };
