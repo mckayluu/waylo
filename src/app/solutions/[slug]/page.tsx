@@ -5,7 +5,7 @@ import { MarketingPage, CTA } from "@/components/marketing/Page";
 import { Section } from "@/components/marketing/Section";
 import { Chip, WorkflowStrip } from "@/components/marketing/Visuals";
 import { PEOPLE, type HeroArt } from "@/components/marketing/PageArt";
-const ART: Record<string, HeroArt> = { marketing: { photo: "twoWomen", overlay: "session" }, sales: { photo: "salesTeam", overlay: "slack" }, saas: { photo: "cafe", overlay: "chat" }, agencies: { photo: "pair", overlay: "chat" } };
+const ART: Record<string, HeroArt> = { marketing: { photo: "twoWomen", overlay: "session" }, sales: { photo: "salesTeam", overlay: "slack" }, saas: { photo: "cafe", overlay: "chat", chat: "annual" }, agencies: { photo: "pair", overlay: "chat", chat: "maintenance" } };
 import { JsonLd, crumbsLd, faqLd, pageMeta } from "@/lib/seo";
 import { SOLUTIONS, getSolution } from "@/lib/solutions";
 export const dynamicParams = false;

@@ -20,13 +20,31 @@ export function SlackCard({ className = "" }: { className?: string }) {
   );
 }
 
-export function ChatBubble({ className = "" }: { className?: string }) {
+// Hero chat cards. Every answer is copied from the fictional Northpoint Ops demo pages
+// (src/app/demo and src/lib/demoKnowledge.ts), so the card shows what the real demo widget would say.
+export const CHATS = {
+  quickbooks: { q: "Does it sync with QuickBooks?", a: "Yes. Invoices and payments post to QuickBooks and Xero automatically.", src: "Features" },
+  pricing: { q: "How much is Pro per tech?", a: "$29 per tech a month. Office seats are free.", src: "Pricing" },
+  seats: { q: "Do office staff count as seats?", a: "No. Only technicians who use the field app are billed.", src: "Pricing" },
+  free: { q: "Is there a free plan?", a: "Yes. Starter is $0 for up to 2 techs, with the scheduling board and mobile app.", src: "Pricing" },
+  setup: { q: "Is there a setup fee?", a: "None on Starter or Pro. Enterprise includes onboarding.", src: "Pricing" },
+  annual: { q: "Is it cheaper if I pay yearly?", a: "Yes. Annual billing saves two months.", src: "Pricing" },
+  switch: { q: "Can I switch plans mid-month?", a: "Yes. Plan changes prorate to the day.", src: "Pricing" },
+  hours: { q: "When is your support team in?", a: "Monday to Friday, 6am to 6pm Pacific. You can also email support@northpoint.example.", src: "Contact" },
+  walkthrough: { q: "Can I see it with my own jobs?", a: "Yes. Walkthroughs take 30 minutes and use your own job list.", src: "Contact" },
+  offline: { q: "Does the app work without signal?", a: "Yes. Techs log notes, photos and signatures offline. It syncs when they’re back in signal.", src: "Features" },
+  maintenance: { q: "Can I run maintenance plans?", a: "Yes, on Pro. Recurring maintenance agreements live on the scheduling board.", src: "Pricing" },
+} as const;
+export type ChatKey = keyof typeof CHATS;
+
+export function ChatBubble({ className = "", chat = "quickbooks" }: { className?: string; chat?: ChatKey }) {
+  const c = CHATS[chat];
   return (
-    <div className={`w-full max-w-[290px] space-y-2 text-left text-[13px] leading-5 ${className}`} role="img" aria-label="Illustration of a chat on the fictional Northpoint Ops site. A visitor asks if it syncs with QuickBooks, and the answer links the features page.">
-      <p className="ml-auto w-fit rounded-2xl rounded-br-md bg-navy-700 px-3.5 py-2 text-white shadow-lg">Does it sync with QuickBooks?</p>
+    <div className={`w-full max-w-[290px] space-y-2 text-left text-[13px] leading-5 ${className}`} role="img" aria-label={`Illustration of a chat on the fictional Northpoint Ops site. A visitor asks “${c.q}” and the answer links the ${c.src.toLowerCase()} page.`}>
+      <p className="ml-auto w-fit rounded-2xl rounded-br-md bg-navy-700 px-3.5 py-2 text-white shadow-lg">{c.q}</p>
       <div className="rounded-2xl rounded-bl-md bg-white px-3.5 py-2.5 text-warm-800 shadow-xl shadow-navy-950/20 ring-1 ring-warm-200">
-        Yes. Invoices and payments post to QuickBooks and Xero automatically.<sup className="ml-0.5 font-semibold text-rasp-700">1</sup>
-        <span className="mt-2 flex w-fit items-center gap-1.5 rounded-full bg-warm-50 px-2.5 py-0.5 text-[11px] font-medium text-navy-700 ring-1 ring-warm-200"><span className="font-semibold text-rasp-700">1</span>Northpoint Ops · Features</span>
+        {c.a}<sup className="ml-0.5 font-semibold text-rasp-700">1</sup>
+        <span className="mt-2 flex w-fit items-center gap-1.5 rounded-full bg-warm-50 px-2.5 py-0.5 text-[11px] font-medium text-navy-700 ring-1 ring-warm-200"><span className="font-semibold text-rasp-700">1</span>Northpoint Ops · {c.src}</span>
       </div>
     </div>
   );
