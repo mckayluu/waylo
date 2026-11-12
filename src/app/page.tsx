@@ -6,6 +6,7 @@ import { Footer } from "@/components/marketing/Footer";
 import { Shell } from "@/components/marketing/Section";
 import { JsonLd, orgLd, appLd, faqLd } from "@/lib/seo";
 import { HomeTour } from "@/components/marketing/HomeTour";
+import { ChatCallout } from "@/components/marketing/ChatCallout";
 import { SlackCard, ChatBubble, LeftCard, Icon } from "@/components/marketing/HomeVisuals";
 
 export const metadata: Metadata = { title: { absolute: "Waylo – Your website’s own AI chat" }, description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", alternates: { canonical: "/" }, openGraph: { title: "Waylo – Your website’s own AI chat", description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", url: "/", siteName: "Waylo", type: "website", images: [{ url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo – Your website’s own AI chat" }] }, twitter: { card: "summary_large_image", title: "Waylo – Your website’s own AI chat", description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", images: ["/brand/og.png"] } };
@@ -71,6 +72,7 @@ export default function Home() {
               <h1 className="w-h-xl mt-6 font-semibold text-white">Your website’s <span className="w-marker">own AI chat</span></h1>
               <p className="mt-6 max-w-xl text-lg leading-8 text-white/85">Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.</p>
               <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent w-btn-lg">Start free trial</Link><Link href="/try" className="w-btn-glass w-btn-lg">Try it on your site</Link></div>
+              <ChatCallout />
             </div>
             <div id="product" className="relative scroll-mt-20"><HeroCollage /></div>
           </div>
