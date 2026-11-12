@@ -119,7 +119,7 @@ export default function Demo({ params }: { params: { slug?: string[] } }) {
           <div className="mt-5 flex flex-wrap gap-3"><a href="/signup" className="rounded bg-rasp-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rasp-700">Start free trial</a><a href="/how-it-works" className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-100">See how it works</a></div></div>
         <ProductTour steps={tourSteps()} compact /></div></section>
       <footer className="border-t border-slate-200 px-5 py-8 pb-24 text-xs text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3"><span>© 2026 Northpoint Ops (fictional). Chat by Waylo, embedded with <code>&lt;script src=&quot;/waylo.js&quot; data-mode=&quot;launcher&quot;&gt;</code>.</span><a href="/demo/pricing" className="hover:text-slate-800">Pricing</a></div></footer>
-      <Script src="/waylo.js" data-site="northpoint-demo" data-mode="launcher" strategy="afterInteractive" />
+      <Script src="/waylo.js" data-site="northpoint-demo" data-mode="launcher" data-color="#1d4ed8" strategy="afterInteractive" />
     </div>
   );
 }

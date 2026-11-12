@@ -15,9 +15,9 @@ export function emailStatus() {
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
 function layout(title: string, body: string, cta: string, link: string) {
   return `<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;padding:24px;color:#1c1917">
-<p style="font-weight:700;color:#0f766e;font-size:18px;margin:0 0 16px">Waylo</p>
+<p style="font-weight:700;color:#A81B48;font-size:18px;margin:0 0 16px">Waylo</p>
 <h1 style="font-size:20px;margin:0 0 12px">${esc(title)}</h1>${body}
-<p style="margin:24px 0"><a href="${esc(link)}" style="background:#0d9488;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">${esc(cta)}</a></p>
+<p style="margin:24px 0"><a href="${esc(link)}" style="background:#A81B48;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">${esc(cta)}</a></p>
 <p style="font-size:12px;color:#78716c">Or paste this link: ${esc(link)}</p></div>`;
 }
 async function send(to: string, subject: string, html: string, text: string, link: string): Promise<EmailResult> {

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
 import type { Branding } from "@/lib/store";
-const SWATCH = ["#0f766e", "#0e7490", "#1d4ed8", "#4d7c0f", "#b45309", "#1c1917"];
+const SWATCH = ["#A81B48", "#0e7490", "#1d4ed8", "#4d7c0f", "#b45309", "#1c1917"];
 export function BrandingForm({ initial }: { initial: Branding }) {
   const [b, setB] = useState(initial); const [msg, setMsg] = useState(""); const [busy, setBusy] = useState(false); const router = useRouter();
   async function save(e: React.FormEvent) {
