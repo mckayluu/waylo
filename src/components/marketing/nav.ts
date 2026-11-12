@@ -25,7 +25,7 @@ export const NAV: NavGroup[] = [
     { label: "Support deflection", href: "/use-cases/support-deflection", desc: "Docs answers with the link", icon: "🛟", t: "teal" },
     { label: "Compare", href: "/compare", desc: "Waylo next to chatbots and live chat", icon: "⚖", t: "indigo" },
     { label: "All use cases", href: "/use-cases", desc: "Compare every team side by side", icon: "↗", t: "amber" },
-  ], feature: { title: "Sales handoff in minutes", body: "On Starter and up, reps get a Slack post with the question and a link to the conversation.", href: "/solutions/sales", cta: "See how", img: "/marketing/meeting.webp" } },
+  ], feature: { title: "Sales handoff in minutes", body: "Reps get a Slack post with the question and a link to the conversation.", href: "/solutions/sales", cta: "See how", img: "/marketing/meeting.webp" } },
   { id: "resources", label: "Resources", href: "/resources", blurb: "Docs, guides, and answers for trying and running Waylo.", items: [
     { label: "Resources hub", href: "/resources", desc: "Everything in one place", icon: "📚", t: "indigo" },
     { label: "Documentation", href: "/docs", desc: "How every feature works", icon: "📘", t: "teal" },

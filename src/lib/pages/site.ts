@@ -2,11 +2,11 @@ import type { InfoDef } from "./types";
 export const HOW: InfoDef = { path: "/how-it-works", crumb: "How it works", eyebrow: "Product tour",
   title: "From signup to your first cited answer",
   sub: "Here are the eight real screens in order. You need your own pages and one script tag.",
-  answer: "Create a workspace and crawl your site. Name the assistant, and add guidance where your pages miss something. Then paste one script tag. Visitors get answers from your pages with a link to the source. You read every question in the admin. On Starter and up, ready buyers also post to Slack.",
+  answer: "Create a workspace and crawl your site. Name the assistant, and add guidance where your pages miss something. Then paste one script tag. Visitors get answers from your pages with a link to the source. You read every question in the admin, and ready buyers post to Slack.",
   metaTitle: "How Waylo works, step by step", metaDesc: "A screen-by-screen tour of Waylo. Create a workspace, crawl your site, brand the assistant, paste the script tag, and see cited answers, the admin, Slack routing, and the free Trial.",
   blocks: [
     { t: "prose", eyebrow: "Behind the answers", h: "How buying intent is detected", p: ["Waylo checks every visitor message for words about pricing, demos, buying, enterprise needs like SSO and compliance, integrations, and support. Two or more buying signals, or a ready-to-buy signal, make the conversation **high-intent**.", "Page views are recorded from the moment the script loads, so each signal comes with the path that led to it."] },
-    { t: "slack", eyebrow: "Hand off", h: "What lands in Slack", p: ["On Starter and up, high-intent conversations and contact requests post to your channel. Each post has the visitor’s words and signals, with an **Open in Waylo** link.", "The Trial doesn’t send Slack or CRM alerts. You see the same signals in the admin."] },
+    { t: "slack", eyebrow: "Hand off", h: "What lands in Slack", p: ["High-intent conversations and contact requests post to your channel on every plan, the Trial included. Each post has the visitor’s words and signals, with an **Open in Waylo** link."] },
     { t: "faq", items: [["How long does setup take?", "Most of it is reading. The crawl usually finishes in under a minute for a small site, and the install is one tag."], ["Do I need a developer?", "Only if you can’t add custom HTML to your site yourself. See the [install guide](/docs/install)."], ["What if it gets something wrong?", "Open the conversation, see which source it used, then fix the page or add a Fact in Guidance. The answer changes on the next question."]] }],
   related: [["AI chat", "/product/ai-chat", "Crawl and answers in detail."], ["Install guide", "/docs/install", "Every attribute, every CMS."], ["Pricing", "/pricing", "Trial $0, Starter $79, Growth $249."]] };
 
@@ -35,11 +35,11 @@ export const SECURITY: InfoDef = { path: "/security", crumb: "Security and data"
 export const INTEGRATIONS: InfoDef = { path: "/integrations", crumb: "Integrations", eyebrow: "Integrations", hero: "integrations",
   title: "What Waylo connects to",
   sub: "There’s a Slack incoming webhook and a JSON webhook for everything else. The script tag works on any site that takes custom HTML.",
-  answer: "On Starter and up, Waylo sends data out through a Slack incoming webhook and a JSON webhook. It installs with one script tag on any CMS or in Google Tag Manager. To reach HubSpot, Salesforce, or a spreadsheet, point the JSON webhook at Zapier, Make, n8n, or your own endpoint.",
+  answer: "On every plan, Waylo sends data out through a Slack incoming webhook and a JSON webhook. It installs with one script tag on any CMS or in Google Tag Manager. To reach HubSpot, Salesforce, or a spreadsheet, point the JSON webhook at Zapier, Make, n8n, or your own endpoint.",
   metaTitle: "Integrations: Slack, JSON webhook, CMS and GTM", metaDesc: "What Waylo integrates with today. Slack through an incoming webhook, any CRM through a JSON webhook with Zapier, Make, or n8n, and installs on Webflow, WordPress, Shopify, Squarespace, Wix, and GTM.",
   blocks: [
     { t: "table", eyebrow: "Today", h: "What’s built and how it connects", head: ["Integration", "How", "Notes"], rows: [
-      ["Slack", "Incoming webhook URL", "Starter and Growth. One channel per workspace. Leads, high-intent, handoffs. [Details](/product/slack-routing)."], ["CRM (HubSpot, Salesforce, and others)", "JSON webhook to Zapier, Make, n8n, or your endpoint", "Starter and Growth. No native CRM app."],
+      ["Slack", "Incoming webhook URL", "Every plan. One channel per workspace. Leads, high-intent, handoffs. [Details](/product/slack-routing)."], ["CRM (HubSpot, Salesforce, and others)", "JSON webhook to Zapier, Make, n8n, or your endpoint", "Every plan. No native CRM app."],
       ["Google Tag Manager", "Custom HTML tag, All Pages", "[Install guide](/docs/install#cms)."], ["Webflow", "Site settings → Custom code → Footer", ""],
       ["WordPress", "Theme footer or a header/footer code plugin", "No Waylo plugin."], ["Shopify", "theme.liquid, before </body>", "No Shopify app."],
       ["Squarespace, Wix", "Code injection or custom code", "Those platforms may need a paid plan for custom code."], ["Stripe", "Built-in billing for your Waylo plan", "Not a visitor-facing integration."]] },
