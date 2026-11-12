@@ -28,23 +28,23 @@ const qa: [string, string][] = [
 export default function Resources() {
   return <MarketingPage eyebrow="Resources" crumb="Resources" title="Docs, guides, and answers" sub="Install steps, embed reference, the JavaScript API, troubleshooting, and the FAQ." answer="Waylo’s resources include the docs, an install guide, an embed mode reference, the JavaScript API, an FAQ, pricing details, a demo site, and guides for marketing, sales, SaaS, and agency teams.">
     <JsonLd data={[crumbsLd([["Resources", "/resources"]]), faqLd(qa)]} />
-    <Section className="w-mesh" eyebrow="Library" title="Start where you are">
+    <Section className="w-band-mist py-16 sm:py-20" eyebrow="Library" title="Start where you are">
       <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr]">
-        <div><Link href={res[1].href} className="group grid overflow-hidden rounded-md bg-warm-950 text-white sm:grid-cols-[1fr_200px]"><div className="p-6"><p className="text-xs font-semibold uppercase tracking-[0.08em] text-rasp-300">Start here</p><p className="mt-1.5 text-2xl font-semibold tracking-tight">{res[1].h}</p><p className="mt-2 text-sm leading-6 text-warm-300">{res[1].d}</p><span className="mt-4 inline-block text-sm font-medium text-rasp-300 group-hover:underline">Open the guide →</span></div><Image src="/marketing/laptop.webp" alt="" width={1400} height={934} sizes="200px" className="hidden h-full w-full object-cover opacity-80 sm:block" /></Link>
+        <div><Link href={res[1].href} className="group grid overflow-hidden rounded-md bg-warm-950 text-white sm:grid-cols-[1fr_200px]"><div className="p-6"><p className="text-xs font-semibold uppercase tracking-[0.08em] text-rasp-300">Start here</p><p className="mt-1.5 text-2xl font-semibold tracking-tight">{res[1].h}</p><p className="mt-2 text-sm leading-6 text-warm-300">{res[1].d}</p><span className="mt-4 inline-block text-sm font-medium text-rasp-300 group-hover:underline">Open the guide →</span></div><Image src="/images/people/cafe-laptop.webp" alt="" width={1400} height={934} sizes="200px" className="hidden h-full w-full object-cover opacity-80 sm:block" /></Link>
           <ul className="mt-6 divide-y divide-warm-200 border-y border-warm-200">{res.filter((r, i) => i !== 1 && ["Docs", "Setup", "Developers", "Support"].includes(r.tag)).map(r => <li key={r.h}><Link href={r.href} className="grid gap-1 py-3.5 hover:text-navy-800 sm:grid-cols-[180px_1fr] sm:gap-6"><span className="font-semibold text-warm-900">{r.h}</span><span className="text-sm text-warm-600">{r.d}</span></Link></li>)}</ul></div>
         <div><p className="text-xs font-semibold uppercase tracking-wider text-navy-700">Evaluating Waylo</p><ul className="mt-3 space-y-4">{res.filter(r => r.tag === "Evaluate").map(r => <li key={r.h}><Link href={r.href} className="group block"><span className="font-semibold text-warm-900 group-hover:text-navy-800">{r.h} →</span><span className="mt-0.5 block text-sm leading-6 text-warm-600">{r.d}</span></Link></li>)}</ul></div>
       </div>
     </Section>
-    <Section className="bg-white" eyebrow="Guides" title="Practical guides" id="guides">
+    <Section className="bg-card py-16 sm:py-20" eyebrow="Guides" title="Practical guides" id="guides">
       <div className="grid gap-5 md:grid-cols-2">{GUIDES.map((g, i) => <Link key={g.slug} href={`/resources/${g.slug}`} className={`group block rounded-md p-6 ring-1 transition ${i === 0 ? "bg-warm-950 text-white ring-white/10 md:row-span-2" : "bg-white ring-warm-200 hover:ring-rasp-300"}`}><p className={`text-xs font-semibold uppercase tracking-wider ${i === 0 ? "text-rasp-300" : "text-navy-700"}`}>{g.tag} · {g.readMin} min read</p><p className={`mt-2 font-semibold tracking-tight ${i === 0 ? "text-2xl" : "text-lg text-warm-900 group-hover:text-navy-800"}`}>{g.title}</p><p className={`mt-2 text-sm leading-6 ${i === 0 ? "text-warm-300" : "text-warm-600"}`}>{g.dek}</p><span className={`mt-4 inline-block text-sm font-semibold ${i === 0 ? "text-rasp-300" : "text-navy-700"}`}>Read →</span></Link>)}</div>
     </Section>
-    <Section className="bg-white" eyebrow="Playbooks by team" title="How teams roll out Waylo">
-      <div className="grid gap-4 md:grid-cols-2">{SOLUTIONS.map(s => <Link key={s.id} href={`/solutions/${s.id}`} className="w-card-lg group flex overflow-hidden transition hover:border-rasp-300"><Image src={s.img} alt="" width={1400} height={934} sizes="160px" className="h-auto w-36 shrink-0 object-cover" /><div className="p-5"><Chip t={s.t}>{s.who}</Chip><p className="mt-2 font-semibold text-warm-900">{s.short}</p><p className="mt-1 text-sm text-warm-600">{s.setup.map(x => x[0]).join(" → ")}</p></div></Link>)}</div>
+    <Section className="bg-card py-16 sm:py-20" eyebrow="Playbooks by team" title="How teams roll out Waylo">
+      <div className="grid gap-4 md:grid-cols-2">{SOLUTIONS.map(s => <Link key={s.id} href={`/solutions/${s.id}`} className="w-tile w-tile-card ring-1 ring-warm-200 group flex overflow-hidden transition hover:border-rasp-300"><Image src={s.img} alt="" width={1400} height={934} sizes="160px" className="h-auto w-36 shrink-0 object-cover" /><div className="p-5"><Chip t={s.t}>{s.who}</Chip><p className="mt-2 font-semibold text-warm-900">{s.short}</p><p className="mt-1 text-sm text-warm-600">{s.setup.map(x => x[0]).join(" → ")}</p></div></Link>)}</div>
     </Section>
-    <Section className="w-mesh"><FactsBlock /></Section>
-    <Section className="bg-white" eyebrow="Common questions" title="Before you install">
+    <Section className="w-band-mist py-16 sm:py-20"><FactsBlock /></Section>
+    <Section className="bg-card py-16 sm:py-20" eyebrow="Common questions" title="Before you install">
       <div className="max-w-4xl divide-y divide-warm-200 border-y border-warm-200">{qa.map(([q, a]) => <div key={q} className="py-4"><h3 className="font-semibold text-warm-900">{q}</h3><p className="mt-2 text-sm leading-6 text-warm-600">{a}</p></div>)}</div>
     </Section>
-    <Section><CTA /></Section>
+    <section className="w-band-paper px-5 py-16"><CTA /></section>
   </MarketingPage>;
 }

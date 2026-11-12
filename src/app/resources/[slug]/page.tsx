@@ -27,8 +27,8 @@ export default function Guide({ params }: { params: { slug: string } }) {
       <p className="mt-5 text-xs text-white/70">By McKay Luu · {g.readMin} min read · Updated {g.updated}</p>
     </div></section>
     <div className="mx-auto grid max-w-6xl gap-10 px-5 py-10 lg:grid-cols-[220px_1fr]">
-      <aside className="hidden lg:block"><div className="sticky top-24 text-sm"><p className="w-eyebrow-amber">On this page</p><ol className="mt-3 space-y-2 border-l border-warm-200 pl-3">{g.sections.map(s => <li key={s.h}><a href={`#${slug(s.h)}`} className="text-warm-600 hover:text-navy-700">{s.h}</a></li>)}</ol></div></aside>
-      <article className="w-card-lg min-w-0 max-w-3xl p-6 text-[15.5px] leading-7 text-warm-700 sm:p-10">
+      <aside className="hidden lg:block"><div className="sticky top-24 text-sm"><p className="w-pill">On this page</p><ol className="mt-3 space-y-2 border-l border-warm-200 pl-3">{g.sections.map(s => <li key={s.h}><a href={`#${slug(s.h)}`} className="text-warm-600 hover:text-navy-700">{s.h}</a></li>)}</ol></div></aside>
+      <article className="w-tile w-tile-card ring-1 ring-warm-200 min-w-0 max-w-3xl p-6 text-[15.5px] leading-7 text-warm-700 sm:p-10">
         {g.sections.map(s => <section key={s.h} id={slug(s.h)} className="scroll-mt-24 border-t border-warm-100 pt-7 first:border-0 first:pt-0 [&+section]:mt-7">
           <h2 className="text-xl font-semibold tracking-tight text-warm-900 sm:text-2xl">{s.h}</h2>
           {s.p?.map((p, i) => <p key={i} className="mt-3"><Rich s={p} /></p>)}
@@ -40,7 +40,7 @@ export default function Guide({ params }: { params: { slug: string } }) {
         {g.faqs && <section className="mt-9 border-t border-warm-100 pt-7"><h2 className="text-xl font-semibold tracking-tight text-warm-900">Questions</h2><dl className="mt-3 divide-y divide-warm-100">{g.faqs.map(([q, a]) => <div key={q} className="py-3"><dt className="font-medium text-warm-900">{q}</dt><dd className="mt-1 text-sm text-warm-600">{a}</dd></div>)}</dl></section>}
       </article>
     </div>
-    <Section eyebrow="More guides" title="Keep reading" className="bg-white"><ul className="grid gap-px overflow-hidden rounded-md bg-warm-200 ring-1 ring-warm-200 md:grid-cols-3">{others.map(o => <li key={o.slug} className="bg-white"><Link href={`/resources/${o.slug}`} className="block h-full p-5 hover:bg-warm-50"><span className="text-xs font-semibold uppercase tracking-wider text-navy-700">{o.tag} · {o.readMin} min</span><span className="mt-1 block font-semibold text-warm-900">{o.title}</span></Link></li>)}</ul></Section>
-    <Section><CTA /></Section>
+    <Section eyebrow="More guides" title="Keep reading" className="bg-card py-16 sm:py-20"><ul className="grid gap-px overflow-hidden rounded-md bg-warm-200 ring-1 ring-warm-200 md:grid-cols-3">{others.map(o => <li key={o.slug} className="bg-white"><Link href={`/resources/${o.slug}`} className="block h-full p-5 hover:bg-warm-50"><span className="text-xs font-semibold uppercase tracking-wider text-navy-700">{o.tag} · {o.readMin} min</span><span className="mt-1 block font-semibold text-warm-900">{o.title}</span></Link></li>)}</ul></Section>
+    <section className="w-band-paper px-5 py-16"><CTA /></section>
   </main><Footer /></Shell>;
 }

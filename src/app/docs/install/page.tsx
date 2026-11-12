@@ -11,7 +11,7 @@ export default function Install() {
   const s = snippet();
   return <DocsLayout title="Install guide">
     <JsonLd data={crumbsLd([["Docs", "/docs"], ["Install guide", "/docs/install"]])} />
-    <p className="w-eyebrow">Install guide</p>
+    <p className="w-pill">Install guide</p>
     <h1 className="mt-2">Install Waylo</h1>
     <p className="text-lg text-warm-600">One line of HTML adds the chat to every page. It also starts recording visitor journeys and flagging buying intent. There’s no build step or SDK.</p>
     <ol className="not-prose mt-6 grid gap-3 sm:grid-cols-3">{([["Add the snippet", "#snippet", "teal"], ["Allow your domain", "#allowlist", "indigo"], ["Verify", "#verify", "amber"]] as const).map(([t, h, c], i) => <li key={h}><a href={h} className="w-card flex items-center gap-3 p-4 !no-underline hover:border-rasp-300"><IconTile t={c}>{i + 1}</IconTile><span className="font-semibold text-warm-900">{t}</span></a></li>)}</ol>

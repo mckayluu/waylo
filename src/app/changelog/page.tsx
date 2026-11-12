@@ -23,9 +23,9 @@ const tone = { Product: "bg-navy-50 text-navy-800 ring-navy-200", Billing: "bg-r
 export default function Changelog() {
   return <MarketingPage eyebrow="Changelog" crumb="Changelog" title="What’s shipped" sub="Dated entries from the commit history. Things change fast in early access, so check here." answer="Waylo’s first version shipped on November 3, 2026 with cited answers, guidance, signals, and Slack alerts. Workspaces and self-serve signup followed on November 4.">
     <JsonLd data={[crumbsLd([["Changelog", "/changelog"]])]} />
-    <Section className="pt-10"><ol className="relative max-w-3xl border-l-2 border-warm-200 pl-6">{LOG.map(e => <li key={e.date + e.title} className="relative pb-9 last:pb-0"><span className="absolute -left-[33px] top-1 h-4 w-4 rounded-full border-2 border-white bg-gradient-to-br from-navy-600 to-navy-600 ring-1 ring-warm-200" />
+    <Section className="w-band-paper py-16"><ol className="relative max-w-3xl border-l-2 border-warm-200 pl-6">{LOG.map(e => <li key={e.date + e.title} className="relative pb-9 last:pb-0"><span className="absolute -left-[33px] top-1 h-4 w-4 rounded-full border-2 border-white bg-gradient-to-br from-navy-600 to-navy-600 ring-1 ring-warm-200" />
       <div className="flex flex-wrap items-center gap-2"><time className="font-mono text-xs text-warm-500">{e.date}</time><span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${tone[e.tag]}`}>{e.tag}</span></div>
       <h2 className="mt-1.5 text-lg font-semibold tracking-tight text-warm-900">{e.title}</h2><ul className="mt-2 space-y-1.5 text-sm leading-6 text-warm-600">{e.items.map(x => <li key={x} className="flex gap-2"><span className="text-navy-700">·</span>{x}</li>)}</ul></li>)}</ol></Section>
-    <Section><CTA /></Section>
+    <section className="w-band-paper px-5 py-16"><CTA /></section>
   </MarketingPage>;
 }

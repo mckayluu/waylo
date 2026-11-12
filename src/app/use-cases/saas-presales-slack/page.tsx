@@ -35,7 +35,7 @@ export default function SaasPresalesSlack() {
     <Section eyebrow="What it answers" title="The questions that come before a demo" sub="Each answer links the page it came from, so the evaluator can check it and so can you.">
       <div className="divide-y divide-warm-200 border-y border-warm-200">{questions.map(([q, a, sig]) => <div key={q} className="grid gap-2 py-4 sm:grid-cols-[260px_1fr_auto] sm:items-baseline"><p className="font-semibold text-warm-900">{q}</p><p className="text-sm text-warm-600">{a}</p><span className="w-fit rounded-full border border-rasp-300 bg-rasp-50 px-2 py-0.5 text-xs font-medium text-rasp-800">{sig}</span></div>)}</div>
     </Section>
-    <Section eyebrow="One visit" title="From first question to a Slack post" className="bg-white">
+    <Section eyebrow="One visit" title="From first question to a Slack post" className="bg-card py-16 sm:py-20">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
         <ol className="border-l-2 border-navy-600 pl-5">{timeline.map(([t, d]) => <li key={t + d} className="pb-4 last:pb-0"><p className="font-mono text-xs text-navy-700">{t}</p><p className="text-sm text-warm-700">{d}</p></li>)}</ol>
         <SlackFormats />
@@ -48,7 +48,7 @@ export default function SaasPresalesSlack() {
       <div className="mt-6 max-w-3xl"><Code>{snippet()}</Code></div>
       <p className="mt-4 text-sm"><Link href="/docs/install#checklist" className="font-semibold text-navy-700 hover:underline">Full install checklist →</Link> · <Link href="/pricing" className="font-semibold text-navy-700 hover:underline">Pricing</Link> (handoff is on every plan, the Trial included)</p>
     </Section>
-    <Section eyebrow="Questions" title="Before you set it up" className="bg-white">
+    <Section eyebrow="Questions" title="Before you set it up" className="bg-card py-16 sm:py-20">
       <div className="max-w-3xl divide-y divide-warm-200 border-y border-warm-200">{faq.map(([q, a]) => <div key={q} className="py-4"><p className="font-medium">{q}</p><p className="mt-1 text-sm text-warm-600">{a}</p></div>)}</div>
       <p className="mt-6 text-sm text-warm-500">We’ll add customer stories once there are customers to write about.</p><div className="mt-6 grid max-w-4xl gap-5 md:grid-cols-2"><Shot k="tracking" crop="h-52" /><Shot k="integrations" crop="h-52" /></div>
       <div className="mt-6 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-4 py-2">Start free trial</Link><Link href="/how-it-works" className="w-btn-ghost px-4 py-2">See how it works</Link></div>

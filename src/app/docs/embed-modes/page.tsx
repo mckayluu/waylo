@@ -13,7 +13,7 @@ const modes: [string, string, string, string, string][] = [
 export default function EmbedModes() {
   return <DocsLayout title="Embed modes">
     <JsonLd data={crumbsLd([["Docs", "/docs"], ["Embed modes", "/docs/embed-modes"]])} />
-    <p className="w-eyebrow-alt">Configure</p><h1 className="mt-2">Embed modes</h1>
+    <p className="w-pill">Configure</p><h1 className="mt-2">Embed modes</h1>
     <p className="text-lg text-warm-600">Waylo has three embed modes, set with the <code>data-mode</code> attribute: <code>launcher</code> (default), <code>sidebar</code>, and <code>track</code>. You can use a different mode on each page.</p>
     <div className="not-prose mt-6"><ModesVisual /></div>
     <div className="not-prose mt-8 overflow-x-auto rounded-md border border-warm-200"><table className="w-full min-w-[520px] text-sm"><thead className="bg-warm-50"><tr><th className="w-th">Mode</th><th className="w-th">Chat UI</th><th className="w-th">Journeys and signals</th><th className="w-th">Best for</th></tr></thead><tbody className="divide-y divide-warm-100">{modes.map(([m, , , b]) => <tr key={m}><td className="px-5 py-3 font-mono font-semibold">{m}</td><td className="px-5 py-3">{m === "track" ? "–" : "✓"}</td><td className="px-5 py-3 text-navy-700">✓</td><td className="px-5 py-3 text-warm-600">{b}</td></tr>)}</tbody></table></div>

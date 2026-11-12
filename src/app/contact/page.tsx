@@ -30,8 +30,8 @@ export default function Help() {
       <p className="mt-4 max-w-2xl text-lg text-white/85">Waylo is self-serve. The tour, the install guide, and the FAQ answer most questions. If something is broken, use the support form below.</p>
       <div className="mt-6 flex flex-wrap gap-3"><Link href="/how-it-works" className="w-btn-accent px-5 py-2.5">See how it works</Link><Link href="/signup" className="w-btn-glass px-5 py-2.5">Start free trial</Link></div>
     </div></section>
-    <Section className="pt-10"><div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">{groups.map(g => <div key={g}><p className="w-eyebrow-amber">{g}</p><ul className="mt-3 divide-y divide-warm-200 border-y border-warm-200">{paths.filter(p => p[0] === g).map(([, l, h, d]) => <li key={h}><Link href={h} className="block py-3 hover:text-navy-800"><span className="font-semibold text-warm-900">{l} →</span><span className="mt-0.5 block text-sm leading-6 text-warm-600">{d}</span></Link></li>)}</ul></div>)}</div></Section>
-    <Section id="support" eyebrow="Support form" title="Something not working?" sub="For bugs and account problems only. Tell us the page, what you expected, and what happened. Replies come by email." className="bg-white">
+    <Section className="w-band-paper py-16"><div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">{groups.map(g => <div key={g}><p className="w-pill">{g}</p><ul className="mt-3 divide-y divide-warm-200 border-y border-warm-200">{paths.filter(p => p[0] === g).map(([, l, h, d]) => <li key={h}><Link href={h} className="block py-3 hover:text-navy-800"><span className="font-semibold text-warm-900">{l} →</span><span className="mt-0.5 block text-sm leading-6 text-warm-600">{d}</span></Link></li>)}</ul></div>)}</div></Section>
+    <Section id="support" eyebrow="Support form" title="Something not working?" sub="For bugs and account problems only. Tell us the page, what you expected, and what happened. Replies come by email." className="bg-card py-16 sm:py-20">
       <div className="max-w-xl"><ContactForm /></div></Section>
   </main><Footer /></Shell>;
 }

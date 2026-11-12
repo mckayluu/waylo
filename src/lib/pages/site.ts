@@ -1,7 +1,7 @@
 import type { InfoDef } from "./types";
 export const HOW: InfoDef = { path: "/how-it-works", crumb: "How it works", eyebrow: "Product tour",
   title: "From signup to your first cited answer",
-  sub: "Here are the eight real screens in order. You need your own pages and one script tag.",
+  sub: "Add your website, paste one line of code, and publish. You can do it yourself in an afternoon.",
   answer: "Create a workspace and crawl your site. Name the assistant, and add guidance where your pages miss something. Then paste one script tag. Visitors get answers from your pages with a link to the source. You read every question in the admin, and ready buyers post to Slack.",
   metaTitle: "How Waylo works, step by step", metaDesc: "A screen-by-screen tour of Waylo. Create a workspace, crawl your site, brand the assistant, paste the script tag, and see cited answers, the admin, Slack routing, and the free Trial.",
   blocks: [

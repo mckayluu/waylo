@@ -1,7 +1,7 @@
 export type Tone = "teal" | "amber" | "indigo";
 export type Solution = { id: string; who: string; short: string; t: Tone; img: string; headline: string; sub: string; answer: string; pains: string[]; scenario: [string, string][]; wins: string[]; features: string[]; setup: [string, string][]; signals: string[]; faqs: [string, string][] };
 export const SOLUTIONS: Solution[] = [
-  { id: "marketing", who: "Marketing teams", short: "Learn what visitors ask", t: "teal", img: "/marketing/analytics.webp",
+  { id: "marketing", who: "Marketing teams", short: "Learn what visitors ask", t: "teal", img: "/images/people/marketing-two-women-laptop.webp",
     headline: "Waylo for marketing teams", sub: "Answer visitor questions with cited sources. Learn the words buyers use, and see which pages lead to buying questions.",
     answer: "Marketing teams use Waylo to answer visitors with cited sources and to see the real questions people ask. The admin shows which pages come before buying questions.",
     pains: ["Visitors leave when the answer is three clicks deep", "Forms capture a name and little else", "It’s hard to tell which pages lead to sales"],
@@ -10,7 +10,7 @@ export const SOLUTIONS: Solution[] = [
     setup: [["Crawl your site", "Add your domain and Waylo crawls your public pages in the background."], ["Set the voice", "Add facts, rules, and skills so answers sound like you."], ["Install the snippet", "One script tag in Webflow, WordPress, or Google Tag Manager."], ["Review questions weekly", "Use real visitor questions to fix content gaps and brief campaigns."]],
     signals: ["Pricing interest", "Demo intent", "Integration questions", "Unanswered questions"],
     faqs: [["Will Waylo replace my lead forms?", "No. Waylo answers questions and takes a name and email when a visitor wants a follow-up. Your existing forms keep working."], ["Can I control what Waylo says about our product?", "Yes. Facts, rules, and skills in the admin shape answers, and every answer cites the pages it used."], ["Does Waylo work with Webflow and WordPress?", "Yes. Waylo installs with one script tag on any site, including Webflow, WordPress, Shopify, Squarespace, Wix, and Google Tag Manager."]] },
-  { id: "sales", who: "Sales teams", short: "Hear about serious visitors in Slack", t: "amber", img: "/marketing/team.webp",
+  { id: "sales", who: "Sales teams", short: "Hear about serious visitors in Slack", t: "amber", img: "/images/people/sales-team-laptop.webp",
     headline: "Waylo for sales teams", sub: "Waylo flags pricing, demo, security, and integration questions. When a visitor looks ready to buy, leaves their details, or asks for a person, it posts to Slack or your CRM webhook with a link to the conversation.",
     answer: "Sales teams use Waylo to hear about visitors who show buying intent. The Slack post has the question, the signals, and a link to the conversation and page journey, so reps know the context before they reply.",
     pains: ["Hot visitors leave before a rep sees them", "Inbound leads arrive with no context", "Demo requests sit in a shared inbox"],
@@ -19,7 +19,7 @@ export const SOLUTIONS: Solution[] = [
     setup: [["Connect Slack", "Pick the channel where warm leads should land."], ["Add a CRM webhook", "Point the JSON webhook at Zapier, Make, or your own endpoint."], ["Tune handoff", "Decide when Waylo offers a human follow-up."], ["Follow up with context", "Reps read the conversation and page journey before they reply."]],
     signals: ["Demo request", "Pricing questions", "Security and SSO", "CRM integration"],
     faqs: [["How fast do reps hear about a lead?", "Slack alerts and webhooks fire as soon as the handoff is captured. Reps can follow up while the visitor is still on the site."], ["What does a rep see?", "Slack shows the visitor’s name or email, signals, last question, and an Open in Waylo link. The admin shows the full conversation with cited answers and the pages they visited."], ["Which CRMs are supported?", "There are no native CRM apps yet. Waylo sends a JSON webhook; teams route it into HubSpot, Salesforce, or a sheet with Zapier, Make, or their own endpoint."]] },
-  { id: "saas", who: "SaaS websites and docs", short: "Cited answers from docs and pricing", t: "indigo", img: "/marketing/laptop.webp",
+  { id: "saas", who: "SaaS websites and docs", short: "Cited answers from docs and pricing", t: "indigo", img: "/images/people/cafe-laptop.webp",
     headline: "Waylo for SaaS websites and docs", sub: "Evaluators get cited answers about integrations, security, and pricing. Use a launcher on marketing pages and a sidebar on docs.",
     answer: "SaaS companies use Waylo to answer technical and pricing questions from their docs and pricing pages, with links. Evaluators find answers faster, and support sees fewer repeat questions.",
     pains: ["Evaluators can’t find integration and security details", "Support answers the same pre-sales questions every day", "Docs search returns ten links and no answer"],
@@ -28,7 +28,7 @@ export const SOLUTIONS: Solution[] = [
     setup: [["Crawl marketing and docs", "Include docs and pricing pages in the crawl."], ["Choose a mode for each page", "Use the launcher on marketing pages, the sidebar on docs, and data-mode=\"track\" where you just want data."], ["Add skills", "Tell Waylo how to handle security or SSO questions."], ["Watch the gaps", "Unanswered questions show where docs need work."]],
     signals: ["Security and SSO", "API and integrations", "Pricing tiers", "Migration questions"],
     faqs: [["Can Waylo run in our docs?", "Yes. Sidebar mode is made for docs and help centers. Set data-mode=\"sidebar\" on the script tag."], ["Will it make up answers about features we don’t have?", "Waylo answers from crawled pages and facts you add. When your content doesn’t cover a question, it says so and offers a handoff."], ["Can we measure before turning chat on?", "Yes. Track mode records journeys and signals without showing chat."]] },
-  { id: "agencies", who: "Agencies and multi-site teams", short: "Cited chat on each client’s site", t: "teal", img: "/marketing/collab.webp",
+  { id: "agencies", who: "Agencies and multi-site teams", short: "Cited chat on each client’s site", t: "teal", img: "/images/people/pair-laptops-table.webp",
     headline: "Waylo for agencies", sub: "Give each client site its own Waylo workspace. Each one gets its own crawl, guidance, assistant name and color, and Slack or webhook routing.",
     answer: "Agencies use Waylo to run cited-answer chat on client sites, with a separate workspace per client so each has its own crawl, guidance, branding, and lead routing.",
     pains: ["Clients want AI chat but worry it will make things up", "Each site needs different rules and routing", "Clients need access without admin rights"],

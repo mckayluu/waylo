@@ -11,7 +11,7 @@ const cards: [string, string, string, "teal" | "amber" | "indigo"][] = [["Instal
 export default function Docs() {
   return <DocsLayout title="Overview">
     <JsonLd data={crumbsLd([["Docs", "/docs"]])} />
-    <p className="w-eyebrow">Documentation</p>
+    <p className="w-pill">Documentation</p>
     <h1 className="mt-2">Get Waylo live on your site</h1>
     <p className="text-lg text-warm-600">Waylo runs from a single async script tag. It adds the chat, records visitor journeys, and flags buying intent. The install takes about ten minutes.</p>
     <div className="mt-6 [&_pre]:mt-0"><Code label="Quick start. Paste before </body>">{snippet()}</Code></div>
