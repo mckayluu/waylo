@@ -10,6 +10,22 @@ export const isWayloWs = async () => !tryCtx() && (await currentWs()) === DEFAUL
 export type Source = { title: string; url: string; summary: string };
 const STOP = new Set("the a an is are was were what how do does can i you we our your to of and or for in on it its with be my me about this that from at by as will would should could have has had any there their them they us".split(" "));
 export const terms = (s: string) => (s.toLowerCase().match(/[a-z0-9$]+/g) || []).filter((w) => w.length > 2 && !STOP.has(w)).map((w) => w.replace(/(ies)$/, "y").replace(/(?<!s)s$/, ""));
+export const isPricingQuestion = (q: string) => /\b(price|pricing|cost|costs|how much|quote|plans?|starter|growth|\$?\d+)\b/i.test(q);
+/** True when this page/source actually contains pricing a visitor could be asking about. */
+export function hasPricingContent(s: { url?: string; title?: string; text?: string; summary?: string }) {
+  const path = (() => { try { return new URL(s.url || "", "https://example.com").pathname; } catch { return s.url || ""; } })();
+  if (/\/pricing(\/|$)/i.test(path) || /\bpricing\b/i.test(s.title || "")) return true;
+  const t = `${s.title || ""} ${s.text || ""} ${s.summary || ""}`;
+  return /\$\s?\d/.test(t) && /\b(plan|plans|month|\/mo|trial|starter|growth|priced?|cost)\b/i.test(t);
+}
+function pathScore(url: string, pricingQ: boolean) {
+  try {
+    const p = new URL(url, "https://example.com").pathname;
+    if (/^\/(demo|admin|api|widget)(\/|$)/i.test(p)) return -4;
+    if (pricingQ && /\/pricing(\/|$)/i.test(p) && !/^\/demo\//i.test(p)) return 4;
+  } catch {}
+  return 0;
+}
 
 type Chunk = { url: string; title: string; text: string; tf: Map<string, number>; len: number };
 type Index = { key: string; chunks: Chunk[]; df: Map<string, number>; avg: number };
@@ -48,12 +64,17 @@ export async function retrieve(question: string, max = 3): Promise<Source[]> {
   if (!(await hasCrawl())) return !(await isWayloWs()) ? [] : findRelevant(question, max).map(({ title, url, summary }) => ({ title, url, summary }));
   const { chunks, df, avg } = (await index()); const q = terms(question); if (!q.length) return [];
   const N = chunks.length, k1 = 1.2, b = 0.75;
-  const scored = chunks.map((c) => ({ c, s: q.reduce((sum, w) => { const f = c.tf.get(w) || 0; if (!f) return sum; const idf = Math.log(1 + (N - df.get(w)! + 0.5) / (df.get(w)! + 0.5)); return sum + idf * (f * (k1 + 1)) / (f + k1 * (1 - b + b * c.len / avg)); }, 0) + q.filter((w) => terms(c.title).includes(w)).length * 1.5 }))
+  const pricingQ = isPricingQuestion(question);
+  const scored = chunks.map((c) => ({ c, s: q.reduce((sum, w) => { const f = c.tf.get(w) || 0; if (!f) return sum; const idf = Math.log(1 + (N - df.get(w)! + 0.5) / (df.get(w)! + 0.5)); return sum + idf * (f * (k1 + 1)) / (f + k1 * (1 - b + b * c.len / avg)); }, 0) + q.filter((w) => terms(c.title).includes(w)).length * 1.5 + pathScore(c.url, pricingQ) + (pricingQ && hasPricingContent(c) ? 2 : 0) }))
     .filter((x) => x.s > 0.8).sort((a, b) => b.s - a.s);
   const out: Source[] = []; const seen = new Set<string>(); const qs = new Set(q);
-  for (const { c } of scored) { if (seen.has(c.url)) continue; seen.add(c.url);
-    const summary = bestSentences(c.text, qs) || c.text.slice(0, 300);
-    out.push({ title: c.title, url: c.url, summary }); if (out.length >= max) break; }
+  const push = (c: Chunk) => { if (seen.has(c.url)) return; seen.add(c.url); out.push({ title: c.title, url: c.url, summary: bestSentences(c.text, qs) || c.text.slice(0, 300) }); };
+  for (const { c } of scored) { push(c); if (out.length >= max) break; }
+  // Pricing questions should include a page that actually has prices, even if keyword overlap was weak ("How much does Starter cost?" vs "What does the Starter plan cost?").
+  if (pricingQ && !out.some(hasPricingContent)) {
+    const extra = scored.find((x) => hasPricingContent(x.c) && !seen.has(x.c.url))?.c || chunks.find((c) => hasPricingContent(c) && !seen.has(c.url));
+    if (extra) { if (out.length >= max) out.pop(); push(extra); }
+  }
   return out;
 }
 export function sourcesPrompt(src: Source[]) {

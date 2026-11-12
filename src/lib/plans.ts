@@ -8,8 +8,8 @@ export const PLANS: Record<Tier, PlanLimits> = {
 };
 /** Before any plan is chosen (or Stripe failed at signup): enough to test the widget in preview. */
 export const PREVIEW: PlanLimits = { name: "Preview", price: 0, replies: 50, replyPeriod: "trial", sites: 1, pages: 25, recrawlDays: 7 };
-/** Self-hosted / Waylo's own workspace: no metering. */
-export const UNLIMITED: PlanLimits = { name: "Unlimited", price: 0, replies: Number.POSITIVE_INFINITY, replyPeriod: "month", sites: 10, pages: 2000, recrawlDays: 1 };
+/** Self-hosted / Waylo's own workspace: no metering. Shown as "Internal", not a customer plan name. */
+export const UNLIMITED: PlanLimits = { name: "Internal", price: 0, replies: Number.POSITIVE_INFINITY, replyPeriod: "month", sites: 10, pages: 2000, recrawlDays: 1 };
 export const PAID_TIERS: Tier[] = ["starter", "growth"];
 export const monthKey = (d = new Date()) => d.toISOString().slice(0, 7);
 /** First day of next UTC month (when monthly reply counts reset). */

@@ -19,7 +19,7 @@ export function BillingActions({ hasCustomer, configured, plans, current, mode, 
       const isCur = current === p.tier; const pick = plan === p.tier;
       return <div key={p.tier} className={`rounded-xl border p-3.5 ${isCur ? "border-navy-400 bg-navy-50/40" : pick ? "border-rasp-300" : "border-warm-200"}`}>
         <div className="flex items-baseline justify-between"><p className="font-semibold text-warm-900">{p.name}</p><p className="text-sm"><span className="text-lg font-bold">${p.price}</span><span className="text-warm-500">/mo</span></p></div>
-        <ul className="mt-2 space-y-0.5 text-xs text-warm-600"><li>{p.replies} AI replies / month</li><li>{p.sites} site{p.sites > 1 ? "s" : ""} · {p.pages} indexed pages</li><li>Unlimited seats · daily re-crawl</li></ul>
+        <ul className="mt-2 space-y-0.5 text-xs text-warm-600"><li>{p.replies} AI replies / month</li><li>{p.sites} site{p.sites > 1 ? "s" : ""} · {p.pages} indexed pages</li><li>No seat limits · daily re-crawl</li></ul>
         {isCur ? <p className="mt-3 text-center text-xs font-medium text-navy-800">Current plan</p> :
           <button disabled={!configured || !!busy} onClick={() => mode === "switch" ? go("/api/billing/change", { tier: p.tier }, p.tier) : go("/api/billing/checkout", { tier: p.tier }, p.tier)} className={`${pick || mode === "checkout" ? "w-btn-accent" : "w-btn-ghost"} mt-3 w-full py-2`}>
             {busy === p.tier ? "Working…" : mode === "switch" ? `Switch to ${p.name}` : `Upgrade to ${p.name}`}</button>}

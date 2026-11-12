@@ -25,6 +25,24 @@ export function extract(html: string) {
   return { title, text: (desc && !text.includes(desc) ? desc + "\n" : "") + text };
 }
 const sameSite = (a: URL, b: URL) => a.protocol.startsWith("http") && a.hostname.replace(/^www\./, "") === b.hostname.replace(/^www\./, "");
+// App internals we never index, even if robots.txt is missing or failed to load.
+const APP_SKIP = /^\/(admin|api|widget)(\/|$)/i;
+/** True when pathname is this robots Disallow prefix (/admin matches /admin and /admin/signup, not /administration). */
+export function pathDisallowed(pathname: string, prefix: string) {
+  if (!prefix) return false;
+  const d = prefix.endsWith("/") && prefix.length > 1 ? prefix.slice(0, -1) : prefix;
+  return pathname === d || pathname.startsWith(d.endsWith("/") ? d : d + "/");
+}
+export function isAppSkipPath(pathname: string) { return APP_SKIP.test(pathname); }
+function isNoIndex(html: string, headers?: Headers) {
+  if (headers && /\bnoindex\b/i.test(headers.get("x-robots-tag") || "")) return true;
+  for (const m of html.matchAll(/<meta\b[^>]*\bname=["']robots["'][^>]*>/gi)) {
+    const tag = m[0];
+    const content = tag.match(/\bcontent=["']([^"']*)["']/i)?.[1] || "";
+    if (/\bnoindex\b/i.test(content)) return true;
+  }
+  return false;
+}
 function links(html: string, base: URL, site: URL) {
   const out: string[] = [];
   for (const m of html.matchAll(/<a\b[^>]*href=["']([^"'#]+)/gi)) {
@@ -93,12 +111,16 @@ export async function crawl(start: string, opts: CrawlOpts = {}) {
   try { const r = await fetch(base, { method: "GET", headers: { "User-Agent": UA, Accept: "text/html" }, redirect: "follow", signal: AbortSignal.timeout(10000) }); if (r.url) { const f = new URL(r.url); if (sameSite(f, base) || f.hostname === base.hostname) base = f; } r.body?.cancel().catch(() => {}); } catch {}
   const site = base;
   const rb = await robots(base.origin);
-  const blocked = (u: URL) => rb.disallow.some((d) => u.pathname.startsWith(d));
-  const seen = new Set<string>([norm(base.toString())]); const queue = [norm(base.toString())];
-  // Sitemap-first: everything the site says it has, then whatever links reveal.
+  const blocked = (u: URL) => isAppSkipPath(u.pathname) || rb.disallow.some((d) => pathDisallowed(u.pathname, d));
+  const seen = new Set<string>(); const queue: string[] = [];
+  const enqueue = (u: string, fromSm = false) => {
+    try { const x = new URL(u); if (!sameSite(x, site) || blocked(x) || (!docs && DOC_EXT.test(x.pathname)) || (SKIP_EXT.test(x.pathname) && !DOC_EXT.test(x.pathname))) return false; const n = norm(x.toString()); if (seen.has(n)) return false; seen.add(n); queue.push(n); return fromSm; } catch { return false; }
+  };
+  enqueue(base.toString());
+  // Sitemap-first: everything the site says it has, then whatever links reveal. Respect robots / app-skip here so blocked URLs don't occupy the queue.
   let fromSitemap = 0;
   for (const u of await sitemapUrls(base.origin, rb.sitemaps, max * 3)) {
-    try { const x = new URL(u); if (!sameSite(x, site) || (!docs && DOC_EXT.test(x.pathname)) || (SKIP_EXT.test(x.pathname) && !DOC_EXT.test(x.pathname))) continue; const n = norm(x.toString()); if (!seen.has(n)) { seen.add(n); queue.push(n); fromSitemap++; } } catch {}
+    if (enqueue(u, true)) fromSitemap++;
   }
   const pages: Omit<Page, "id">[] = []; let errors = 0;
   const failures: { url: string; reason: string }[] = [];
@@ -127,8 +149,9 @@ export async function crawl(start: string, opts: CrawlOpts = {}) {
         }
         const html = (await r.text()).slice(0, 2_000_000);
         const { title, text } = extract(html);
-        if (text.length > 80 && pages.length < max) { pages.push({ url: norm(finalUrl.toString()), title: title || finalUrl.pathname, text: text.slice(0, 40000), updatedAt: new Date().toISOString() }); opts.onProgress?.(pages.length); }
-        for (const l of links(html, finalUrl, site).concat(docs ? docLinks(html, finalUrl, site) : [])) { const n = norm(l); if (!seen.has(n) && seen.size < max * 6) { seen.add(n); queue.push(n); } }
+        if (isNoIndex(html, r.headers)) { /* honor noindex; still follow on-page links below */ }
+        else if (text.length > 80 && pages.length < max) { pages.push({ url: norm(finalUrl.toString()), title: title || finalUrl.pathname, text: text.slice(0, 40000), updatedAt: new Date().toISOString() }); opts.onProgress?.(pages.length); }
+        for (const l of links(html, finalUrl, site).concat(docs ? docLinks(html, finalUrl, site) : [])) { if (seen.size < max * 6) enqueue(l); }
       } catch (e) {
         errors++;
         const reason = (e as Error)?.name === "TimeoutError" || /timeout/i.test(String((e as Error)?.message)) ? "Timed out" : ((e as Error)?.message || "Request failed");

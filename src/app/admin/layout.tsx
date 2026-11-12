@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { AdminNav } from "./AdminNav";
@@ -7,6 +8,8 @@ import { getSettings, currentWs } from "@/lib/store";
 import { currentSession } from "@/lib/auth";
 import { authEnabled } from "@/lib/session";
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
+
 
 function isAuthShell(pathname: string) {
   return pathname === "/admin/login" || pathname === "/admin/signup" || pathname === "/admin/forgot" || pathname.startsWith("/admin/invite/") || pathname.startsWith("/admin/reset/");

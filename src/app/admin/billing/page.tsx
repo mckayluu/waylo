@@ -41,7 +41,7 @@ export default async function BillingPage({ searchParams }: { searchParams: { ch
           <dl className="mt-3 divide-y divide-warm-100 border-t border-warm-100 pt-2 text-sm">
             {row("Sites", <span className="tabular-nums">{sites} / {e.plan.sites}</span>)}
             {row("Indexed pages", <span className="tabular-nums">{fmtNum(pages)} / {fmtNum(e.plan.pages)}</span>)}
-            {row("Seats", "Unlimited")}
+            {row("Members", "no limit")}
           </dl>
           {!e.chatOpen && <p className="mt-3 rounded-lg bg-rose-50 px-2.5 py-1.5 text-xs text-rose-800">{e.reason}. Your widget shows a “leave a message” form instead of AI answers until you upgrade.</p>}
         </Card>

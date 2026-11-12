@@ -3,7 +3,7 @@ import { getGuidance, getSettings, type Citation, type Message, type Fact } from
 import { findRelevant } from "./knowledge";
 import { DEMO_PAGES, findDemo } from "./demoKnowledge";
 import { isDemoSite } from "./tenant";
-import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl, isWayloWs } from "./retrieve";
+import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl, isWayloWs, hasPricingContent } from "./retrieve";
 import { tryCtx } from "./trycontext";
 
 export type Answer = { text: string; citations: Citation[] };
@@ -52,14 +52,15 @@ async function mock(text: string, signals: string[], hasEmail: boolean): Promise
   const st = (await getSettings());
   if (st.companyProfile && /\b(who are you|about (you|the company|us)|what (do|does) (you|they|the company) do|company|tell me about)\b/i.test(text))
     return { text: `**About ${st.siteName}:** ${st.companyProfile}`, citations: [] };
-  if (noPricing) rel = rel.filter((k) => k.url !== "/docs/pricing" && !/pric/i.test(k.title));
+  // A "never quote pricing" rule must not hide prices that are actually on crawled pages.
+  if (noPricing && !rel.some(hasPricingContent)) rel = rel.filter((k) => k.url !== "/docs/pricing" && !/pric/i.test(k.title));
   const skill = g.skills.find((k) => words(k.name).some((w) => new Set(words(text)).has(w)));
   const tail = skill ? `\n\n_${skill.instructions}_` : "";
   if (facts.length) {
     const out = facts.map((f) => f.text).join("\n\n") + (rel.length ? "\n\n" + rel.map((k) => k.summary).join("\n\n") : "");
     return { text: out + tail, citations: cite(rel) };
   }
-  if (noPricing && signals.includes("pricing") && rel.length === 0)
+  if (noPricing && signals.includes("pricing") && !rel.some(hasPricingContent))
     return { text: "I can't quote pricing here — leave your details in the **Contact** tab and the team will send exact numbers." + tail, citations: [] };
   if (/^(hi|hello|hey)\b/i.test(text.trim()) && rel.length === 0)
     return { text: "Hi! I can help with:\n- **Pricing** and plans\n- **Installing** the sidebar\n- **Booking a demo**\n\nWhat would you like to know?", citations: [] };
@@ -78,7 +79,12 @@ async function simulate(text: string, onDelta: OnDelta) {
 }
 async function systemPrompt(src: { title: string; url: string; summary: string }[]) {
   const waylo = await isWayloWs(); const name = waylo ? "Waylo" : tryCtx()?.siteName || (await getSettings()).siteName || "this company";
-  const pricing = waylo ? " For pricing, the only current plans are Trial ($0, 14 days, no card, 500 AI replies), Starter ($79/mo, 3,000 replies), and Growth ($249/mo, 3 sites, 15,000 replies). No plan has a seat or team-member limit: teammates are invited from Members with Owner, Editor or Viewer roles; never mention a Free tier, $49 plan, or Enterprise tier. Waylo is fully self-serve: there are no sales calls, setup calls, demos with a person, or founder contact. When a visitor wants to try or buy, point them to the free trial at /signup or pasting their URL on the homepage; for help, the docs at /docs." : " Never quote prices, plans or facts that are not in SOURCES or the guidance; you are not Waylo and must not describe Waylo's product. Always write at least one sentence before the SOURCES line, even when the answer is not available.";
+  const sourcedPrices = src.some(hasPricingContent);
+  const pricing = waylo
+    ? " For pricing, the only current plans are Trial ($0, 14 days, no card, 500 AI replies), Starter ($79/mo, 3,000 replies), and Growth ($249/mo, 3 sites, 15,000 replies). No plan has a seat or team-member limit: teammates are invited from Members with Owner, Editor or Viewer roles; never mention a Free tier, $49 plan, or Enterprise tier. Waylo is fully self-serve: there are no sales calls, setup calls, demos with a person, or founder contact. When a visitor wants to try or buy, point them to the free trial at /signup or pasting their URL on the homepage; for help, the docs at /docs."
+    : sourcedPrices
+      ? " SOURCES include pricing or plan information. If the visitor asks what a plan costs or how much something is, answer with the figures in SOURCES and cite them. Do not refuse a pricing question when SOURCES contain the answer. Never invent prices that are not in SOURCES or the guidance. You are not Waylo and must not describe Waylo's product unless it appears in SOURCES. Always write at least one sentence before the SOURCES line."
+      : " Never quote prices, plans or facts that are not in SOURCES or the guidance; you are not Waylo and must not describe Waylo's product. Always write at least one sentence before the SOURCES line, even when the answer is not available.";
   return `You are ${name}'s concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly${waylo ? " and suggest the docs at /docs or starting the free trial at /signup" : " and point the visitor to the **Contact** tab"} — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. ${waylo ? "Never suggest contacting the team, booking a call, or the Contact tab." : "Only mention the **Contact** tab when the answer is genuinely missing from SOURCES."}${pricing} Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
 }
 function parse(raw: string, src: { title: string; url: string }[]): Answer {
