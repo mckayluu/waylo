@@ -5,40 +5,37 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { Shell } from "@/components/marketing/Section";
 import { JsonLd, orgLd, appLd, faqLd } from "@/lib/seo";
-import { ProductTour } from "@/components/marketing/ProductTour";
-import { tourSteps } from "@/lib/tour";
+import { HomeTour } from "@/components/marketing/HomeTour";
+import { SlackCard, ChatBubble, LeftCard, Icon } from "@/components/marketing/HomeVisuals";
 
 export const metadata: Metadata = { title: { absolute: "Waylo – Your website’s own AI chat" }, description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", alternates: { canonical: "/" }, openGraph: { title: "Waylo – Your website’s own AI chat", description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", url: "/", siteName: "Waylo", type: "website", images: [{ url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo – Your website’s own AI chat" }] }, twitter: { card: "summary_large_image", title: "Waylo – Your website’s own AI chat", description: "Waylo answers visitors’ questions from your own pages, so they find what they came for instead of leaving. You see what they ask, and you hear about the ones who are ready to buy.", images: ["/brand/og.png"] } };
 
-// Hero collage: real product screenshots on colour-blocked tiles (design language adapted from the Awardco reference).
+// Hero collage: a stock photo with illustrative UI layered over it, plus a real widget screenshot (design language adapted from the Awardco reference).
 function HeroCollage() {
   return (
-    <figure className="relative mx-auto w-full max-w-[560px]">
-      <div className="grid grid-cols-[1.05fr_1fr] gap-4">
-        <div className="w-tile w-tile-blush row-span-2 flex items-end justify-center px-5 pt-6 w-rise">
-          <div className="w-shot-float w-full max-w-[250px] translate-y-3"><Image src="/product/widget-answer.webp" alt="Waylo chat widget on the fictional Northpoint Ops demo site answering “How much is Pro per tech?” with a source chip that links its pricing page" width={406} height={648} priority sizes="250px" className="h-auto w-full" /></div>
-        </div>
-        <div className="w-tile w-tile-mist relative h-44 p-3 w-rise-2"><span className="w-pill absolute left-3 top-3 z-10 bg-card/90">Visitor journey</span><div className="w-shot-float mt-9 h-full"><Image src="/product/admin-tracking.webp" alt="Visitor journey in the Waylo admin with pages viewed and the questions asked" width={1440} height={900} sizes="260px" className="h-full w-full object-cover object-[18%_22%]" /></div></div>
-        <div className="w-tile w-tile-cream relative h-44 p-3 w-rise-3"><span className="w-pill absolute left-3 top-3 z-10 bg-card/90">Slack alerts</span><div className="w-shot-float mt-9 h-full"><Image src="/product/admin-integrations.webp" alt="Waylo admin Integrations view with Slack and CRM webhooks connected and recent deliveries" width={1440} height={900} sizes="260px" className="h-full w-full object-cover object-[40%_25%]" /></div></div>
+    <figure className="relative mx-auto w-full max-w-[580px]">
+      <div className="relative sm:pb-16">
+        <div aria-hidden className="absolute -right-4 -top-5 h-28 w-28 rotate-6 rounded-[26px] bg-rasp-600" />
+        <div aria-hidden className="absolute -bottom-2 left-8 h-16 w-16 -rotate-6 rounded-[16px] bg-blush" />
+        <div className="w-tile relative overflow-hidden w-rise"><Image src="/images/people/owner-phone-laptop.webp" alt="A woman on the phone at her laptop in a design studio" width={1000} height={562} priority sizes="(min-width:1024px) 580px, 100vw" className="h-[300px] w-full object-cover object-[60%_40%] sm:h-[360px]" /></div>
+        <ChatBubble className="absolute -left-8 top-6 hidden w-rise-2 sm:block" />
+        <SlackCard className="relative z-10 -mt-14 ml-auto mr-1 max-w-[300px] w-rise-3 sm:absolute sm:-bottom-2 sm:right-[-1.5rem] sm:mr-0 sm:mt-0" />
       </div>
-      <figcaption className="mt-6 text-xs leading-5 text-white/65">Real screenshots. The chat is on <Link href="/demo" className="underline hover:text-white">/demo</Link>, where Northpoint Ops is a fictional company. Admin views use sample data.</figcaption>
+      <figcaption className="mt-6 text-xs leading-5 text-white/65">Stock photo. The chat and Slack cards are illustrations using <Link href="/demo" className="underline hover:text-white">Northpoint Ops</Link>, a fictional company.</figcaption>
     </figure>
   );
 }
 const does: [string, string, string, string, string][] = [
-  ["Answers you can trust.", "Waylo only answers from your site and links to the page it used. If your site doesn’t cover something, it says so instead of guessing.", "/product/admin-conv.webp", "object-[30%_30%]", "w-tile-blush"],
+  ["Answers you can trust.", "Waylo only answers from your site and links to the page it used. If your site doesn’t cover something, it says so instead of guessing.", "/tour/05-live-chat-cited.webp", "object-[95%_40%]", "w-tile-blush"],
   ["See what people want.", "Every question shows up in your dashboard, so you learn what buyers care about and which pages leave them stuck.", "/product/admin-tracking.webp", "object-[15%_20%]", "w-tile-mist"],
   ["Know when someone’s ready.", "When a visitor looks ready to buy or leaves their details, you get a Slack message with the whole conversation.", "/product/admin-integrations.webp", "object-[38%_22%]", "w-tile-cream"],
 ];
-const helps: [string, string, string][] = [
-  ["SaaS companies", "Evaluators get answers from your pricing and docs pages without waiting on your team.", "/solutions/saas"],
-  ["B2B service firms", "Prospects learn what you do and how you work, and you hear from the ones ready to talk.", "/use-cases/b2b-services"],
-  ["Online stores", "Shoppers get answers on shipping and returns from your own policy pages before they buy.", "/use-cases/ecommerce"],
-  ["Agencies", "Add Waylo to each client’s site. Every site gets its own workspace.", "/use-cases/agencies"],
-  ["Sales teams", "Reps hear about serious visitors in Slack, along with the question they asked.", "/solutions/sales"],
-  ["Support teams", "Repeat how-to questions get answered from your docs, with a link to the right article.", "/use-cases/support-deflection"],
+const helps: [string, string, string, string, "megaphone" | "target" | "headset", string][] = [
+  ["Marketing", "Learn what visitors ask and which pages leave them stuck.", "/solutions/marketing", "/images/people/marketing-two-women-laptop.webp", "megaphone", "Two women talking at a laptop by a bright window"],
+  ["Sales", "Hear in Slack when a visitor looks ready to buy, with the full conversation.", "/solutions/sales", "/images/people/sales-team-laptop.webp", "target", "Four coworkers smiling around a laptop at a table"],
+  ["Customer Support", "Common questions get answered from your docs, with a link to the right page.", "/use-cases/support-deflection", "/images/people/support-headset.webp", "headset", "A smiling woman wearing a headset at her computer"],
 ];
-const stack = ["Slack", "CRM via webhooks", "Google Tag Manager", "Webflow", "WordPress", "Shopify", "Squarespace", "Wix"];
+const marks: [string, string][] = [["googletagmanager", "Google Tag Manager"], ["wordpress", "WordPress"], ["webflow", "Webflow"], ["shopify", "Shopify"], ["squarespace", "Squarespace"], ["wix", "Wix"]];
 const homeFaqs: [string, string][] = [
   ["How do I know the answers are right?", "Waylo only answers from the public pages it reads on your site, and every answer links the page it used. If your pages don’t cover a question, it says it doesn’t know and offers your contact form."],
   ["How do I set it up?", "Add your website and let Waylo read your pages. Then paste one line of code into your site or Google Tag Manager, and publish."],
@@ -79,10 +76,15 @@ export default function Home() {
           </div>
         </section>
 
-        <section aria-labelledby="problem" className="w-band-mist px-5 py-16 sm:py-24">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 id="problem" className="w-h-lg font-semibold text-warm-900">Most visitors have a question. Few of them ask it.</h2>
-            <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-warm-600">They skim a page or two, can’t find the answer, and leave. You never find out what they wanted.</p>
+        <section aria-labelledby="problem" className="w-band-mist px-5 py-16 sm:py-20">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-[1fr_1.05fr]">
+            <div><h2 id="problem" className="w-h-lg font-semibold text-warm-900">Most visitors have a question. Few of them ask it.</h2>
+              <p className="mt-5 max-w-md text-lg leading-8 text-warm-600">They skim a page or two, can’t find the answer, and leave. You never find out what they wanted.</p></div>
+            <div className="relative pb-10 md:pb-0">
+              <div aria-hidden className="absolute -left-4 -top-4 h-20 w-20 -rotate-6 rounded-[18px] bg-navy-900" />
+              <div className="w-tile relative overflow-hidden"><Image src="/images/people/owner-desk-laptop.webp" alt="A woman standing at a desk working on her laptop in a small office" width={1400} height={934} sizes="(min-width:768px) 560px, 100vw" className="h-[280px] w-full object-cover sm:h-[340px]" /></div>
+              <LeftCard className="absolute -bottom-2 right-3 sm:-right-4 md:bottom-6" />
+            </div>
           </div>
         </section>
 
@@ -98,8 +100,8 @@ export default function Home() {
         <section id="tour" aria-labelledby="tour-h" className="w-band-paper scroll-mt-20 px-5 py-16 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <p className="w-pill">Product tour</p>
-            <h2 id="tour-h" className="w-h-lg mt-5 max-w-2xl font-semibold text-warm-900">See it from signup to first answer</h2>
-            <div className="mt-10"><ProductTour steps={tourSteps()} compact /></div>
+            <h2 id="tour-h" className="w-h-lg mt-5 max-w-2xl font-semibold text-warm-900">What you get once it’s live</h2>
+            <div className="mt-10"><HomeTour /></div>
           </div>
         </section>
 
@@ -113,15 +115,21 @@ export default function Home() {
         <section aria-labelledby="helps" className="w-band-paper px-5 py-16 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <h2 id="helps" className="w-h-lg max-w-2xl font-semibold text-warm-900">Who Waylo helps</h2>
-            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{helps.map(([t, d, href]) => <li key={t}><Link href={href} className="w-tile w-tile-card group flex h-full flex-col p-6 ring-1 ring-warm-200 transition hover:-translate-y-0.5 hover:ring-rasp-600">
-              <span className="font-display text-xl font-semibold text-warm-900">{t}</span><span className="mt-2 flex-1 leading-7 text-warm-600">{d}</span><span className="mt-4 text-sm font-semibold text-rasp-700 group-hover:underline">Learn more →</span></Link></li>)}</ul>
+            <ul className="mt-10 grid gap-5 md:grid-cols-3">{helps.map(([t, d, href, img, icon, alt]) => <li key={t}><Link href={href} className="w-tile w-tile-card group flex h-full flex-col overflow-hidden ring-1 ring-warm-200 transition hover:-translate-y-0.5 hover:ring-rasp-600">
+              <div className="relative"><Image src={img} alt={alt} width={900} height={600} sizes="(min-width:768px) 360px, 100vw" className="h-48 w-full object-cover" /><span className="absolute -bottom-5 left-6 grid h-11 w-11 place-items-center rounded-xl bg-rasp-600 text-white shadow-lg"><Icon name={icon} /></span></div>
+              <div className="flex flex-1 flex-col p-6 pt-8"><span className="font-display text-2xl font-semibold text-warm-900">{t}</span><span className="mt-2 flex-1 leading-7 text-warm-600">{d}</span><span className="mt-4 text-sm font-semibold text-rasp-700 group-hover:underline">Learn more →</span></div></Link></li>)}</ul>
           </div>
         </section>
 
         <section aria-labelledby="stack-h" className="w-band-navy px-5 py-14 sm:py-16">
-          <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-[0.9fr_1.4fr]">
-            <div><h2 id="stack-h" className="w-h-lg font-semibold text-white">Works with your stack</h2><p className="mt-4 leading-7 text-white/80">Waylo works anywhere you can add a script tag. Slack and CRM alerts go out through webhooks.</p><Link href="/docs/install" className="mt-5 inline-block text-sm font-semibold text-blush hover:underline">Read the install guide →</Link></div>
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">{stack.map(t => <li key={t} className="rounded-2xl bg-white/[0.06] px-4 py-4 text-center text-sm font-semibold text-white ring-1 ring-white/10">{t}</li>)}</ul>
+          <div className="mx-auto max-w-6xl">
+            <div className="flex flex-wrap items-end justify-between gap-4"><div><p id="stack-h" className="w-pill w-pill-dark">Works with</p><p className="mt-4 max-w-xl text-lg leading-8 text-white/85">Waylo works anywhere you can add a script tag. Slack and CRM alerts go out through webhooks.</p></div><Link href="/docs/install" className="text-sm font-semibold text-blush hover:underline">Read the install guide →</Link></div>
+            <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <li className="flex h-20 items-center justify-center rounded-2xl bg-white/[0.06] px-4 text-center text-base font-semibold text-white ring-1 ring-white/10">Slack</li>
+              <li className="flex h-20 items-center justify-center rounded-2xl bg-white/[0.06] px-4 text-center text-sm font-semibold text-white ring-1 ring-white/10">Any CRM via webhook</li>
+              {marks.map(([f, n]) => <li key={f} className="flex h-20 items-center justify-center gap-3 rounded-2xl bg-white/[0.06] px-5 ring-1 ring-white/10">{f === "wix" ? <Image src="/images/logos/wix.svg" alt="Wix" width={44} height={44} className="h-9 w-9 invert" /> : <><Image src={`/images/logos/${f}.svg`} alt="" width={26} height={26} className="h-6 w-6 invert" /><span className="text-sm font-semibold text-white">{n}</span></>}</li>)}
+            </ul>
+            <p className="mt-4 text-xs text-white/50">Trademarks belong to their owners. Shown to say where the script tag works, not to suggest a partnership.</p>
           </div>
         </section>
 
