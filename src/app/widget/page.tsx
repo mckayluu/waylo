@@ -13,7 +13,7 @@ const api = (path: string) => `${path}?site=${encodeURIComponent(SITE())}`;
 // Waylo's own site is fully self-serve: no "talk to a person" / "book a demo"; trial + instant try instead. Customer workspaces unchanged.
 const SELF = () => SITE() === "default" || SITE() === "waylo";
 const LS = (k: string) => `${k}:${SITE()}`; // per-site so chats never cross workspaces in the shared widget origin
-const isDesktop = () => typeof window !== "undefined" && window.matchMedia("(min-width: 641px)").matches;
+const isTouch = () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 const DEFAULT_SUGGESTIONS = (self: boolean) => self
   ? ["How much does it cost?", "How do I install it?", "Is there a free trial?", "How does the crawl work?"]
   : ["How much does it cost?", "How does it work?", "Can I book a demo?"];
@@ -85,8 +85,10 @@ export default function Widget() {
   const [form, setForm] = useState({ name: "", email: "", message: "", consent: false });
   const [fstate, setFstate] = useState<"" | "sending" | "sent" | string>("");
 
-  function focusInput() {
-    if (!isDesktop()) return;
+  function focusInput(opts?: { touch?: boolean }) {
+    // Don't use the iframe's own viewport (it's ~400px, so a 641px media query always fails).
+    // Skip focus on touch devices so a phone keyboard doesn't pop up.
+    if (opts?.touch ?? isTouch()) return;
     const el = box.current; if (el) requestAnimationFrame(() => el.focus());
   }
 
@@ -106,7 +108,14 @@ export default function Widget() {
   useEffect(() => {
     if (tab !== "chat") return;
     focusInput();
-    const onMsg = (e: MessageEvent) => { if (e.data === "waylo:opened") focusInput(); };
+    const onMsg = (e: MessageEvent) => {
+      const d = e.data;
+      if (d === "waylo:opened") focusInput();
+      else if (d && typeof d === "object" && d.type === "waylo:opened") {
+        if (d.focus === false) return;
+        focusInput({ touch: typeof d.touch === "boolean" ? d.touch : undefined });
+      }
+    };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
   }, [tab, msgs.length]);

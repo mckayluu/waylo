@@ -1,19 +1,19 @@
 "use client";
 // Homepage-only callout that points visitors at the live Waylo chat: a white card plus one clean curved
 // arrow, and a soft pulse ring over the launcher. Everything is placed from the widget's real DOM
-// (public/waylo.js), and nothing here changes the widget itself:
-//   open panel -> iframe[title="Waylo chat"] (display:block): card left of the panel, arrow into its input area
-//   closed     -> button[aria-label="Chat with us"][data-waylo-ui]: card left of the launcher, arrow into it
+// (public/waylo.js):
+//   open panel -> [data-waylo-panel] (fallback: iframe[title="Waylo chat"]): card left of the panel, arrow into its input area
+//   closed     -> [data-waylo-launcher] (fallback: button[aria-label="Chat with us"][data-waylo-ui]): card left of the launcher, arrow into it
 //   mobile     -> div[data-waylo-ui][role="dialog"] (the teaser) or the launcher; hidden once the panel is open
 // The card and arrow never sit on the hero copy, buttons, illustration cards or caption (on desktop, nor on
 // the hero photo). If no clear spot exists, the callout stays hidden.
-// Clicking the card calls window.Waylo.open() (fallback: click the launcher). Dismissal lives in sessionStorage.
+// Clicking the card calls window.Waylo.open({ focus: true }) (fallback: click the launcher). Dismissal lives in sessionStorage.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const DISMISS_KEY = "waylo_callout_dismissed";
-const PANEL = 'iframe[title="Waylo chat"]';
-const LAUNCHER = 'button[aria-label="Chat with us"][data-waylo-ui]';
+const panelEl = () => document.querySelector("[data-waylo-panel], iframe[title='Waylo chat']");
+const launcherEl = () => document.querySelector("[data-waylo-launcher], button[aria-label='Chat with us'][data-waylo-ui]");
 const TEASER = 'div[data-waylo-ui][role="dialog"]';
 const EDGE = 12; // keep clear of the viewport edge
 const PAD = 6; // breathing room around anything we avoid
@@ -64,7 +64,7 @@ const norm = (x: number, y: number) => { const l = Math.hypot(x, y) || 1; return
 
 function place(w: number, h: number, mobile: boolean): Place | null {
   const W = window.innerWidth, H = window.innerHeight;
-  const panel = document.querySelector(PANEL), launcher = document.querySelector(LAUNCHER), teaser = document.querySelector(TEASER);
+  const panel = panelEl(), launcher = launcherEl(), teaser = document.querySelector(TEASER);
   const { block, hero, photo } = scene(mobile);
   const widget = [panel, launcher, teaser].filter(visible).map((e) => e.getBoundingClientRect());
   const tone = (pts: Pt[]): Arrow["tone"] => {
@@ -164,34 +164,20 @@ export function ChatCallout() {
     let raf = 0;
     const tick = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(measure); };
     tick();
-    const iv = window.setInterval(tick, 400); // the widget mounts and auto-opens on its own clock and sends no events
+    const iv = window.setInterval(tick, 1000); // fallback if an older waylo.js is cached and doesn't emit waylo:state
     window.addEventListener("resize", tick); window.addEventListener("scroll", tick, { passive: true });
+    window.addEventListener("waylo:state", tick);
     const mo = new MutationObserver(tick); mo.observe(document.body, { childList: true, attributes: true, attributeFilter: ["style"] });
-    return () => { cancelAnimationFrame(raf); clearInterval(iv); window.removeEventListener("resize", tick); window.removeEventListener("scroll", tick); mo.disconnect(); };
+    return () => { cancelAnimationFrame(raf); clearInterval(iv); window.removeEventListener("resize", tick); window.removeEventListener("scroll", tick); window.removeEventListener("waylo:state", tick); mo.disconnect(); };
   }, [mounted, dismissed, measure]);
 
   const dismiss = () => { setDismissed(true); try { sessionStorage.setItem(DISMISS_KEY, "1"); } catch { /* private mode */ } };
 
   const openChat = () => {
-    const w = window as unknown as { Waylo?: { open?: () => void } };
-    if (w.Waylo && typeof w.Waylo.open === "function") w.Waylo.open();
-    else (document.querySelector(LAUNCHER) as HTMLButtonElement | null)?.click();
+    const w = window as unknown as { Waylo?: { open?: (opts?: { focus?: boolean }) => void } };
+    if (w.Waylo && typeof w.Waylo.open === "function") w.Waylo.open({ focus: true });
+    else (launcherEl() as HTMLButtonElement | null)?.click();
     window.setTimeout(measure, 50);
-    // TEMPORARY until the widget focus fix lands: waylo.js posts "waylo:opened", but the widget's
-    // focusInput() checks (min-width: 641px) inside the 400px iframe, so it never focuses. The iframe is
-    // same-origin, so focus its textarea directly. Skipped on touch screens so the keyboard doesn't pop up
-    // (matches the widget's own mobile rule). Remove once Waylo.open() focuses the input itself.
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-    let n = 0;
-    const tryFocus = () => {
-      const f = document.querySelector(PANEL) as HTMLIFrameElement | null;
-      try {
-        const ta = f?.contentDocument?.querySelector("textarea") as HTMLTextAreaElement | null;
-        if (f && ta) { f.focus(); ta.focus(); return; }
-      } catch { return; } // cross-origin embed: leave it to the widget
-      if (++n < 30) window.setTimeout(tryFocus, 100);
-    };
-    tryFocus();
   };
 
   if (!mounted || dismissed) return null;

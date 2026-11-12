@@ -66,7 +66,7 @@
   function reducedMotion() { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
   function mount() {
     var src = origin + "/widget?vid=" + encodeURIComponent(vid) + "&site=" + encodeURIComponent(site) + "&embed=" + encodeURIComponent(mode);
-    var f = document.createElement("iframe"); f.title = "Waylo chat"; f.setAttribute("allow", "clipboard-write");
+    var f = document.createElement("iframe"); f.title = "Waylo chat"; f.setAttribute("data-waylo-panel", ""); f.setAttribute("allow", "clipboard-write");
     var side = left ? "left" : "right";
     if (mode === "sidebar") {
       f.src = src;
@@ -103,28 +103,39 @@
       if (!reducedMotion()) requestAnimationFrame(function () { teaser.style.opacity = "1"; teaser.style.transform = "translateY(0)"; });
     }
     f.style.cssText = "position:fixed;bottom:92px;" + side + ":20px;width:400px;max-width:calc(100vw - 24px);height:640px;max-height:calc(100vh - 116px);border:0;border-radius:16px;box-shadow:0 20px 50px rgba(28,25,23,.25);z-index:2147483646;background:#fafaf9;display:none";
-    var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Chat with us"); b.setAttribute("data-waylo-ui", "");
+    var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Chat with us"); b.setAttribute("data-waylo-ui", ""); b.setAttribute("data-waylo-launcher", "");
     b.style.cssText = "position:fixed;bottom:20px;" + side + ":20px;width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:" + color + ";color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:2147483647;display:flex;align-items:center;justify-content:center;" + (reducedMotion() ? "" : "transition:transform .15s");
     var chat = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
     var x = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
     b.innerHTML = chat;
     b.onmouseenter = function () { if (!reducedMotion()) b.style.transform = "scale(1.06)"; }; b.onmouseleave = function () { b.style.transform = ""; };
-    function notifyOpened() { try { if (f.contentWindow) f.contentWindow.postMessage("waylo:opened", origin); } catch (e) {} }
+    function isTouch() { return window.matchMedia && window.matchMedia("(pointer: coarse)").matches; }
+    function notifyOpened(opts) {
+      opts = opts || {};
+      var msg = { type: "waylo:opened", focus: opts.focus !== false, viewportWidth: window.innerWidth, touch: isTouch() };
+      try { if (f.contentWindow) { f.contentWindow.postMessage(msg, origin); f.contentWindow.postMessage("waylo:opened", origin); } } catch (e) {}
+    }
+    function emitState() {
+      var detail = { open: open };
+      try { window.dispatchEvent(new CustomEvent("waylo:state", { detail: detail })); } catch (e) {}
+      try { window.postMessage({ type: "waylo:state", open: open }, location.origin); } catch (e) {}
+    }
     function set(v, opts) {
       opts = opts || {};
       open = v;
       if (v) { hideTeaser(); if (autoTimer) { clearTimeout(autoTimer); autoTimer = 0; } }
-      if (v && !loaded) { f.src = src; loaded = true; f.addEventListener("load", notifyOpened); }
-      else if (v) notifyOpened();
+      if (v && !loaded) { f.src = src; loaded = true; f.addEventListener("load", function () { notifyOpened(opts); }); }
+      else if (v) notifyOpened(opts);
       if (!v && opts.user) rememberDismissed();
       f.style.display = v ? "block" : "none";
       b.innerHTML = v ? x : chat;
       b.setAttribute("aria-expanded", String(v));
+      emitState();
     }
-    b.onclick = function () { if (open) set(false, { user: true }); else set(true, { manual: true }); };
-    api.open = function () { set(true, { manual: true }); };
+    b.onclick = function () { if (open) set(false, { user: true }); else set(true, { manual: true, focus: true }); };
+    api.open = function (opts) { opts = opts || {}; set(true, { manual: true, focus: opts.focus === true || opts.focus === undefined }); };
     api.close = function () { set(false, { user: true }); };
-    api.toggle = function () { if (open) set(false, { user: true }); else set(true, { manual: true }); };
+    api.toggle = function (opts) { if (open) set(false, { user: true }); else set(true, { manual: true, focus: !!(opts && opts.focus) }); };
     window.addEventListener("message", function (e) { if (e.origin === origin && e.data === "waylo:close") set(false, { user: true }); });
     document.body.appendChild(f); document.body.appendChild(b);
     var attrOpen = A("open", "") === "true";
