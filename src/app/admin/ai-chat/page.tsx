@@ -19,11 +19,11 @@ export default async function AiChat() {
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="space-y-3 lg:col-span-3">
         {steps.map((x) => <div key={x.n} className={`w-card flex items-center gap-4 p-4 ${x.ok ? "" : ""}`}>
-          <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-semibold ${x.ok ? "bg-teal-700 text-white" : "border border-stone-300 text-stone-500"}`}>{x.ok ? "✓" : x.n}</span>
-          <div className="min-w-0 flex-1"><p className="font-medium text-stone-800">{x.label}</p><p className="text-sm text-stone-500">{x.desc}</p></div>{x.action}</div>)}
-        <Card title="Embed snippet"><pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-lg bg-[#0d1b1e] p-4 text-[11px] leading-relaxed text-teal-100">{SNIPPET}</pre></Card>
+          <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-semibold ${x.ok ? "bg-navy-700 text-white" : "border border-warm-300 text-warm-500"}`}>{x.ok ? "✓" : x.n}</span>
+          <div className="min-w-0 flex-1"><p className="font-medium text-warm-800">{x.label}</p><p className="text-sm text-warm-500">{x.desc}</p></div>{x.action}</div>)}
+        <Card title="Embed snippet"><pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-lg bg-[#0d1b1e] p-4 text-[11px] leading-relaxed text-navy-100">{SNIPPET}</pre></Card>
       </div>
-      <div className="lg:col-span-2"><Card title="Live preview" pad={false} actions={<Link href={`/widget?site=${WS}`} target="_blank" className="text-xs font-medium text-teal-700 hover:underline">Open ↗</Link>}>
+      <div className="lg:col-span-2"><Card title="Live preview" pad={false} actions={<Link href={`/widget?site=${WS}`} target="_blank" className="text-xs font-medium text-navy-700 hover:underline">Open ↗</Link>}>
         <iframe src={`/widget?site=${WS}`} title="Waylo preview" className="h-[620px] w-full rounded-b-xl border-0" /></Card></div>
     </div>
   </>);

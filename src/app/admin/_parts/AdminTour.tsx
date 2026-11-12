@@ -35,13 +35,13 @@ export function AdminTour({ autoStart }: { autoStart: boolean }) {
   const side = r && r.right + 340 < vw; // room to the right (desktop rail)
   const style: React.CSSProperties = r ? (side ? { top: Math.max(12, r.top - 8), left: r.right + 14 } : { top: r.bottom + 12, left: Math.min(Math.max(12, r.left), vw - 332) }) : { top: 80, left: Math.max(12, vw / 2 - 160) };
   return <div className="fixed inset-0 z-[60]" role="dialog" aria-label="Product tour">
-    <div className="absolute inset-0 bg-stone-950/40" onClick={end} />
+    <div className="absolute inset-0 bg-warm-950/40" onClick={end} />
     {r && <div className="pointer-events-none absolute rounded-lg ring-2 ring-amber-400 ring-offset-2 ring-offset-transparent" style={{ top: r.top - 3, left: r.left - 3, width: r.width + 6, height: r.height + 6, boxShadow: "0 0 0 9999px rgba(12,10,9,.25)" }} />}
-    <div className="absolute w-80 rounded-xl bg-white p-4 text-stone-800 shadow-2xl" style={style}>
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-teal-700">Quick tour · {i + 1}/{STEPS.length}</p>
-      <p className="mt-1 font-semibold">{s.title}</p><p className="mt-1 text-sm text-stone-600">{s.body}</p>
+    <div className="absolute w-80 rounded-xl bg-card p-4 text-warm-800 shadow-2xl" style={style}>
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-navy-700">Quick tour · {i + 1}/{STEPS.length}</p>
+      <p className="mt-1 font-semibold">{s.title}</p><p className="mt-1 text-sm text-warm-600">{s.body}</p>
       <div className="mt-3 flex items-center justify-between">
-        <button onClick={end} className="text-xs text-stone-500 hover:text-stone-800">Skip tour</button>
+        <button onClick={end} className="text-xs text-warm-500 hover:text-warm-800">Skip tour</button>
         <div className="flex gap-2">{i > 0 && <button onClick={() => setI(i - 1)} className="w-btn-ghost px-3 py-1 text-sm">Back</button>}
           <button onClick={() => (last ? end() : setI(i + 1))} className="w-btn px-3 py-1 text-sm">{last ? "Done" : "Next"}</button></div>
       </div>
@@ -49,5 +49,5 @@ export function AdminTour({ autoStart }: { autoStart: boolean }) {
   </div>;
 }
 export function TourButton() {
-  return <button type="button" onClick={() => window.dispatchEvent(new Event("waylo:tour"))} className="grid h-8 w-8 place-items-center rounded-full border border-stone-200 text-xs text-stone-500 hover:border-teal-300 hover:text-teal-700" title="Take the quick tour" aria-label="Take the quick tour">?</button>;
+  return <button type="button" onClick={() => window.dispatchEvent(new Event("waylo:tour"))} className="grid h-8 w-8 place-items-center rounded-full border border-warm-200 text-xs text-warm-500 hover:border-navy-300 hover:text-navy-700" title="Take the quick tour" aria-label="Take the quick tour">?</button>;
 }

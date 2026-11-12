@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   icons: { icon: [{ url: "/favicon.ico", sizes: "48x48" }, { url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }, { url: "/icon-512.png", sizes: "512x512", type: "image/png" }], apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }] },
 };
 // Raspberry Navy brand fonts, self-hosted (no Google Fonts requests). These only
-// define CSS variables; the marketing `.mk` scope applies them. Admin type is unchanged.
+// define CSS variables; the marketing `.mk` and admin `.ad` scopes apply them.
 const display = localFont({ src: "./fonts/Fraunces-Variable.woff2", variable: "--font-display", weight: "400 700", display: "swap", fallback: ["Georgia", "serif"] });
 const ui = localFont({ src: [{ path: "./fonts/SourceSans3-Variable.woff2", weight: "200 900", style: "normal" }, { path: "./fonts/SourceSans3-Italic-Variable.woff2", weight: "200 900", style: "italic" }], variable: "--font-ui", display: "swap", fallback: ["system-ui", "sans-serif"] });
 const mono = localFont({ src: [{ path: "./fonts/IBMPlexMono-Regular.woff2", weight: "400" }, { path: "./fonts/IBMPlexMono-Medium.woff2", weight: "500" }], variable: "--font-mono", display: "swap", preload: false, fallback: ["ui-monospace", "monospace"] });

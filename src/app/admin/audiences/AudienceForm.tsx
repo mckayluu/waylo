@@ -20,9 +20,9 @@ export function AudienceForm({ canEdit }: { canEdit: boolean }) {
       <select className="w-input w-auto" value={x.field} onChange={(e) => set(i, { field: e.target.value as AudienceRule["field"] })}>{FIELDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
       <select className="w-input w-auto" value={x.op} onChange={(e) => set(i, { op: e.target.value as AudienceRule["op"] })}>{x.field === "pageviews" ? <><option value="gte">at least</option><option value="equals">exactly</option></> : <><option value="contains">contains</option><option value="equals">equals</option></>}</select>
       <input className="w-input max-w-[14rem]" placeholder={x.field === "pageviews" ? "3" : x.field === "path" ? "/pricing" : x.field === "signal" ? "pricing" : ""} value={x.value} onChange={(e) => set(i, { value: e.target.value })} />
-      {rules.length > 1 && <button type="button" onClick={() => setRules(rules.filter((_, j) => j !== i))} className="text-xs text-stone-400 hover:text-rose-600">Remove</button>}
+      {rules.length > 1 && <button type="button" onClick={() => setRules(rules.filter((_, j) => j !== i))} className="text-xs text-warm-400 hover:text-rose-600">Remove</button>}
     </div>)}
-      <button type="button" onClick={() => setRules([...rules, blank()])} className="text-xs font-medium text-teal-700 hover:underline">+ Add rule</button></div>
+      <button type="button" onClick={() => setRules([...rules, blank()])} className="text-xs font-medium text-navy-700 hover:underline">+ Add rule</button></div>
     <div className="flex items-center gap-3"><button className="w-btn">Create audience</button>{err && <span className="text-sm text-rose-600">{err}</span>}</div>
   </form>;
 }

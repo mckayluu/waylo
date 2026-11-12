@@ -17,21 +17,21 @@ export function IntegrationsForm({ initial }: { initial: Integrations }) {
   const Block = ({ k, title, desc, ph, help }: { k: "slackWebhook" | "crmWebhook"; title: string; desc: string; ph: string; help: React.ReactNode }) => {
     const t = k === "slackWebhook" ? "slack" : "crm";
     return <div className="w-card p-5">
-      <div className="flex items-start justify-between gap-3"><div><p className="font-semibold text-stone-900">{title}</p><p className="text-sm text-stone-500">{desc}</p></div>
-        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${v[k] ? "bg-teal-50 text-teal-800 ring-teal-200" : "bg-stone-100 text-stone-500 ring-stone-200"}`}>{v[k] ? "Connected" : "Not connected"}</span></div>
+      <div className="flex items-start justify-between gap-3"><div><p className="font-semibold text-warm-900">{title}</p><p className="text-sm text-warm-500">{desc}</p></div>
+        <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${v[k] ? "bg-navy-50 text-navy-800 ring-navy-200" : "bg-warm-100 text-warm-500 ring-warm-200"}`}>{v[k] ? "Connected" : "Not connected"}</span></div>
       <label className="w-label mt-4">Webhook URL</label>
       <div className="flex gap-2"><input className="w-input font-mono text-xs" placeholder={ph} value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })} />
         <button type="button" disabled={!!busy || !v[k]} onClick={() => test(t)} className="w-btn-ghost whitespace-nowrap">{busy === t ? "Sending…" : "Send test"}</button></div>
-      <p className={`mt-1.5 text-xs ${msg[t]?.startsWith("✗") ? "text-rose-600" : msg[t] ? "text-teal-700" : "text-stone-500"}`}>{msg[t] || help}</p>
+      <p className={`mt-1.5 text-xs ${msg[t]?.startsWith("✗") ? "text-rose-600" : msg[t] ? "text-navy-700" : "text-warm-500"}`}>{msg[t] || help}</p>
     </div>;
   };
   return <div className="space-y-3">
     {Block({ k: "slackWebhook", title: "Slack", desc: "Post alerts to a channel with an incoming webhook.", ph: "https://hooks.slack.com/services/…", help: <>Create one in Slack → Apps → Incoming Webhooks. Payload: <code>{"{ text }"}</code>.</> })}
     {Block({ k: "crmWebhook", title: "CRM / outbound webhook", desc: "POST a JSON summary to any CRM, Zapier, Make or your own endpoint.", ph: "https://your-crm.example.com/waylo", help: <>Payload: <code>{"{ event, site, sentAt, data: { lead, handoff, conversation } }"}</code>.</> })}
-    <div className="w-card p-5"><p className="font-semibold text-stone-900">Send notifications for</p>
+    <div className="w-card p-5"><p className="font-semibold text-warm-900">Send notifications for</p>
       <div className="mt-3 space-y-2.5">{([["notifyLeads", "New Contact-form leads", "lead.created"], ["notifyHighIntent", "Visitors becoming high-intent", "conversation.high_intent"], ["notifyHandoffs", "“Talk to a person” requests", "handoff.requested"]] as const).map(([k, l, ev]) =>
-        <label key={k} className="flex items-center gap-3 text-sm"><input type="checkbox" className="h-4 w-4 accent-teal-700" checked={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.checked })} /><span className="text-stone-800">{l}</span><code className="ml-auto text-[11px] text-stone-400">{ev}</code></label>)}</div>
-      <div className="mt-4 flex items-center gap-3"><button type="button" disabled={!!busy} onClick={() => save()} className="w-btn">{busy === "save" ? "Saving…" : "Save integrations"}</button>{msg.save && <span className={`text-sm ${msg.save === "Saved" ? "text-teal-700" : "text-rose-600"}`}>{msg.save}</span>}</div>
+        <label key={k} className="flex items-center gap-3 text-sm"><input type="checkbox" className="h-4 w-4 accent-navy-700" checked={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.checked })} /><span className="text-warm-800">{l}</span><code className="ml-auto text-[11px] text-warm-400">{ev}</code></label>)}</div>
+      <div className="mt-4 flex items-center gap-3"><button type="button" disabled={!!busy} onClick={() => save()} className="w-btn">{busy === "save" ? "Saving…" : "Save integrations"}</button>{msg.save && <span className={`text-sm ${msg.save === "Saved" ? "text-navy-700" : "text-rose-600"}`}>{msg.save}</span>}</div>
     </div>
   </div>;
 }

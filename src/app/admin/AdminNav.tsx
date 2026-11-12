@@ -32,8 +32,8 @@ export function AdminNav() {
     {SECTIONS.map((sec) => <div key={sec.title} className="flex gap-1 md:mb-3.5 md:flex-col md:gap-0.5">
     <p className="w-admin-eyebrow hidden md:block">{sec.title}</p>
     {sec.items.map((n) => (
-      <Link key={n.href} href={n.href} className={`relative flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm transition ${active(n.href) ? "bg-white/10 font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,.06)] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-teal-300" : "text-teal-50/60 hover:bg-white/5 hover:text-white"}`}>
-        <span className={active(n.href) ? "text-teal-300" : ""}>{n.icon}</span><span className="hidden md:inline">{n.label}</span></Link>))}
+      <Link key={n.href} href={n.href} className={`relative flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm transition ${active(n.href) ? "bg-white/10 font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,.06)] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-rasp-500" : "text-navy-100/75 hover:bg-white/5 hover:text-white"}`}>
+        <span className={active(n.href) ? "text-white" : ""}>{n.icon}</span><span className="hidden md:inline">{n.label}</span></Link>))}
     </div>)}
   </nav>;
 }

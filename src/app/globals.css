@@ -47,8 +47,7 @@ body { @apply bg-stone-50 text-stone-900 antialiased; }
 /* ---------------------------------------------------------------------------
    Raspberry Navy (refined) – marketing scope.
    Everything below applies only inside `.mk` (the marketing Shell, docs, legal,
-   the Waylo banner on /demo). The admin and the widget iframe keep the legacy
-   teal tokens above until they get their own pass.
+   the Waylo banner on /demo). The widget iframe keeps the legacy teal tokens above until they get their own pass.
    Raspberry is reserved for the primary button, the signal dot, the widget send
    control and the hot-lead number. Navy carries structure. Paper is the page.
    ------------------------------------------------------------------------- */
@@ -90,3 +89,55 @@ body { @apply bg-stone-50 text-stone-900 antialiased; }
 .mk .w-gradient .w-text-grad, .mk .w-text-grad-light { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #FFFFFF; }
 .mk .w-glow { box-shadow: var(--w-shadow-lg); }
 .mk .w-accent-line { height: 1px; background: #E4DDD4; }
+
+/* ---------------------------------------------------------------------------
+   Raspberry Navy (refined) – admin scope.
+   Applied by src/app/admin/layout.tsx (`.ad`) to the console and the bare auth
+   pages (login, signup, forgot, invite, reset). Same tokens as `.mk`; admin
+   chrome is a Night Navy rail on a Paper page with warm-white cards.
+   Raspberry: primary buttons, the active-nav marker, hot-lead / high-intent
+   signals. Navy: structure, links, success/"done" states, focus. Amber is kept
+   only for warnings (preview mode, trial ending, usage limits); rose for errors.
+   Contrast (AA): white on Raspberry 7.20:1, white on Navy 12.89:1, Ink on Paper
+   15.75:1, Warm Slate on Paper 6.68:1.
+   ------------------------------------------------------------------------- */
+.ad { --w-primary:#A81B48; --w-primary-hover:#8C1640; --w-primary-soft:#F6E8EC; --w-signal:#A81B48; --w-ink:#1A1714; --w-muted:#5A534C; --w-line:#E4DDD4; --w-canvas:#F5F0EA;
+  --w-deep:#0F1C33; --w-bright:#163352; --w-mint:#E8A8B8; --w-navy:#163352; --w-night:#0F1C33; --w-blush:#E8A8B8; --w-card:#FFFCF8; --w-cream:#D8D0C6; --w-soft-navy:#E8EEF3;
+  --w-accent:#A81B48; --w-accent-soft:#F6E8EC; --w-accent-bright:#A81B48; --w-support:#163352; --w-support-soft:#E8EEF3;
+  --w-grad:linear-gradient(180deg,#0F1C33 0%,#163352 100%);
+  --w-grad-cta:none; --w-grad-accent:none; --w-grad-text:none;
+  --w-shadow:0 1px 2px rgba(26,23,20,.05);
+  --w-shadow-lg:0 1px 2px rgba(26,23,20,.06),0 12px 32px -18px rgba(15,28,51,.28);
+  font-family: var(--font-ui), system-ui, -apple-system, "Segoe UI", sans-serif; background-color: var(--w-canvas); color: var(--w-ink); }
+.ad h1 { font-family: var(--font-display), Georgia, serif; font-weight: 560; font-optical-sizing: auto; letter-spacing: -0.012em; }
+.ad .font-display { font-family: var(--font-display), Georgia, serif; font-weight: 560; font-optical-sizing: auto; }
+.ad :is(code, kbd, pre, samp, .font-mono) { font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ad ::selection { background: #F6E8EC; color: #1A1714; }
+.ad :focus-visible:not(.w-input) { outline: 2px solid #163352; outline-offset: 2px; }
+.ad .w-admin-rail :focus-visible { outline-color: #E8A8B8; }
+.ad .w-btn:focus-visible { outline-color: #A81B48; }
+.ad .w-eyebrow { color: #A81B48; }
+.ad .w-eyebrow-alt { color: #163352; }
+.ad .w-eyebrow-amber { color: #8C1640; }
+.ad .w-code { background: #0F1C33; color: #E8EEF3; border-radius: 6px; }
+.ad .w-card { border-radius: 6px; border-color: #E4DDD4; background: #FFFCF8; box-shadow: none; }
+.ad .w-card-lg { border-radius: 6px; border-color: #E4DDD4; background: #FFFCF8; box-shadow: var(--w-shadow-lg); }
+.ad .w-input { border-radius: 4px; border-color: #D2C9BE; background: #FFFCF8; color: #1A1714; }
+.ad .w-input:focus { border-color: #163352; --tw-ring-color: rgba(22,51,82,.18); }
+.ad .w-input::placeholder { color: #6F665E; }
+.ad .w-label { color: #5A534C; }
+.ad .w-th { color: #5A534C; }
+.ad .w-btn, .ad .w-btn-grad, .ad .w-btn-accent { border-radius: 4px; background: #A81B48; color: #fff; box-shadow: none; filter: none; }
+.ad .w-btn:hover, .ad .w-btn-grad:hover, .ad .w-btn-accent:hover { background: #8C1640; filter: none; }
+.ad .w-btn-ghost { border-radius: 4px; border-color: #D2C9BE; background: #FFFCF8; color: #163352; }
+.ad .w-btn-ghost:hover { background: #F5F0EA; }
+.ad .w-badge-accent { border-radius: 4px; background: #F6E8EC; color: #8C1640; --tw-ring-color: #F0CFD9; }
+.ad .w-badge-support { border-radius: 4px; background: #E8EEF3; color: #163352; --tw-ring-color: #CBD7E3; }
+.ad .w-gradient { background: var(--w-grad); }
+.ad .w-mesh { background: #F5F0EA; }
+.ad .w-text-grad, .ad .w-text-grad-light { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #163352; }
+.ad .w-glow { box-shadow: var(--w-shadow-lg); }
+.ad .w-accent-line { height: 1px; background: #E4DDD4; }
+.ad .w-admin-rail { background: linear-gradient(180deg,#0F1C33 0%,#0F1C33 55%,#163352 100%); }
+.ad.w-admin-main, .ad .w-admin-main { background: #F5F0EA; }
+.ad .w-admin-eyebrow { color: rgba(216,208,198,.7); }

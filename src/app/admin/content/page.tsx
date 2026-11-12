@@ -23,13 +23,13 @@ export default async function Content({ searchParams }: { searchParams: { q?: st
     <div className="mb-4"><Card title="Crawl your site"><CrawlPanel siteUrl={st.siteUrl} last={(await getLastCrawl())} sites={siteList(st)} planSites={ent.plan.sites} planPages={ent.plan.pages} planName={ent.plan.name} indexed={pages.length} /></Card></div>
     <form className="mb-3"><input name="q" defaultValue={searchParams.q} placeholder="Filter pages…" className="w-input max-w-xs" /></form>
     <Card pad={false}><div className="overflow-x-auto"><table className="w-full text-sm">
-      <thead className="border-b border-stone-100 bg-stone-50/60"><tr><th className="w-th">Page</th><th className="w-th">Preview</th><th className="w-th">Status</th><th className="w-th text-right">Cited</th><th className="w-th" /></tr></thead>
-      <tbody className="divide-y divide-stone-100">{rows.map((k) => <tr key={k.url} className="group align-top hover:bg-stone-50">
-        <td className="max-w-xs px-4 py-2.5"><a href={k.url} target="_blank" rel="noreferrer" className="font-medium text-stone-800 hover:text-teal-700">{k.title}</a><p className="truncate font-mono text-xs text-stone-400">{k.url}</p></td>
-        <td className="max-w-md px-4 py-2.5 text-stone-600"><p className="line-clamp-2">{k.summary}</p><p className="mt-0.5 text-[11px] text-stone-400">{k.chars.toLocaleString()} chars{k.at && ` · ${ago(k.at)}`}</p></td>
-        <td className="px-4 py-2.5">{crawled ? <Badge tone="teal">Indexed</Badge> : <Badge>Sample</Badge>}</td>
-        <td className="px-4 py-2.5 text-right tabular-nums text-stone-600">{counts.get(k.url) || 0}</td>
+      <thead className="border-b border-warm-100 bg-warm-50/60"><tr><th className="w-th">Page</th><th className="w-th">Preview</th><th className="w-th">Status</th><th className="w-th text-right">Cited</th><th className="w-th" /></tr></thead>
+      <tbody className="divide-y divide-warm-100">{rows.map((k) => <tr key={k.url} className="group align-top hover:bg-warm-50">
+        <td className="max-w-xs px-4 py-2.5"><a href={k.url} target="_blank" rel="noreferrer" className="font-medium text-warm-800 hover:text-navy-700">{k.title}</a><p className="truncate font-mono text-xs text-warm-400">{k.url}</p></td>
+        <td className="max-w-md px-4 py-2.5 text-warm-600"><p className="line-clamp-2">{k.summary}</p><p className="mt-0.5 text-[11px] text-warm-400">{k.chars.toLocaleString()} chars{k.at && ` · ${ago(k.at)}`}</p></td>
+        <td className="px-4 py-2.5">{crawled ? <Badge tone="navy">Indexed</Badge> : <Badge>Sample</Badge>}</td>
+        <td className="px-4 py-2.5 text-right tabular-nums text-warm-600">{counts.get(k.url) || 0}</td>
         <td className="px-3 py-3 text-right">{k.id && <DeletePage id={k.id} />}</td></tr>)}
-        {rows.length === 0 && <tr><td colSpan={5} className="px-4 py-10 text-center text-stone-500">{emptyNew ? <>No pages indexed yet. Set your website URL in Settings, then crawl — Waylo won’t use the sample Waylo pages in this workspace.</> : q ? "No pages match." : "No pages yet."}</td></tr>}</tbody></table></div></Card>
+        {rows.length === 0 && <tr><td colSpan={5} className="px-4 py-10 text-center text-warm-500">{emptyNew ? <>No pages indexed yet. Set your website URL in Settings, then crawl — Waylo won’t use the sample Waylo pages in this workspace.</> : q ? "No pages match." : "No pages yet."}</td></tr>}</tbody></table></div></Card>
   </>);
 }
