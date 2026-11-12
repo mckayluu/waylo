@@ -1,12 +1,12 @@
 import type { InfoDef } from "./types";
 export const HOW: InfoDef = { path: "/how-it-works", crumb: "How it works", eyebrow: "Product tour",
-  title: "From signup to cited answers on your site, step by step",
-  sub: "Here are the eight screens, in the order you’ll see them. You need one script tag and your own pages.",
-  answer: "Create a workspace, crawl your site, and set the assistant’s name and guidance. Then paste one script tag and publish on the free Trial. Visitors get answers from your pages with source links. You read every question, and on Starter and up you can send serious visitors to Slack.",
+  title: "From signup to your first cited answer",
+  sub: "Here are the eight real screens in order. You need your own pages and one script tag.",
+  answer: "Create a workspace and crawl your site. Name the assistant, and add guidance where your pages miss something. Then paste one script tag. Visitors get answers from your pages with a link to the source. You read every question in the admin. On Starter and up, ready buyers also post to Slack.",
   metaTitle: "How Waylo works, step by step", metaDesc: "A screen-by-screen tour of Waylo. Create a workspace, crawl your site, brand the assistant, paste the script tag, and see cited answers, the admin, Slack routing, and the free Trial.",
   blocks: [
     { t: "prose", eyebrow: "Behind the answers", h: "How buying intent is detected", p: ["Waylo checks every visitor message for words about pricing, demos, buying, enterprise needs like SSO and compliance, integrations, and support. Two or more buying signals, or a ready-to-buy signal, make the conversation **high-intent**.", "Page views are recorded from the moment the script loads, so each signal comes with the path that led to it."] },
-    { t: "slack", eyebrow: "Hand off", h: "What lands in Slack", p: ["On Starter and up, high-intent conversations, Contact-form messages, and “Talk to a person” clicks post to your channel. Each post has the visitor’s words, the signals, and an **Open in Waylo** link."] },
+    { t: "slack", eyebrow: "Hand off", h: "What lands in Slack", p: ["On Starter and up, high-intent conversations and contact requests post to your channel. Each post has the visitor’s words and signals, with an **Open in Waylo** link.", "The Trial doesn’t send Slack or CRM alerts. You see the same signals in the admin."] },
     { t: "faq", items: [["How long does setup take?", "Most of it is reading. The crawl usually finishes in under a minute for a small site, and the install is one tag."], ["Do I need a developer?", "Only if you can’t add custom HTML to your site yourself. See the [install guide](/docs/install)."], ["What if it gets something wrong?", "Open the conversation, see which source it used, then fix the page or add a Fact in Guidance. The answer changes on the next question."]] }],
   related: [["AI chat", "/product/ai-chat", "Crawl and answers in detail."], ["Install guide", "/docs/install", "Every attribute, every CMS."], ["Pricing", "/pricing", "Trial $0, Starter $79, Growth $249."]] };
 

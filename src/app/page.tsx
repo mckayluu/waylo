@@ -6,46 +6,38 @@ import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
 import { Section, Shell } from "@/components/marketing/Section";
 import { Code } from "@/components/marketing/Code";
-import { FactsBlock } from "@/components/marketing/Page";
-import { ValueProps, WorkflowStrip, PhotoBand, PHOTOS, CrawlVisual, SignalsVisual, HandoffVisual, GuidanceVisual, Chip } from "@/components/marketing/Visuals";
-import { Shot, ShotNote } from "@/components/marketing/Shots";
 import { ProductTour } from "@/components/marketing/ProductTour";
 import { tourSteps } from "@/lib/tour";
-import { MSG } from "@/lib/messaging";
 import { TryWaylo } from "@/components/try/TryWaylo";
 import { JsonLd, orgLd, appLd, faqLd, FAQS, DEFINITION } from "@/lib/seo";
 
 export const metadata: Metadata = { title: { absolute: "Waylo – Your website’s own AI chat" }, description: "Waylo learns the public pages on your site and answers visitor questions the way your team would, with a link to the page behind each answer.", alternates: { canonical: "/" }, openGraph: { title: "Waylo – Your website’s own AI chat", description: "Waylo learns the public pages on your site and answers visitor questions the way your team would, with a link to the page behind each answer.", url: "/", siteName: "Waylo", type: "website", images: [{ url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo – Your website’s own AI chat" }] }, twitter: { card: "summary_large_image", title: "Waylo – Your website’s own AI chat", description: "Waylo learns the public pages on your site and answers visitor questions the way your team would, with a link to the page behind each answer.", images: ["/brand/og.png"] } };
 
-const features = [
-  ["Source links on every answer", "Each reply links the pages it used. Buyers can check it, and so can your team."],
-  ["Site crawl", "Enter your domain and Waylo reads your public pages. Run it again after you change the site."],
-  ["Buying signals", "Questions about pricing, integrations, security, and demos are flagged and tied to the pages the visitor read."],
-  ["Contact and demo requests", "When a visitor asks for a person, Waylo takes their details. On Starter and up it also posts them to Slack or your webhook."],
-  ["Slack and JSON webhook", "Starter and up. Alerts go to a Slack channel. The JSON webhook can feed HubSpot or Salesforce through Zapier, Make, or your own endpoint."],
-  ["Guidance", "Add facts, rules, and skills so the chat talks the way your team does and stays off topics you choose."],
-  ["Audiences", "On Growth, group visitors by what they did. For example, everyone who viewed /pricing."],
-  ["Team roles", "Invite teammates as Owner, Editor, or Viewer."],
-];
-const steps = [["Add your site", "Enter your domain and Waylo crawls your public pages."], ["Paste one tag", "Put the snippet on your site, in your CMS, or in Google Tag Manager."], ["Visitors ask", "The launcher or sidebar answers from your pages, with links, at any hour."], ["Follow up", "On Starter and up, serious visitors and contact requests post to Slack or your webhook."]];
-const outcomes = [["A visitor asks “Do you have SSO?”", "Waylo answers from your security page and links it. If the page doesn’t say, the chat says it doesn’t know."], ["Pricing and demo questions get flagged.", "You see them in the admin with the pages the visitor read first."], ["Contact requests reach a person.", "On Starter and up they post to Slack or your webhook with the last question and a link to the conversation."]];
 const faqs = FAQS;
-function ProductShot() {
+// Hero collage: real product screenshots on colour-blocked tiles (design language adapted from the Awardco reference).
+function HeroCollage() {
   return (
-    <figure className="w-glow overflow-hidden rounded-md border border-white/20 bg-white">
-      <div className="flex items-center gap-1.5 border-b border-warm-200 bg-warm-100 px-4 py-2.5"><span className="h-2.5 w-2.5 rounded-full bg-warm-300" /><span className="h-2.5 w-2.5 rounded-full bg-warm-300" /><span className="h-2.5 w-2.5 rounded-full bg-warm-300" /><span className="ml-3 text-xs text-warm-500">waylo-j5hv.onrender.com/demo</span></div>
-      <Image src="/product/demo-northpoint-answer.webp" alt="Waylo chat on the fictional Northpoint Ops demo site answering “How much is Pro per tech?” with a Northpoint Ops Pricing source chip" width={1920} height={1072} priority sizes="(min-width:1024px) 620px, 100vw" className="h-auto w-full" />
-      <figcaption className="border-t border-warm-200 bg-white px-4 py-2 text-[11px] text-warm-500">Real screenshot of the <Link href="/demo" className="font-medium text-navy-700 hover:underline">/demo</Link> page. Northpoint Ops is a fictional company. The answer and its source chip come from its pricing page.</figcaption>
+    <figure className="relative mx-auto w-full max-w-[560px]">
+      <div className="grid grid-cols-[1.05fr_1fr] gap-4">
+        <div className="w-tile w-tile-blush row-span-2 flex items-end justify-center px-5 pt-6 w-rise">
+          <div className="w-shot-float w-full max-w-[250px] translate-y-3"><Image src="/product/widget-answer.webp" alt="Waylo chat widget on the fictional Northpoint Ops demo site answering “How much is Pro per tech?” with a source chip that links its pricing page" width={406} height={648} priority sizes="250px" className="h-auto w-full" /></div>
+        </div>
+        <div className="w-tile w-tile-mist relative h-44 p-3 w-rise-2"><span className="w-pill absolute left-3 top-3 z-10 bg-card/90">Visitor journey</span><div className="w-shot-float mt-9 h-full"><Image src="/product/admin-tracking.webp" alt="Visitor journey in the Waylo admin with pages viewed and the questions asked" width={1440} height={900} sizes="260px" className="h-full w-full object-cover object-[18%_22%]" /></div></div>
+        <div className="w-tile w-tile-cream relative h-44 p-3 w-rise-3"><span className="w-pill absolute left-3 top-3 z-10 bg-card/90">Slack alerts</span><div className="w-shot-float mt-9 h-full"><Image src="/product/admin-integrations.webp" alt="Waylo admin Integrations view with Slack and CRM webhooks connected and recent deliveries" width={1440} height={900} sizes="260px" className="h-full w-full object-cover object-[40%_25%]" /></div></div>
+      </div>
+      <figcaption className="mt-6 text-xs leading-5 text-white/65">Real screenshots. The chat is on <Link href="/demo" className="underline hover:text-white">/demo</Link>, where Northpoint Ops is a fictional company. Admin views use sample data. Slack alerts are on Starter and up.</figcaption>
     </figure>
   );
 }
-
-const rows: [string, string, string, string, string[]][] = [
-  ["Cited answers", "Answers visitors can check", "Waylo reads your public pages and replies with links to the pages behind each answer. When your pages don’t cover a question, it says so and offers the contact form.", "/product/widget-answer.webp", ["Answers come from your published pages", "Source links on every reply", "Facts and rules you set"]],
-  ["Buying signals", "See who is serious while they browse", "Questions about pricing, integrations, and demos are flagged as buying intent. Each one sits next to the pages that visitor read.", "/product/admin-tracking.webp", ["Signals on each conversation", "Audiences such as “viewed /pricing” on Growth", "A link to the full conversation"]],
-  ["Team handoff", "Leads show up in Slack", "On Starter and up, alerts go to a Slack channel or a JSON webhook. Use the webhook with Zapier, Make, or your own endpoint to reach your CRM.", "/product/admin-integrations.webp", ["Slack alerts", "JSON webhook for your CRM", "Owner, Editor, and Viewer roles"]],
+const dayOne: [string, string][] = [["1 script tag", "Paste it before </body> or add it in Google Tag Manager."], ["A source link on every answer", "Visitors can open the page the answer came from."], ["Fresh pages", "Re-crawls every 3 days on the Trial and daily on paid plans."], ["500 AI messages free", "The Trial needs no card. Invite your whole team."]];
+const cards: [string, string, string, string, string, string][] = [
+  ["Buying signals", "See who looks ready", "Pricing and security questions get flagged. Each one sits next to the pages that visitor read first.", "/product/admin-tracking.webp", "object-[15%_20%]", "w-tile-mist"],
+  ["Starter and up", "Ready buyers post to Slack", "When a visitor looks serious, the conversation goes to your Slack channel or a JSON webhook. On the Trial you see the same signals in the admin.", "/product/admin-integrations.webp", "object-[38%_22%]", "w-tile-cream"],
+  ["Guidance", "Fill the gaps your pages leave", "Add a fact when a page is missing something. Set a rule for any topic the chat should leave alone.", "/product/admin-guidance.webp", "object-[25%_15%]", "w-tile-mist"],
+  ["Site crawl", "Your pages, kept current", "Enter your domain once. Waylo reads your public pages and keeps them fresh. You can re-crawl any time.", "/product/admin-content.webp", "object-[25%_25%]", "w-tile-cream"],
 ];
-const stats: [string, string][] = [["1 tag", "to install"], ["async", "won’t block your page"], ["3", "embed modes"], ["500", "free AI messages"]];
+const platforms = ["Webflow", "WordPress", "Squarespace", "Wix", "Shopify", "Google Tag Manager"];
+const plansTeaser: [string, string, string, string, string][] = [["Trial", "$0", "14 days", "Try it on your own site with real visitors. 500 AI messages and no card.", "w-tile-card"], ["Starter", "$79", "/mo", "One site that wants ready buyers sent to Slack or your CRM. 3,000 messages a month.", "w-tile-blush"], ["Growth", "$249", "/mo", "Up to 3 sites and 15,000 messages a month. Adds Audiences for grouping visitors.", "w-tile-mist"]];
 
 export default function Home() {
   return (
@@ -53,74 +45,86 @@ export default function Home() {
       <Header />
       <main>
         <JsonLd data={[orgLd, appLd, faqLd(FAQS)]} />
-        <section className="w-gradient relative overflow-hidden px-5 pb-20 pt-10 text-white sm:pt-14">
-          <div className="w-grid-bg absolute inset-0 opacity-70" aria-hidden />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur"><span className="h-1.5 w-1.5 rounded-full bg-rasp-600 ring-1 ring-white/60" />Early access</p>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">Your website’s <span className="w-text-grad-light">own AI chat</span></h1>
-              <p className="mt-5 max-w-xl text-lg text-white/90">Waylo learns the public pages on your site and answers visitor questions the way your team would, with a link to the page behind each answer.</p>
-              <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass px-5 py-3 text-base">See how it works</Link></div><p className="mt-3 text-xs text-white/70">500 AI messages free. One script tag to install.</p>
-              <div id="try" className="mt-7 max-w-xl scroll-mt-24"><p className="mb-2 text-sm font-medium text-white/90">Or try it on your own site first. It takes about a minute, with no signup.</p><TryWaylo compact /></div>
-              <dl className="mt-8 grid max-w-lg grid-cols-4 gap-3 border-t border-white/15 pt-6">{stats.map(([v, l]) => <div key={l}><dt className="text-xl font-semibold">{v}</dt><dd className="text-xs text-white/70">{l}</dd></div>)}</dl>
+        <section className="w-band-navy relative overflow-hidden px-5 pb-20 pt-12 sm:pt-16">
+          <div aria-hidden className="pointer-events-none absolute -left-16 bottom-10 hidden h-32 w-32 -rotate-6 rounded-[26px] bg-navy-700 lg:block" />
+          <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+            <div className="w-rise">
+              <p className="w-pill w-pill-dark"><span className="w-pill-dot" />AI chat for your website · early access</p>
+              <h1 className="w-h-xl mt-6 font-semibold text-white">Your website’s <span className="w-marker">own AI chat</span></h1>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-white/85">Waylo reads the public pages on your site and answers visitor questions with a link to the page it used. You see what people ask and who looks ready to buy.</p>
+              <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent w-btn-lg">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass w-btn-lg">See how it works</Link></div>
+              <p className="mt-3 text-sm text-white/70">500 AI messages free. No card needed.</p>
+              <div id="try" className="mt-8 max-w-xl scroll-mt-24 border-t border-white/15 pt-6"><p className="mb-2 text-sm font-medium text-white/90">Or try it on your own site first. No signup needed. It reads up to 20 pages and answers up to 12 questions.</p><TryWaylo compact /></div>
             </div>
-            <div id="product" className="relative scroll-mt-20">
-              
-              <div className="relative"><ProductShot /></div>
-              
+            <div id="product" className="relative scroll-mt-20"><HeroCollage /></div>
+          </div>
+        </section>
+
+        <section aria-label="What you get on day one" className="w-band-mist px-5 py-10">
+          <div className="mx-auto max-w-6xl">
+            <p className="text-center text-sm text-warm-600">We don’t have customer logos yet, so we don’t show any. Here is what every Trial gets on day one.</p>
+            <dl className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{dayOne.map(([k, d]) => <div key={k} className="w-tile w-tile-card p-5"><dt className="font-display text-xl font-semibold text-warm-900">{k}</dt><dd className="mt-1.5 text-sm leading-6 text-warm-600">{d}</dd></div>)}</dl>
+          </div>
+        </section>
+
+        <section id="features" className="scroll-mt-20 bg-card px-5 py-16 sm:py-20">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)]">
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <p className="w-pill">What it does</p>
+              <h2 className="w-h-lg mt-5 font-semibold text-warm-900">Answers your buyers can check</h2>
+              <p className="mt-4 leading-7 text-warm-600">Every reply links the page behind it. When your pages don’t cover a question, Waylo says it doesn’t know and offers your contact form.</p>
+              <div className="mt-7 flex flex-wrap items-center gap-4"><Link href="/signup" className="w-btn-accent w-btn-lg">Start free trial</Link><Link href="/features" className="text-sm font-semibold text-navy-700 hover:underline">All features →</Link></div>
+            </div>
+            <div className="grid gap-5">
+              <div className="w-tile w-tile-blush grid items-center gap-6 p-7 md:grid-cols-[1fr_1.15fr]">
+                <div><p className="w-pill bg-card/70">Cited answers</p><h3 className="mt-4 text-2xl font-semibold tracking-tight text-warm-900">The answer and the page it came from</h3><p className="mt-2 text-warm-700">Numbered source chips sit under each reply. Your team sees the same sources in the conversation view.</p></div>
+                <div className="w-shot-float"><Image src="/product/admin-conv.webp" alt="A conversation in the Waylo admin with the transcript and source chips under each answer" width={1440} height={900} sizes="(min-width:1024px) 380px, 100vw" className="h-60 w-full object-cover object-[30%_30%]" /></div>
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2">{cards.map(([tag, t, d, img, pos, tile]) => <div key={t} className={`w-tile ${tile} flex flex-col p-5`}>
+                <div className="w-shot-float"><Image src={img} alt={`Waylo admin screenshot for ${tag.toLowerCase()}`} width={1440} height={900} sizes="(min-width:1024px) 340px, 100vw" className={`h-40 w-full object-cover ${pos}`} /></div>
+                <p className="mt-5 font-plex text-[11px] font-medium uppercase tracking-[0.09em] text-rasp-700">{tag}</p><h3 className="mt-1.5 text-xl font-semibold tracking-tight text-warm-900">{t}</h3><p className="mt-2 text-sm leading-6 text-warm-600">{d}</p></div>)}</div>
             </div>
           </div>
         </section>
-        <div className="relative z-10 -mt-10 px-5"><div className="mx-auto max-w-6xl shadow-xl shadow-navy-950/10"><ValueProps items={MSG.props} /></div></div>
-        
-        <Section id="tour" eyebrow="Self-serve" title="Set it up yourself in eight screens" sub="These are the real screens, in order. You go from signup to a cited answer and a Slack alert without talking to anyone." className="bg-white">
+
+        <Section id="tour" eyebrow="Self-serve setup" title="Set it up yourself in eight screens" sub="These are the real screens in order. You go from signup to a cited answer without talking to anyone." className="w-band-paper">
           <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
             <ProductTour steps={tourSteps()} compact />
-            <div className="rounded-md border border-warm-200 bg-warm-50 p-5 text-sm text-warm-700 lg:self-start">
-              <p className="text-xs font-semibold uppercase tracking-wider text-navy-700">Where we are</p>
-              <ul className="mt-3 space-y-2">
+            <div className="w-tile w-tile-card p-6 text-sm text-warm-700 lg:self-start">
+              <p className="w-pill">Where we are</p>
+              <ul className="mt-4 space-y-2.5">
                 <li className="flex gap-2"><span className="text-navy-700">✓</span>The Trial includes 500 AI messages. No card needed.</li>
                 <li className="flex gap-2"><span className="text-navy-700">✓</span>Starter is $79 a month and Growth is $249. No contract.</li>
                 <li className="flex gap-2"><span className="text-navy-700">✓</span>Every step is in the admin. The docs and FAQ cover the rest.</li>
                 <li className="flex gap-2"><span className="text-rasp-600">–</span>We run on a free hosting tier, so a first load can be slow. Stripe is in test mode.</li>
-                <li className="flex gap-2"><span className="text-rasp-600">–</span>We don’t have customer logos yet, so we don’t show any.</li>
               </ul>
-              <div className="mt-5 flex flex-wrap gap-2"><Link href="/signup" className="w-btn-accent px-4 py-2">Start free trial</Link><Link href="/how-it-works" className="w-btn-ghost px-4 py-2">Full tour</Link></div>
+              <div className="mt-6 flex flex-wrap gap-2"><Link href="/signup" className="w-btn-accent px-4 py-2">Start free trial</Link><Link href="/how-it-works" className="w-btn-ghost px-4 py-2">See how it works</Link></div>
             </div>
           </div>
         </Section>
-        <Section className="w-mesh">
-          <div className="grid gap-y-5 border-y border-warm-200 py-6 md:grid-cols-[1.3fr_1fr_1fr] md:divide-x md:divide-warm-200">{outcomes.map(([a, b], i) => <div key={a} className={i ? "md:pl-6" : "md:pr-6"}><p className={i ? "font-semibold text-warm-900" : "text-xl font-semibold tracking-tight text-warm-900"}>{a}</p><p className="mt-1 text-sm leading-6 text-warm-600">{b}</p></div>)}</div>
-          <div className="mt-8"><WorkflowStrip /></div>
-        </Section>
-        <Section id="views" eyebrow="Inside the admin" title="Four views your team will use" sub="Knowledge shows what was crawled. Signals shows who asked about what. Guidance holds your facts and rules. Handoff decides where leads go." className="bg-white">
-          <div className="grid gap-5 lg:grid-cols-2">{([["teal", "Knowledge", "Your site, read by Waylo", "Paste a domain and Waylo crawls your public pages. It re-crawls every 3 days on the Trial and daily on paid plans.", <CrawlVisual key="c" />], ["amber", "Signals", "Who asked about pricing, and from which page", "Pricing, security, integration, and demo questions are flagged and tied to the pages the visitor read.", <SignalsVisual key="s" />], ["indigo", "Handoff", "Leads arrive with context", "On Starter and up, contact and demo requests post to Slack or your webhook with the last question and a link to the conversation.", <HandoffVisual key="h" />], ["teal", "Guidance", "Answers stay inside what you’ve published", "Facts, rules, and skills keep answers accurate and in your voice. When Waylo doesn’t know, it says so.", <GuidanceVisual key="g" />]] as const).map(([t, k, h, d, v], i) => <div key={k} className={`rounded-md bg-warm-50 p-5 ring-1 ring-warm-200 ${i === 0 ? "lg:col-span-2 lg:grid lg:grid-cols-[1fr_1.4fr] lg:items-center lg:gap-8" : ""}`}><div className="mb-4 flex items-start justify-between gap-3"><div><h3 className="text-lg font-semibold tracking-tight">{h}</h3><p className="mt-1 text-sm text-warm-600">{d}</p></div><Chip t={t}>{k}</Chip></div>{v}</div>)}</div>
-        </Section>
-        <Section id="screens" eyebrow="Real screens" title="The admin your team works in" sub="These are real admin screens from the Trial, with sample data." className="w-mesh">
-          <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]"><Shot k="conv" /><div className="grid gap-5"><Shot k="guidance" crop="h-44" /><Shot k="content" crop="h-44" /></div></div><ShotNote />
-        </Section>
-        <Section id="features" eyebrow="Features" title="What’s included" sub="Every plan gets the chat, the crawl, and signals. Slack, webhooks, guidance, and audiences depend on the plan." className="w-mesh">
-          <div className="space-y-8">{rows.map(([tag, t, d, img, bullets], i) => <div key={t} className={`grid items-center gap-8 lg:grid-cols-2 ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-            <figure className="overflow-hidden rounded-md bg-white ring-1 ring-warm-200 w-glow"><Image src={img} alt={`Waylo product screenshot: ${tag}`} width={1440} height={900} sizes="(min-width:1024px) 560px, 100vw" className={`h-72 w-full object-cover ${i === 0 ? "object-top" : "object-left-top"}`} /><figcaption className="flex items-center justify-between border-t border-warm-200 px-4 py-2 text-xs text-warm-500"><span className="font-semibold text-navy-700">{tag}</span><span>{["Widget on the /demo site", "Admin → Tracking → one visitor", "Admin → Integrations"][i]}</span></figcaption></figure>
-            <div><p className="w-eyebrow">{tag}</p><h3 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{t}</h3><p className="mt-3 text-warm-600">{d}</p><ul className="mt-5 grid gap-2 sm:grid-cols-2">{bullets.map(b => <li key={b} className="flex items-start gap-2 text-sm text-warm-700"><span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-rasp-50 text-[11px] font-bold text-rasp-700 ring-1 ring-rasp-200">✓</span>{b}</li>)}</ul></div>
-          </div>)}</div>
-          <div className="mt-12 grid gap-8 lg:grid-cols-[220px_1fr]"><div><h3 className="text-lg font-semibold tracking-tight">Full feature list</h3><p className="mt-1 text-sm text-warm-600">Everything in the admin today.</p><Link href="/features" className="mt-3 inline-block text-sm font-medium text-navy-700 hover:underline">Feature details →</Link></div><dl className="grid border-t border-warm-200 sm:grid-cols-2 sm:gap-x-10">{features.map(([t, d]) => <div key={t} className="border-b border-warm-200 py-4"><dt className="font-semibold text-warm-900">{t}</dt><dd className="mt-1 text-sm leading-6 text-warm-600">{d}</dd></div>)}</dl></div>
-        </Section>
-        <section id="how" className="scroll-mt-20 bg-warm-950 px-5 py-14 text-white sm:py-16"><div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2">
-          <div><p className="text-xs font-semibold uppercase tracking-[0.08em] text-rasp-300">How it works</p><h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Live in about ten minutes</h2><p className="mt-3 text-warm-300">There’s no SDK and no build step. The tag loads async, so it won’t slow your page. Pick <code className="text-rasp-200">launcher</code>, <code className="text-rasp-200">sidebar</code>, or <code className="text-rasp-200">track</code> with <code className="text-rasp-200">data-mode</code>.</p>
-            <ol className="mt-6 divide-y divide-white/10 border-y border-white/10">{steps.map(([t, d], i) => <li key={t} className="grid grid-cols-[2rem_1fr] gap-3 py-3.5"><span className="font-mono text-sm text-rasp-300">0{i + 1}</span><p className="text-sm text-warm-300"><b className="font-semibold text-white">{t}.</b> {d}</p></li>)}</ol></div>
-          <div><Code label="Paste before </body>">{snippet()}</Code><div className="mt-4"><Code label="Open chat from your own button">{`<button onclick="Waylo.open()">Talk to us</button>`}</Code></div><p className="mt-4 text-sm"><Link href="/docs/embed-modes" className="mr-4 font-medium text-rasp-300 hover:underline">Compare embed modes →</Link><Link href="/docs/install" className="font-medium text-rasp-300 hover:underline">Read the install guide →</Link></p><p className="mt-6 text-sm text-warm-400">Works with Webflow · WordPress · Squarespace · Wix · Shopify · Google Tag Manager · Slack · CRM webhooks</p></div>
+
+        <section id="how" className="w-band-navy scroll-mt-20 px-5 py-16 sm:py-20"><div className="mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-2">
+          <div><p className="w-pill w-pill-dark">Install</p><h2 className="w-h-lg mt-5 font-semibold text-white">One script tag and you’re live</h2><p className="mt-4 leading-7 text-white/80">There’s no SDK and no build step. The tag loads async, so it won’t slow your page. Choose a launcher or a docked sidebar with <code className="text-blush">data-mode</code>. Track-only mode records visits without showing the chat.</p>
+            <p className="mt-8 text-sm font-medium text-white/80">Works where your site lives</p>
+            <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">{platforms.map(p => <li key={p} className="rounded-2xl bg-white/[0.06] px-4 py-4 text-center text-sm font-semibold text-white ring-1 ring-white/10">{p}</li>)}</ul>
+            <p className="mt-6 text-sm"><Link href="/docs/install" className="font-medium text-blush hover:underline">Read the install guide →</Link></p></div>
+          <div><Code label="Paste before </body>">{snippet()}</Code><div className="mt-4"><Code label="Open the chat from your own button">{`<button onclick="Waylo.open()">Ask a question</button>`}</Code></div><p className="mt-4 text-sm"><Link href="/docs/embed-modes" className="font-medium text-blush hover:underline">Compare embed modes →</Link></p></div>
         </div></section>
-        <Section eyebrow="Who it helps" title="Who uses it" className="bg-white"><PhotoBand items={[PHOTOS.support, PHOTOS.meeting, PHOTOS.dashboard, PHOTOS.workshop]} /></Section>
-        <Section id="what" eyebrow="In short" title="What is Waylo?" className="w-mesh"><div className="grid items-start gap-8 lg:grid-cols-[1fr_1.2fr]"><div><p className="text-lg leading-8 text-warm-700">{DEFINITION}</p><div className="relative mt-6 overflow-hidden rounded-md w-glow"><Image src="/marketing/collab.webp" alt="A marketing and sales team reviewing website conversations together" width={1400} height={934} sizes="(min-width:1024px) 480px, 100vw" className="h-56 w-full object-cover" /></div><p className="mt-5 text-sm"><Link href="/features" className="font-medium text-navy-700 hover:underline">All features →</Link> · <Link href="/use-cases" className="font-medium text-navy-700 hover:underline">Use cases →</Link></p></div><FactsBlock /></div></Section>
-        <Section id="pricing" eyebrow="Pricing" title="Three plans with the price on the page" className="bg-white">
-          <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-end"><div className="overflow-hidden rounded-md ring-1 ring-warm-200">{[["Trial", "$0", "1 site · 500 AI messages"], ["Starter", "$79/mo", "3,000 messages · Slack and webhooks"], ["Growth", "$249/mo", "3 sites · 15,000 messages · Audiences"]].map(([n, p, d], i) => <div key={n} className={`grid grid-cols-[6rem_6.5rem_1fr] items-baseline gap-3 px-5 py-4 text-sm ${i ? "border-t border-warm-200" : ""} ${i === 1 ? "bg-navy-50/60" : "bg-white"}`}><p className="font-semibold text-warm-900">{n}</p><p className="text-xl font-semibold tracking-tight">{p}</p><p className="text-warm-600">{d}</p></div>)}</div>
-          <div><Link href="/pricing" className="w-btn-grad px-5 py-2.5">Compare plans →</Link><p className="mt-3 text-xs text-warm-500">Checkout runs on Stripe. Change or cancel your plan from Billing in the admin.</p></div></div>
+
+        <Section id="pricing" eyebrow="Pricing" title="The price is on the page" sub="Start on the free Trial. Paid plans are a flat monthly price with no overage fees." className="bg-card">
+          <div className="grid gap-5 md:grid-cols-3">{plansTeaser.map(([n, p, per, d, tile]) => <div key={n} className={`w-tile ${tile} p-6`}><p className="font-plex text-[11px] font-medium uppercase tracking-[0.09em] text-warm-600">{n}</p><p className="mt-3"><span className="font-display text-4xl font-semibold tracking-tight text-warm-900">{p}</span> <span className="text-sm text-warm-500">{per}</span></p><p className="mt-3 text-sm leading-6 text-warm-700">{d}</p></div>)}</div>
+          <div className="mt-6 flex flex-wrap items-center gap-4"><Link href="/pricing" className="w-btn-accent w-btn-lg">Compare plans</Link><p className="text-sm text-warm-600">Slack and CRM alerts start on Starter. Change or cancel from Billing.</p></div>
         </Section>
-        <Section id="faq" className="w-mesh">
-          <div className="grid gap-8 lg:grid-cols-[280px_1fr]"><div className="lg:sticky lg:top-24 lg:self-start"><p className="text-xs font-semibold uppercase tracking-wider text-rasp-700">FAQ</p><h2 className="mt-1.5 text-2xl font-semibold tracking-tight sm:text-[2rem]">Common questions</h2><Link href="/faq" className="mt-3 inline-block text-sm font-medium text-navy-700 hover:underline">All questions →</Link></div><div className="divide-y divide-warm-200 border-y border-warm-200">{faqs.map(([q, a]) => <details key={q} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium"><h3>{q}</h3><span className="text-lg leading-none text-rasp-700 transition group-open:rotate-45">+</span></summary><p className="mt-2 max-w-2xl text-sm leading-6 text-warm-600">{a}</p></details>)}</div></div>
+
+        <Section id="faq" className="w-band-paper">
+          <div className="grid gap-10 lg:grid-cols-[320px_1fr]"><div className="lg:sticky lg:top-24 lg:self-start"><p className="w-pill">FAQ</p><h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-[1.1]">Common questions</h2><p className="mt-4 text-sm leading-6 text-warm-600">{DEFINITION}</p><Link href="/faq" className="mt-4 inline-block text-sm font-semibold text-navy-700 hover:underline">All questions →</Link></div><div className="divide-y divide-warm-200 border-y border-warm-200">{faqs.map(([q, a]) => <details key={q} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium"><h3>{q}</h3><span className="text-lg leading-none text-rasp-700 transition group-open:rotate-45">+</span></summary><p className="mt-2 max-w-2xl text-sm leading-6 text-warm-600">{a}</p></details>)}</div></div>
         </Section>
-        <section className="px-5 pb-14 pt-4"><div className="w-gradient w-glow relative mx-auto grid max-w-6xl items-center gap-8 overflow-hidden rounded-md px-8 py-12 text-white md:grid-cols-[1.3fr_1fr]"><div className="w-grid-bg absolute inset-0 opacity-50" aria-hidden /><div className="relative"><h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">You can have it live this afternoon</h2><p className="mt-3 text-white/85">Crawl your pages, paste one script tag, and watch the first answers come in. 500 AI messages free.</p><div className="mt-7 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent px-5 py-3 text-base">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass px-5 py-3 text-base">See how it works</Link><Link href="/demo" className="px-2 py-3 text-sm font-medium text-white/85 underline-offset-4 hover:underline">Try the demo site</Link></div></div><div className="relative hidden overflow-hidden rounded-md ring-1 ring-white/20 md:block"><Image src="/marketing/office.webp" alt="" width={1400} height={935} sizes="400px" className="h-56 w-full object-cover opacity-90" /></div></div></section>
+
+        <section className="px-5 pb-16 pt-4 w-band-paper"><div className="w-tile w-band-navy relative mx-auto grid max-w-6xl items-center gap-8 px-8 py-14 sm:px-12 md:grid-cols-[1.4fr_1fr]">
+          <div aria-hidden className="absolute -right-6 -top-6 h-36 w-36 rotate-6 rounded-[28px] bg-rasp-600" /><div aria-hidden className="absolute right-28 top-20 h-16 w-16 -rotate-6 rounded-[16px] bg-blush" />
+          <div className="relative"><p className="w-pill w-pill-dark">Self-serve</p><h2 className="w-h-lg mt-5 font-semibold text-white">You can have it live this afternoon</h2><p className="mt-4 text-white/80">Crawl your pages and paste one script tag. Then watch the first answers come in.</p>
+            <div className="mt-8 flex flex-wrap gap-3"><Link href="/signup" className="w-btn-accent w-btn-lg">Start free trial</Link><Link href="/how-it-works" className="w-btn-glass w-btn-lg">See how it works</Link></div><p className="mt-3 text-sm text-white/65">500 AI messages free. No card needed.</p></div>
+        </div></section>
       </main>
       <Footer />
     </Shell>
