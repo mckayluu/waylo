@@ -19,6 +19,7 @@ export function BrandingForm({ initial }: { initial: Branding }) {
           <input type="color" value={b.accent} onChange={(e) => setB({ ...b, accent: e.target.value })} className="h-7 w-9 cursor-pointer rounded border border-warm-300" /></div>
         <input className="w-input mt-2 font-mono" value={b.accent} onChange={(e) => setB({ ...b, accent: e.target.value })} /></div>
       <div><label className="w-label">Greeting</label><textarea rows={3} className="w-input" value={b.greeting} onChange={(e) => setB({ ...b, greeting: e.target.value })} /></div>
+      <div><label className="w-label">Suggested questions</label><textarea rows={4} className="w-input" placeholder={"How much does it cost?\nHow do I install it?"} value={(b.starterQuestions || []).join("\n")} onChange={(e) => setB({ ...b, starterQuestions: e.target.value.split("\n") })} /><p className="mt-1 text-xs text-warm-500">One per line, up to four. Shown on the empty chat screen. Leave blank to use questions from your crawled pages.</p></div>
       <div className="flex items-center gap-3"><button disabled={busy} className="w-btn">{busy ? "Saving…" : "Save changes"}</button>{msg && <span className={`text-sm ${msg.startsWith("✗") ? "text-rose-600" : "text-navy-700"}`}>{msg}</span>}</div>
     </div>
     <div><p className="w-label">Preview</p>

@@ -11,7 +11,7 @@ export default function WayloEmbed() {
     if (hidden(p) || w.__waylo) return;
     const s = document.createElement("script");
     s.src = "/waylo.js"; s.async = true; s.dataset.site = "waylo"; s.dataset.mode = "launcher"; s.dataset.color = "#A81B48"; // Raspberry launcher on marketing pages
-    if (process.env.NEXT_PUBLIC_WAYLO_OPEN_ON_LOAD === "true") s.dataset.open = "true"; // default closed
+    s.dataset.open = "true"; // polite auto-open (delay, session memory, mobile teaser); workspace toggle can still turn it off
     document.body.appendChild(s);
   }, [p]);
   useEffect(() => { // hide launcher if client-navigating into admin

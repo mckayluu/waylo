@@ -1,7 +1,7 @@
 export type Citation = { title: string; url: string };
 export type Message = { id: string; role: "visitor" | "bot"; text: string; at: string; citations?: Citation[]; feedback?: "up" | "down" };
 export type Lead = { id: string; name: string; email: string; message: string; intent: "message" | "demo" | "support"; consent: boolean; conversationId?: string; createdAt: string };
-export type Branding = { botName: string; accent: string; greeting: string };
+export type Branding = { botName: string; accent: string; greeting: string; starterQuestions?: string[] };
 export const DEFAULT_BRANDING: Branding = { botName: "Waylo", accent: "#A81B48", greeting: "Hi! I'm Waylo's AI assistant. Ask me anything about the product, pricing, or setup." };
 export type Conversation = {
   id: string; visitorName?: string; visitorEmail?: string; visitorType?: string;
@@ -14,7 +14,7 @@ export type Rule = { id: string; text: string; createdAt: string };
 export type Skill = { id: string; name: string; instructions: string; createdAt: string };
 export type Guidance = { facts: Fact[]; rules: Rule[]; skills: Skill[] };
 export type SiteSettings = { siteName: string; siteUrl: string; companyProfile: string; published: boolean; allowedOrigins?: string; openOnLoad?: boolean; extraSites?: string[]; autoRecrawl?: boolean };
-export const DEFAULT_SETTINGS: SiteSettings = { siteName: "", siteUrl: "", companyProfile: "", published: false, openOnLoad: false };
+export const DEFAULT_SETTINGS: SiteSettings = { siteName: "", siteUrl: "", companyProfile: "", published: false }; // openOnLoad unset on existing workspaces; new signups set it true
 export type Member = { id: string; workspaceId?: string; email: string; role: "Viewer" | "Editor" | "Owner"; invitedAt: string; inviteToken?: string; passwordHash?: string; joinedAt?: string };
 export type AudienceRule = { field: "signal" | "path" | "referrer" | "pageviews" | "visitorType"; op: "contains" | "equals" | "gte"; value: string };
 export type Audience = { id: string; name: string; match: "all" | "any"; rules: AudienceRule[]; createdAt: string };

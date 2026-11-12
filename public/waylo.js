@@ -1,7 +1,8 @@
 /* Waylo embed. Paste before </body>:
    <script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="default" async></script>
    Options: data-site (workspace id), data-mode="launcher"(default)|"sidebar"|"track",
-   data-position="right"|"left", data-color="#A81B48", data-open="true". */
+   data-position="right"|"left", data-color="#A81B48", data-open="true"
+   (polite auto-open: ~2.5s delay, once per tab session; mobile teaser). */
 (function () {
   if (window.__waylo) return; window.__waylo = true;
   var s = document.currentScript || document.querySelector('script[src*="/waylo.js"]');
@@ -61,8 +62,10 @@
   if (document.readyState === "complete") track(); else window.addEventListener("load", track);
   var api = window.Waylo = { visitorId: vid, site: site, track: track, open: function () {}, close: function () {}, toggle: function () {} };
   if (mode === "track") return;
+  function isMobile() { return window.matchMedia && window.matchMedia("(max-width: 640px)").matches; }
+  function reducedMotion() { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
   function mount() {
-    var src = origin + "/widget?vid=" + encodeURIComponent(vid) + "&site=" + encodeURIComponent(site);
+    var src = origin + "/widget?vid=" + encodeURIComponent(vid) + "&site=" + encodeURIComponent(site) + "&embed=" + encodeURIComponent(mode);
     var f = document.createElement("iframe"); f.title = "Waylo chat"; f.setAttribute("allow", "clipboard-write");
     var side = left ? "left" : "right";
     if (mode === "sidebar") {
@@ -70,20 +73,78 @@
       f.style.cssText = "position:fixed;top:0;" + side + ":0;width:400px;max-width:100vw;height:100vh;border:0;box-shadow:-8px 0 24px rgba(28,25,23,.12);z-index:2147483647;background:#fafaf9";
       document.body.appendChild(f); return;
     }
-    var open = false, loaded = false;
+    var open = false, loaded = false, teaser = null, autoTimer = 0;
+    var dismissedKey = "waylo_dismissed:" + site;
+    function wasDismissed() { try { return sessionStorage.getItem(dismissedKey) === "1"; } catch (e) { return false; } }
+    function rememberDismissed() { try { sessionStorage.setItem(dismissedKey, "1"); } catch (e) {} }
+    function hideTeaser() { if (teaser && teaser.parentNode) teaser.parentNode.removeChild(teaser); teaser = null; }
+    function showTeaser(cfg) {
+      if (teaser || open || wasDismissed()) return;
+      teaser = document.createElement("div");
+      teaser.setAttribute("data-waylo-ui", "");
+      teaser.setAttribute("role", "dialog");
+      teaser.setAttribute("aria-label", "Chat suggestion");
+      var fade = reducedMotion() ? "opacity:1;" : "opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;";
+      teaser.style.cssText = "position:fixed;bottom:92px;" + side + ":20px;max-width:min(260px,calc(100vw - 100px));z-index:2147483646;" + fade;
+      var accent = (cfg && cfg.accent) || color;
+      var initial = String((cfg && (cfg.botName || cfg.siteName)) || "W").replace(/^\s+/, "").charAt(0).toUpperCase() || "W";
+      teaser.innerHTML = '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 10px 10px 12px;background:#fff;color:#1c1917;border:1px solid #e7e5e4;border-radius:16px;box-shadow:0 12px 32px rgba(28,25,23,.18);font:14px/1.35 ui-sans-serif,system-ui,sans-serif;">'
+        + '<span style="flex:none;width:28px;height:28px;border-radius:50%;background:' + accent + ';color:#fff;display:flex;align-items:center;justify-content:center;font:700 13px/1 ui-sans-serif,system-ui,sans-serif;">' + initial + "</span>"
+        + '<button type="button" data-waylo-open style="flex:1;margin:0;padding:2px 0 0;border:0;background:none;text-align:left;cursor:pointer;font:inherit;color:inherit;">What can I help you find?</button>'
+        + '<button type="button" data-waylo-dismiss aria-label="Dismiss" style="flex:none;width:28px;height:28px;margin:0;border:0;border-radius:50%;background:transparent;color:#78716c;cursor:pointer;font:18px/1 sans-serif;">×</button>'
+        + "</div>";
+      teaser.addEventListener("click", function (e) {
+        var t = e.target && e.target.closest ? e.target.closest("[data-waylo-open],[data-waylo-dismiss]") : null;
+        if (!t) return;
+        if (t.hasAttribute("data-waylo-dismiss")) { hideTeaser(); rememberDismissed(); }
+        else set(true, { manual: true });
+      });
+      document.body.appendChild(teaser);
+      if (!reducedMotion()) requestAnimationFrame(function () { teaser.style.opacity = "1"; teaser.style.transform = "translateY(0)"; });
+    }
     f.style.cssText = "position:fixed;bottom:92px;" + side + ":20px;width:400px;max-width:calc(100vw - 24px);height:640px;max-height:calc(100vh - 116px);border:0;border-radius:16px;box-shadow:0 20px 50px rgba(28,25,23,.25);z-index:2147483646;background:#fafaf9;display:none";
     var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Chat with us"); b.setAttribute("data-waylo-ui", "");
-    b.style.cssText = "position:fixed;bottom:20px;" + side + ":20px;width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:" + color + ";color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:2147483647;display:flex;align-items:center;justify-content:center;transition:transform .15s";
+    b.style.cssText = "position:fixed;bottom:20px;" + side + ":20px;width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:" + color + ";color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:2147483647;display:flex;align-items:center;justify-content:center;" + (reducedMotion() ? "" : "transition:transform .15s");
     var chat = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
     var x = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
     b.innerHTML = chat;
-    b.onmouseenter = function () { b.style.transform = "scale(1.06)"; }; b.onmouseleave = function () { b.style.transform = ""; };
-    function set(v) { open = v; if (v && !loaded) { f.src = src; loaded = true; } f.style.display = v ? "block" : "none"; b.innerHTML = v ? x : chat; b.setAttribute("aria-expanded", String(v)); }
-    b.onclick = function () { set(!open); };
-    api.open = function () { set(true); }; api.close = function () { set(false); }; api.toggle = function () { set(!open); };
-    window.addEventListener("message", function (e) { if (e.origin === origin && e.data === "waylo:close") set(false); });
+    b.onmouseenter = function () { if (!reducedMotion()) b.style.transform = "scale(1.06)"; }; b.onmouseleave = function () { b.style.transform = ""; };
+    function notifyOpened() { try { if (f.contentWindow) f.contentWindow.postMessage("waylo:opened", origin); } catch (e) {} }
+    function set(v, opts) {
+      opts = opts || {};
+      open = v;
+      if (v) { hideTeaser(); if (autoTimer) { clearTimeout(autoTimer); autoTimer = 0; } }
+      if (v && !loaded) { f.src = src; loaded = true; f.addEventListener("load", notifyOpened); }
+      else if (v) notifyOpened();
+      if (!v && opts.user) rememberDismissed();
+      f.style.display = v ? "block" : "none";
+      b.innerHTML = v ? x : chat;
+      b.setAttribute("aria-expanded", String(v));
+    }
+    b.onclick = function () { if (open) set(false, { user: true }); else set(true, { manual: true }); };
+    api.open = function () { set(true, { manual: true }); };
+    api.close = function () { set(false, { user: true }); };
+    api.toggle = function () { if (open) set(false, { user: true }); else set(true, { manual: true }); };
+    window.addEventListener("message", function (e) { if (e.origin === origin && e.data === "waylo:close") set(false, { user: true }); });
     document.body.appendChild(f); document.body.appendChild(b);
-    if (A("open", "") === "true") set(true);
+    var attrOpen = A("open", "") === "true";
+    var wantAuto = attrOpen;
+    var autoCfg = null;
+    try {
+      fetch(origin + "/api/branding?site=" + encodeURIComponent(site))
+        .then(function (r) { return r.ok ? r.json() : {}; })
+        .then(function (cfg) {
+          autoCfg = cfg;
+          if (typeof cfg.openOnLoad === "boolean") wantAuto = cfg.openOnLoad;
+        })
+        .catch(function () {});
+    } catch (e) {}
+    autoTimer = setTimeout(function () {
+      autoTimer = 0;
+      if (!wantAuto || wasDismissed() || open) return;
+      if (isMobile()) showTeaser(autoCfg);
+      else set(true, { auto: true });
+    }, 2500);
   }
   if (document.body) mount(); else document.addEventListener("DOMContentLoaded", mount);
 })();

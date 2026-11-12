@@ -24,4 +24,6 @@ export const DEMO_BRANDING = {
   greeting: "Hi! Ask me anything about Northpoint Ops — pricing, features, or how shops use us.",
   published: true,
   siteName: "Northpoint Ops",
+  openOnLoad: true,
+  starterQuestions: ["How much is Pro per tech?", "What does Northpoint Ops do?", "Do you sync with QuickBooks?", "Can I book a walkthrough?"],
 };
