@@ -1,7 +1,7 @@
 /* Waylo embed. Paste before </body>:
    <script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="default" async></script>
    Options: data-site (workspace id), data-mode="launcher"(default)|"sidebar"|"track",
-   data-position="right"|"left", data-color="#0f766e", data-open="true". */
+   data-position="right"|"left", data-color="#A81B48", data-open="true". */
 (function () {
   if (window.__waylo) return; window.__waylo = true;
   var s = document.currentScript || document.querySelector('script[src*="/waylo.js"]');
@@ -10,7 +10,7 @@
   var A = function (k, d) { var v = s.getAttribute("data-" + k); return v == null || v === "" ? d : v; };
   var site = A("site", "default");
   var mode = A("sidebar", "") === "true" ? "sidebar" : A("mode", "launcher");
-  var left = A("position", "right") === "left", color = A("color", "#0f766e");
+  var left = A("position", "right") === "left", color = A("color", "#A81B48");
   var KEY = "waylo_vid", vid;
   try { vid = localStorage.getItem(KEY); } catch (e) {}
   if (!vid) { vid = "v_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); try { localStorage.setItem(KEY, vid); } catch (e) {} }
