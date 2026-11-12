@@ -39,7 +39,7 @@ export default async function Install() {
         <ul className="list-disc space-y-0.5 pl-5 text-sm text-warm-600">
           <li><code>data-site</code> — must equal this workspace id (<code>{WS}</code>).</li>
           <li><code>data-mode</code> — <code>launcher</code> (floating button, default), <code>sidebar</code> (always-open panel) or <code>track</code> (analytics only).</li>
-          <li><code>data-position=&quot;left&quot;</code>, <code>data-color=&quot;#A81B48&quot;</code>, <code>data-open=&quot;true&quot;</code> (open on load).</li>
+          <li><code>data-position=&quot;left&quot;</code>, <code>data-color=&quot;#A81B48&quot;</code>, <code>data-open=&quot;true&quot;</code> (polite auto-open).</li>
           <li>JS API: <code>Waylo.open()</code>, <code>Waylo.close()</code>, <code>Waylo.toggle()</code> — e.g. on a &quot;Talk to us&quot; button.</li>
         </ul>
         <div className="mt-3"><Code>{`<script src="${WAYLO_URL}/waylo.js" data-site="${WS}" data-color="#1d4ed8" data-position="left" async></script>`}</Code></div></Card>

@@ -4,6 +4,7 @@ import { findRelevant } from "./knowledge";
 import { DEMO_PAGES, findDemo } from "./demoKnowledge";
 import { isDemoSite } from "./tenant";
 import { retrieve, retrieveForLLM, sourcesPrompt, hasCrawl, isWayloWs, hasPricingContent } from "./retrieve";
+import { retrievalQuestion } from "./markdown";
 import { tryCtx } from "./trycontext";
 
 export type Answer = { text: string; citations: Citation[] };
@@ -93,68 +94,93 @@ function parse(raw: string, src: { title: string; url: string }[]): Answer {
   return { text: stripFiller((m ? raw.slice(0, m.index) : raw).trim()), citations: cite(nums.map((n) => src[n - 1]).filter(Boolean).slice(0, 3)) };
 }
 
-/** Answer a visitor. If onDelta is given, text is streamed (real OpenAI streaming, or simulated for the mock). */
-export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta, site?: string): Promise<Answer> {
-  if (isDemoSite(site)) return respondDemo(history, text, onDelta);
-  const key = process.env.OPENAI_API_KEY;
-  const fallback = async () => { const a = (await mock(text, signals, hasEmail)); a.text = stripFiller(a.text); const f = await finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta) await simulate(a.text, onDelta); return a; };
-  if (!key) return fallback();
-  const src = (await retrieveForLLM(text));
-  let emitted = 0;
+/** Last 6 turns (up to 12 messages) for the model. Current question is already in history. */
+function llmHistory(history: Message[]) {
+  return history.slice(-12).map((m) => ({ role: (m.role === "visitor" ? "user" : "assistant") as "user" | "assistant", content: m.text }));
+}
+
+/** Read an OpenAI SSE chat stream, holding back a trailing "SOURCES:" line from onDelta. */
+async function readOpenAiStream(r: Response, onDelta: OnDelta, signal?: AbortSignal): Promise<string> {
+  const reader = r.body!.getReader(); const dec = new TextDecoder(); let buf = "", raw = "", emitted = 0;
+  const emit = async () => {
+    const cut = raw.search(/\n?\s*S(O(U(R(C(E(S(:)?)?)?)?)?)?)?\s*$/i);
+    const safe = (cut >= 0 ? raw.slice(0, cut) : raw);
+    const stop = raw.search(/\n\s*SOURCES:/i); const upto = stop >= 0 ? Math.min(stop, safe.length) : safe.length;
+    if (upto > emitted) { await onDelta(raw.slice(emitted, upto)); emitted = upto; }
+  };
   try {
-    const r = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini", stream: !!onDelta,
-        messages: [{ role: "system", content: (await systemPrompt(src)) }, ...history.map((m) => ({ role: m.role === "visitor" ? "user" : "assistant", content: m.text }))],
-      }),
-    });
-    if (!r.ok) throw new Error(`OpenAI ${r.status}`);
-    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; const a = raw ? await finalize(parse(raw, src), text) : undefined; return a?.text ? a : (await fallback()); }
-    // Stream, holding back anything that might be the trailing "SOURCES:" line.
-    const reader = r.body!.getReader(); const dec = new TextDecoder(); let buf = "", raw = "";
     for (;;) {
+      if (signal?.aborted) break;
       const { done, value } = await reader.read(); if (done) break;
       buf += dec.decode(value, { stream: true }); const lines = buf.split("\n"); buf = lines.pop()!;
       for (const l of lines) {
         if (!l.startsWith("data:")) continue; const d = l.slice(5).trim(); if (d === "[DONE]") continue;
         try { raw += JSON.parse(d).choices?.[0]?.delta?.content || ""; } catch {}
       }
-      const cut = raw.search(/\n?\s*S(O(U(R(C(E(S(:)?)?)?)?)?)?)?\s*$/i); // possible start of SOURCES
-      const safe = (cut >= 0 ? raw.slice(0, cut) : raw).replace(/\s+$/, (w) => w.slice(0, 0));
-      const stop = raw.search(/\n\s*SOURCES:/i); const upto = stop >= 0 ? Math.min(stop, safe.length) : safe.length;
-      if (upto > emitted) { await onDelta(raw.slice(emitted, upto)); emitted = upto; }
+      await emit();
     }
-    if (!raw) return fallback();
+  } catch (e) {
+    if (!signal?.aborted && !(e instanceof DOMException && e.name === "AbortError")) throw e;
+  } finally { try { reader.releaseLock(); } catch {} }
+  return raw;
+}
+
+/** Answer a visitor. If onDelta is given, text is streamed (real OpenAI streaming, or simulated for the mock). */
+export async function respond(history: Message[], text: string, signals: string[], hasEmail: boolean, onDelta?: OnDelta, site?: string, signal?: AbortSignal): Promise<Answer> {
+  if (isDemoSite(site)) return respondDemo(history, text, onDelta, signal);
+  const key = process.env.OPENAI_API_KEY;
+  const q = retrievalQuestion(history, text);
+  const fallback = async () => { const a = (await mock(q, signals, hasEmail)); a.text = stripFiller(a.text); const f = await finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta && !signal?.aborted) await simulate(a.text, onDelta); return a; };
+  if (!key) return fallback();
+  const src = (await retrieveForLLM(q));
+  try {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || "gpt-4o-mini", stream: !!onDelta,
+        messages: [{ role: "system", content: (await systemPrompt(src)) }, ...llmHistory(history)],
+      }),
+      signal,
+    });
+    if (!r.ok) throw new Error(`OpenAI ${r.status}`);
+    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; const a = raw ? await finalize(parse(raw, src), text) : undefined; return a?.text ? a : (await fallback()); }
+    const raw = await readOpenAiStream(r, onDelta, signal);
+    if (!raw) return signal?.aborted ? { text: "", citations: [] } : fallback();
     const a = await finalize(parse(raw, src), text);
-    if (!a.text && emitted === 0) return fallback();
-    if (a.text.length > emitted) await onDelta(a.text.slice(emitted));
+    if (!a.text && !signal?.aborted) return fallback();
     return a;
-  } catch {
-    if (emitted === 0) return fallback();
-    return { text: "", citations: [] };
+  } catch (e) {
+    if (signal?.aborted) return { text: "", citations: [] };
+    return fallback();
   }
 }
 
 /** /demo Northpoint Ops site: answer only from DEMO_PAGES knowledge (never Waylo plans, crawl, or workspace guidance). */
-async function respondDemo(history: Message[], text: string, onDelta?: OnDelta): Promise<Answer> {
-  const rel = findDemo(text);
+async function respondDemo(history: Message[], text: string, onDelta?: OnDelta, signal?: AbortSignal): Promise<Answer> {
+  const q = retrievalQuestion(history, text);
+  const rel = findDemo(q);
   const mockDemo = async (): Promise<Answer> => {
     const a: Answer = rel.length ? { text: rel.map((k) => k.summary).join("\n\n"), citations: cite(rel) }
       : /^(hi|hello|hey)\b/i.test(text.trim()) ? { text: "Hi! I can help with Northpoint Ops **pricing**, **features**, **customers**, or how to **contact sales**.", citations: [] }
       : { text: "I couldn't find that on the Northpoint Ops site. Try asking about pricing, features, or customers — or use the **Contact** tab.", citations: [] };
-    if (onDelta) await simulate(a.text, onDelta); return a;
+    if (onDelta && !signal?.aborted) await simulate(a.text, onDelta); return a;
   };
   const key = process.env.OPENAI_API_KEY; if (!key) return mockDemo();
   const src = DEMO_PAGES;
   const sys = `You are the concise website assistant for Northpoint Ops (field service scheduling software). Answer ONLY from the SOURCES below (pages of the Northpoint Ops website). You are not Waylo; never mention Waylo plans or prices. Give exact numbers from SOURCES. If the answer isn't in SOURCES, say so briefly and point to the **Contact** tab; otherwise answer and stop without filler. Use short markdown. After the answer, on a final line write SOURCES: followed by the numbers used, comma separated, or SOURCES: none.\n\nSOURCES:\n${src.map((k, i) => `[${i + 1}] ${k.title} (${k.url}): ${k.summary}`).join("\n")}`;
   try {
     const r = await fetch("https://api.openai.com/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4o-mini", messages: [{ role: "system", content: sys }, ...history.slice(-10).map((m) => ({ role: m.role === "visitor" ? "user" : "assistant", content: m.text }))] }) });
+      body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4o-mini", stream: !!onDelta, messages: [{ role: "system", content: sys }, ...llmHistory(history)] }), signal });
     if (!r.ok) throw new Error(String(r.status));
-    const raw = (await r.json()).choices?.[0]?.message?.content; if (!raw) return mockDemo();
+    if (!onDelta) {
+      const raw = (await r.json()).choices?.[0]?.message?.content; if (!raw) return mockDemo();
+      const a = parse(raw, src); if (!a.citations.length && rel.length) a.citations = cite(rel);
+      return a;
+    }
+    const raw = await readOpenAiStream(r, onDelta, signal);
+    if (!raw) return signal?.aborted ? { text: "", citations: [] } : mockDemo();
     const a = parse(raw, src); if (!a.citations.length && rel.length) a.citations = cite(rel);
-    if (onDelta) await simulate(a.text, onDelta); return a;
-  } catch { return mockDemo(); }
+    return a;
+  } catch { if (signal?.aborted) return { text: "", citations: [] }; return mockDemo(); }
 }

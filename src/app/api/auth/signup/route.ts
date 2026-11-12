@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   try {
     await runIn(ws.id, async () => {
       await addMember(email, "Owner", hashPassword(pw));
-      await setSettings({ siteName: company, siteUrl, published: false });
+      await setSettings({ siteName: company, siteUrl, published: false, openOnLoad: true });
       await setBranding({ botName: company.slice(0, 40), greeting: `Hi! Ask me anything about ${company}.`, accent: DEFAULT_BRANDING.accent });
       if (fromTry && Date.now() - fromTry.createdAt < TRY_TTL_MS) {
         await upsertPages(fromTry.pages.map(({ id: _id, ...p }) => p));

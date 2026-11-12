@@ -42,7 +42,7 @@ export function SnippetBuilder({ url, site = "default", initialOpen = false }: {
         <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-card shadow transition ${open ? "left-5" : "left-0.5"}`} />
       </button>
       <span>
-        <b>Open chat on page load</b> — visitors see the chat open automatically (adds <code>data-open=&quot;true&quot;</code>).
+        <b>Open chat on page load</b> — after a short delay, visitors see the empty-state greeting (adds <code>data-open=&quot;true&quot;</code>). It won’t reopen in the same tab after they close it. On phones a small teaser appears instead of the full screen.
         {busy && <span className="ml-2 text-warm-500">Saving…</span>}
         {saved && <span className="ml-2 text-navy-700">Saved to workspace</span>}
         {err && <span className="ml-2 text-rose-600">{err}</span>}
