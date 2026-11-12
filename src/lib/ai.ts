@@ -19,12 +19,38 @@ export function stripFiller(t: string) { return t.replace(FILLER, (m) => (/^\s*\
 // On known answers, drop closers that push the Contact tab (e.g. "For custom plans..., please reach out through the Contact tab.").
 const CONTACT_CLOSER = /(?:^|(?<=[.!?\n]))\s*[^.!?\n]*\b(?:contact tab|reach out|get in touch|contact (?:us|the team|our team|sales))\b[^.!?\n]*[.!?]?\s*$/i;
 export function stripContactCloser(t: string) { let prev; do { prev = t; t = t.replace(CONTACT_CLOSER, "").trim(); } while (t !== prev && t.length); return t || prev; }
+const UNKNOWN_RE = /couldn'?t find|don'?t have (that|this)|not sure|can'?t quote/i;
+const GREETING_RE = /^(hi|hello|hey|thanks|thank you|ok|okay|cool|great|got it|cheers)\b/i;
+function isGreeting(s: string) {
+  const t = s.trim();
+  return GREETING_RE.test(t) && t.split(/\s+/).length <= 8;
+}
+function priorCitations(history: Message[]): Citation[] {
+  for (let i = history.length - 1; i >= 0; i--) {
+    const m = history[i];
+    if (m.role === "bot" && m.citations?.length) return m.citations.slice(0, 3);
+  }
+  return [];
+}
+/** Follow-ups like "and for Growth?" must still get their own chips. Prefer the model's SOURCES, then retrieved pages (using the history-expanded query), then citations from the previous grounded answer. Greetings and "I don't know" stay uncited. */
+export function ensureCitations(a: Answer, opts: { question: string; retrieved?: { title: string; url: string }[]; history?: Message[]; builtIn?: { title: string; url: string }[] }): Answer {
+  if (!a.text || isGreeting(opts.question) || isGreeting(a.text)) return { ...a, citations: [] };
+  const unknown = UNKNOWN_RE.test(a.text);
+  if (unknown) return { ...a, citations: a.citations || [] };
+  if (a.citations.length) return a;
+  const retrieved = opts.retrieved?.length ? cite(opts.retrieved.slice(0, 3)) : [];
+  if (retrieved.length) return { ...a, citations: retrieved };
+  if (opts.builtIn?.length) return { ...a, citations: cite(opts.builtIn.slice(0, 3)) };
+  const prior = priorCitations(opts.history || []);
+  if (prior.length) return { ...a, citations: prior };
+  return a;
+}
 /** Ensure known answers carry a citation chip from built-in knowledge (e.g. Pricing & Plans) and no Contact closer. */
-async function finalize(a: Answer, question: string): Promise<Answer> {
-  let citations = a.citations;
-  if (!citations.length && (await isWayloWs())) citations = cite(findRelevant(question, 2));
-  const unknown = /couldn'?t find|don'?t have (that|this)|not sure|can'?t quote/i.test(a.text);
-  return { text: citations.length && !unknown ? stripContactCloser(a.text) : a.text, citations: unknown ? a.citations : citations };
+async function finalize(a: Answer, question: string, retrievalQ: string, retrieved: { title: string; url: string }[], history: Message[]): Promise<Answer> {
+  const builtIn = (await isWayloWs()) ? findRelevant(retrievalQ, 2) : [];
+  const out = ensureCitations(a, { question, retrieved, history, builtIn });
+  const unknown = UNKNOWN_RE.test(out.text);
+  return { text: out.citations.length && !unknown ? stripContactCloser(out.text) : out.text, citations: out.citations };
 }
 const cite = (ps: { title: string; url: string }[]) => ps.map(({ title, url }) => ({ title, url: absUrl(url) }));
 
@@ -86,7 +112,7 @@ async function systemPrompt(src: { title: string; url: string; summary: string }
     : sourcedPrices
       ? " SOURCES include pricing or plan information. If the visitor asks what a plan costs or how much something is, answer with the figures in SOURCES and cite them. Do not refuse a pricing question when SOURCES contain the answer. Never invent prices that are not in SOURCES or the guidance. You are not Waylo and must not describe Waylo's product unless it appears in SOURCES. Always write at least one sentence before the SOURCES line."
       : " Never quote prices, plans or facts that are not in SOURCES or the guidance; you are not Waylo and must not describe Waylo's product. Always write at least one sentence before the SOURCES line, even when the answer is not available.";
-  return `You are ${name}'s concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly${waylo ? " and suggest the docs at /docs or starting the free trial at /signup" : " and point the visitor to the **Contact** tab"} — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. ${waylo ? "Never suggest contacting the team, booking a call, or the Contact tab." : "Only mention the **Contact** tab when the answer is genuinely missing from SOURCES."}${pricing} Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
+  return `You are ${name}'s concise website assistant. Answer ONLY using the SOURCES below (pages from this website) plus the company guidance. If unsure, say so briefly${waylo ? " and suggest the docs at /docs or starting the free trial at /signup" : " and point the visitor to the **Contact** tab"} — When SOURCES or guidance answer the question, give the answer and STOP — NEVER add "check the website", "visit the website", "contact us directly", "visit the Contact tab", or any similar filler. ${waylo ? "Never suggest contacting the team, booking a call, or the Contact tab." : "Only mention the **Contact** tab when the answer is genuinely missing from SOURCES."}${pricing} Prefer concrete facts from SOURCES over hedging. Use short markdown (bold, bullet lists). After the answer, on a final line write SOURCES: followed by the numbers of the sources you used, comma separated (e.g. SOURCES: 1,3), or SOURCES: none. Follow-up questions still need that SOURCES line with the numbers you used — never write SOURCES: none when the answer came from SOURCES, even if the same facts appeared in earlier turns.\n\n${(await guidancePrompt())}\n\nSOURCES:\n${sourcesPrompt(src)}`;
 }
 function parse(raw: string, src: { title: string; url: string }[]): Answer {
   const m = raw.match(/\n?SOURCES:\s*([^\n]*)\s*$/i);
@@ -130,7 +156,7 @@ export async function respond(history: Message[], text: string, signals: string[
   if (isDemoSite(site)) return respondDemo(history, text, onDelta, signal);
   const key = process.env.OPENAI_API_KEY;
   const q = retrievalQuestion(history, text);
-  const fallback = async () => { const a = (await mock(q, signals, hasEmail)); a.text = stripFiller(a.text); const f = await finalize(a, text); a.text = f.text; a.citations = f.citations; if (onDelta && !signal?.aborted) await simulate(a.text, onDelta); return a; };
+  const fallback = async () => { const a = (await mock(q, signals, hasEmail)); a.text = stripFiller(a.text); const f = await finalize(a, text, q, [], history); a.text = f.text; a.citations = f.citations; if (onDelta && !signal?.aborted) await simulate(a.text, onDelta); return a; };
   if (!key) return fallback();
   const src = (await retrieveForLLM(q));
   try {
@@ -144,10 +170,10 @@ export async function respond(history: Message[], text: string, signals: string[
       signal,
     });
     if (!r.ok) throw new Error(`OpenAI ${r.status}`);
-    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; const a = raw ? await finalize(parse(raw, src), text) : undefined; return a?.text ? a : (await fallback()); }
+    if (!onDelta) { const j = await r.json(); const raw = j.choices?.[0]?.message?.content; const a = raw ? await finalize(parse(raw, src), text, q, src, history) : undefined; return a?.text ? a : (await fallback()); }
     const raw = await readOpenAiStream(r, onDelta, signal);
     if (!raw) return signal?.aborted ? { text: "", citations: [] } : fallback();
-    const a = await finalize(parse(raw, src), text);
+    const a = await finalize(parse(raw, src), text, q, src, history);
     if (!a.text && !signal?.aborted) return fallback();
     return a;
   } catch (e) {
@@ -168,19 +194,19 @@ async function respondDemo(history: Message[], text: string, onDelta?: OnDelta, 
   };
   const key = process.env.OPENAI_API_KEY; if (!key) return mockDemo();
   const src = DEMO_PAGES;
-  const sys = `You are the concise website assistant for Northpoint Ops (field service scheduling software). Answer ONLY from the SOURCES below (pages of the Northpoint Ops website). You are not Waylo; never mention Waylo plans or prices. Give exact numbers from SOURCES. If the answer isn't in SOURCES, say so briefly and point to the **Contact** tab; otherwise answer and stop without filler. Use short markdown. After the answer, on a final line write SOURCES: followed by the numbers used, comma separated, or SOURCES: none.\n\nSOURCES:\n${src.map((k, i) => `[${i + 1}] ${k.title} (${k.url}): ${k.summary}`).join("\n")}`;
+  const sys = `You are the concise website assistant for Northpoint Ops (field service scheduling software). Answer ONLY from the SOURCES below (pages of the Northpoint Ops website). You are not Waylo; never mention Waylo plans or prices. Give exact numbers from SOURCES. If the answer isn't in SOURCES, say so briefly and point to the **Contact** tab; otherwise answer and stop without filler. Use short markdown. After the answer, on a final line write SOURCES: followed by the numbers used, comma separated, or SOURCES: none. Follow-up questions still need that SOURCES line with the numbers you used — never write SOURCES: none when the answer came from SOURCES, even if the same facts appeared in earlier turns.\n\nSOURCES:\n${src.map((k, i) => `[${i + 1}] ${k.title} (${k.url}): ${k.summary}`).join("\n")}`;
   try {
     const r = await fetch("https://api.openai.com/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4o-mini", stream: !!onDelta, messages: [{ role: "system", content: sys }, ...llmHistory(history)] }), signal });
     if (!r.ok) throw new Error(String(r.status));
     if (!onDelta) {
       const raw = (await r.json()).choices?.[0]?.message?.content; if (!raw) return mockDemo();
-      const a = parse(raw, src); if (!a.citations.length && rel.length) a.citations = cite(rel);
+      const a = ensureCitations(parse(raw, src), { question: text, retrieved: rel, history });
       return a;
     }
     const raw = await readOpenAiStream(r, onDelta, signal);
     if (!raw) return signal?.aborted ? { text: "", citations: [] } : mockDemo();
-    const a = parse(raw, src); if (!a.citations.length && rel.length) a.citations = cite(rel);
+    const a = ensureCitations(parse(raw, src), { question: text, retrieved: rel, history });
     return a;
   } catch { if (signal?.aborted) return { text: "", citations: [] }; return mockDemo(); }
 }
