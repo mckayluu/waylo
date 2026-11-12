@@ -29,6 +29,7 @@ const visible = (el: Element | null): el is HTMLElement => {
   return s.display !== "none" && s.visibility !== "hidden" && r.width > 0 && r.height > 0;
 };
 const hits = (a: Box, b: Box, pad = 0) => a.left < b.right + pad && a.right > b.left - pad && a.top < b.bottom + pad && a.bottom > b.top - pad;
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const inside = (p: Pt, b: Box) => p.x >= b.left && p.x <= b.right && p.y >= b.top && p.y <= b.bottom;
 // Tight boxes around the actual lines of text, not the whole block.
 const textBoxes = (el: Element): Box[] => { const r = document.createRange(); r.selectNodeContents(el); return Array.from(r.getClientRects()).filter((b) => b.width > 0); };
@@ -48,14 +49,14 @@ function scene(mobile: boolean) {
 
 // One smooth cubic from s (leaving along ds) to e (arriving along de). The line stops at the head's base.
 function arrow(s: Pt, ds: Pt, e: Pt, de: Pt, tone: Arrow["tone"]): { a: Arrow; pts: Pt[] } {
-  const len = Math.hypot(e.x - s.x, e.y - s.y), k = len * 0.5, H = 11;
+  const len = Math.hypot(e.x - s.x, e.y - s.y), k = len * 0.5, H = 16;
   const b = { x: e.x - de.x * H, y: e.y - de.y * H }; // head base
   const c1 = { x: s.x + ds.x * k, y: s.y + ds.y * k }, c2 = { x: b.x - de.x * k * 0.8, y: b.y - de.y * k * 0.8 };
   const pts: Pt[] = [];
   for (let i = 0; i <= 24; i++) { const t = i / 24, u = 1 - t; pts.push({ x: u * u * u * s.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * b.x, y: u * u * u * s.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * b.y }); }
   pts.push(e);
   const f = (p: Pt) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
-  const w = { x: -de.y * 5.5, y: de.x * 5.5 };
+  const w = { x: -de.y * 8, y: de.x * 8 };
   const head = `M${f(e)} L${f({ x: b.x + w.x, y: b.y + w.y })} Q${f({ x: b.x + de.x * 2.5, y: b.y + de.y * 2.5 })} ${f({ x: b.x - w.x, y: b.y - w.y })} Z`;
   return { a: { d: `M${f(s)} C${f(c1)} ${f(c2)} ${f(b)}`, head, nx: de.x, ny: de.y, tone }, pts };
 }
@@ -84,10 +85,10 @@ function place(w: number, h: number, mobile: boolean): Place | null {
   if (mobile) {
     if (visible(panel)) return null;
     if (visible(teaser)) {
-      const r = teaser.getBoundingClientRect(), e = { x: r.left + Math.min(150, r.width * 0.55), y: r.top - 5 };
-      for (const lift of [34, 48, 64, 80]) for (const left of [EDGE + 4, EDGE + 24]) {
+      const r = teaser.getBoundingClientRect(), e = { x: r.left + r.width * 0.7, y: r.top - 4 };
+      for (const lift of [40, 54, 70, 88]) for (const left of [EDGE + 4, EDGE + 16]) {
         const top = r.top - lift - h, s = { x: left + w + 4, y: top + h * 0.5 };
-        if (s.x > e.x - 18) continue;
+        if (s.x > e.x - 14) continue;
         const p = attempt(left, top, s, right, e, norm(0.35, 1), "teaser", visible(launcher) ? launcher.getBoundingClientRect() : null);
         if (p) return p;
       }
@@ -103,23 +104,30 @@ function place(w: number, h: number, mobile: boolean): Place | null {
     return null;
   }
   if (visible(panel)) {
-    // Card under the hero collage, left of the panel; the arrow rises from its top edge and turns into the
-    // panel at the input, or as close below it (starter questions) as the collage allows.
+    // Card in the clear space left of the panel's lower half (below the hero collage); a short, mostly
+    // horizontal arrow runs right from the card and ends with its tip on the panel's left edge, aimed up
+    // slightly toward the starter questions / input.
     const r = panel.getBoundingClientRect();
-    let y0 = r.top + r.height * 0.5;
-    try { const ta = (panel as HTMLIFrameElement).contentDocument?.querySelector("textarea"); if (ta) { const t = ta.getBoundingClientRect(); if (t.height) y0 = r.top + t.top + t.height / 2; } } catch { /* cross-origin */ }
-    const under = Math.max(...block.filter((o) => o.right > r.left - w - 80 && o.left < r.left && o.top < r.bottom).map((o) => o.bottom), r.top) + PAD + 2;
-    for (let y = y0; y <= y0 + 140; y += 8) for (const gap of [12, 20, 32]) for (const drop of [20, 32, 10, 0, 44]) {
-      const left = r.left - gap - w, top = Math.max(under, y + 34) + drop;
-      const s = { x: left + w - 26, y: top - 3 }, e = { x: r.left - 7, y };
-      const p = attempt(left, top, s, up, e, right, "panel", null);
+    let aim = r.top + r.height * 0.6;
+    try {
+      const d = (panel as HTMLIFrameElement).contentDocument;
+      const ta = d?.querySelector("textarea"), chips = d ? Array.from(d.querySelectorAll("button")).filter((b) => b.getBoundingClientRect().top > (ta?.getBoundingClientRect().bottom ?? 0)) : [];
+      const last = chips.map((b) => b.getBoundingClientRect().bottom).filter((y) => y < r.height - 60);
+      if (last.length) aim = r.top + Math.max(...last) - 12; else if (ta) aim = r.top + ta.getBoundingClientRect().bottom;
+    } catch { /* cross-origin: keep the estimate */ }
+    const under = Math.max(...block.filter((o) => o.right > r.left - w - 120 && o.left < r.left && o.top < r.bottom).map((o) => o.bottom), r.top + r.height * 0.45) + PAD + 2;
+    for (let top = under; top + h <= H - EDGE && top + h * 0.5 <= r.bottom + 30; top += 6) for (const gap of [96, 112, 84, 130]) {
+      const left = r.left - gap - w, s = { x: left + w + 6, y: top + h * 0.5 };
+      const e = { x: r.left - 1, y: Math.min(Math.max(s.y - clamp(s.y - (aim + 30), 16, 30), under), r.bottom - 24) }; // tip on the panel edge, a gentle 16-30px rise
+      const rise = (e.y - s.y) / (e.x - s.x);
+      const p = attempt(left, top, s, right, e, norm(1, rise * 1.2), "panel", null);
       if (p) return p;
     }
     return null;
   }
   if (visible(launcher)) {
     const r = launcher.getBoundingClientRect(), e = { x: r.left - 7, y: r.top + r.height * 0.5 };
-    for (const dx of [64, 84, 104]) for (const lift of [56, 76, 96]) {
+    for (const dx of [96, 116, 136]) for (const lift of [80, 104, 128]) {
       const left = r.left - dx - w, top = r.top - lift, s = { x: left + w + 4, y: top + h * 0.5 };
       const p = attempt(left, top, s, right, e, norm(1, 0.55), "launcher", r);
       if (p) return p;
