@@ -22,8 +22,10 @@ export async function POST(req: Request) {
   return withSite(rawSite, async () => { const g = await guard(req, "chat"); return g || handle(req, b, false); });
 }
 async function handle(req: Request, b: any, demo: boolean) {
-  const { conversationId, text, visitorId, stream } = b;
-  if (!text || typeof text !== "string") return NextResponse.json({ error: "text required" }, { status: 400 });
+  let { conversationId, text, visitorId, stream, regenerate } = b;
+  if (regenerate) {
+    // text comes from the last visitor turn; a missing text is ok
+  } else if (!text || typeof text !== "string") return NextResponse.json({ error: "text required" }, { status: 400 });
   const site = demo ? "northpoint-demo" : undefined;
   const getConversation = demo ? async (id: string) => demoConvs.get(id) : getConv;
   const upsertConversation = demo ? async (c: Conversation) => { demoConvs.delete(c.id); demoConvs.set(c.id, c); if (demoConvs.size > 500) demoConvs.delete(demoConvs.keys().next().value!); return c; } : upsertConv;
@@ -31,13 +33,23 @@ async function handle(req: Request, b: any, demo: boolean) {
   const c: Conversation = (conversationId && (await getConversation(conversationId))) || {
     id: newId(), themes: [], signals: [], messages: [], createdAt: now, updatedAt: now,
   };
+  let replacedCounted = false;
+  if (regenerate) {
+    const last = c.messages.at(-1);
+    if (last?.role === "bot") { replacedCounted = !!last.text; c.messages.pop(); }
+    const lastVis = [...c.messages].reverse().find((m) => m.role === "visitor");
+    if (!lastVis) return NextResponse.json({ error: "nothing to regenerate" }, { status: 400 });
+    text = lastVis.text;
+  }
   if (!demo && typeof visitorId === "string" && VID.test(visitorId)) {
     c.visitorId = visitorId;
     if (!(await getVisitor(visitorId))) (await trackPageview(visitorId, { path: "(chat)", title: "Started chat" }, req.headers.get("user-agent") || undefined));
   }
-  c.messages.push({ id: newId(), role: "visitor", text: text.slice(0, 4000), at: now });
-  const email = text.match(EMAIL_RE)?.[0]; if (email) c.visitorEmail = email;
-  const name = text.match(/\b(?:i'?m|my name is|this is)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/)?.[1]; if (name) c.visitorName = name;
+  if (!regenerate) {
+    c.messages.push({ id: newId(), role: "visitor", text: String(text).slice(0, 4000), at: now });
+    const email = text.match(EMAIL_RE)?.[0]; if (email) c.visitorEmail = email;
+    const name = text.match(/\b(?:i'?m|my name is|this is)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/)?.[1]; if (name) c.visitorName = name;
+  }
   const wasHot = c.signals.includes("high-intent");
   const found = detectSignals(text);
   c.signals = mergeSignals(c.signals, found);
@@ -53,33 +65,51 @@ async function handle(req: Request, b: any, demo: boolean) {
     const enc = new TextEncoder(); const ev = (e: string, d: unknown) => `event: ${e}\ndata: ${JSON.stringify(d)}\n\n`;
     return new Response(enc.encode(ev("meta", { conversationId: c.id, messageId: botId, paused: true }) + ev("done", { reply: PAUSED_REPLY, citations: [], paused: true })), { headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform" } });
   }
-  const finish = async (ans: { text: string; citations: { title: string; url: string }[] }) => {
+  // Usage: a persisted non-empty reply counts once. Regenerating a reply that already counted is free; if the previous attempt was empty (e.g. stopped before the first token), the new reply counts.
+  const finish = async (ans: { text: string; citations: { title: string; url: string }[] }, opts?: { counted?: boolean }) => {
+    const counted = opts?.counted ?? (!!ans.text && !replacedCounted);
     c.messages.push({ id: botId, role: "bot", text: ans.text, citations: ans.citations, at: new Date().toISOString() });
-    c.updatedAt = new Date().toISOString(); (await upsertConversation(c)); if (demo) return; if (ent) addUsage(ent.period).catch(() => {}); syncConversation(c).catch(() => {});
+    c.updatedAt = new Date().toISOString(); (await upsertConversation(c)); if (demo) return;
+    if (ent && counted) addUsage(ent.period).catch(() => {});
+    syncConversation(c).catch(() => {});
     if (!wasHot && c.signals.includes("high-intent")) notify("conversation.high_intent", { conversation: c }).catch(() => {});
   };
 
   if (!stream) {
     const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail, undefined, site);
-    finish(ans);
+    await finish(ans);
     return NextResponse.json({ conversationId: c.id, messageId: botId, reply: ans.text, citations: ans.citations });
   }
-  // Server-Sent Events: meta → delta* → done
+  // Server-Sent Events: meta → delta* → done. Signals, usage, CRM, and high-intent notify run in finish() after the stream ends (or is stopped).
   (await upsertConversation(c)); // persist the visitor message immediately
   const enc = new TextEncoder();
+  const ac = new AbortController();
+  const onAbort = () => ac.abort();
+  try { req.signal.addEventListener("abort", onAbort); } catch {}
   const body = new ReadableStream({
     async start(ctl) {
-      const send = (event: string, data: unknown) => ctl.enqueue(enc.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+      const send = (event: string, data: unknown) => { try { ctl.enqueue(enc.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`)); } catch {} };
       send("meta", { conversationId: c.id, messageId: botId });
       let streamed = "";
       try {
-        const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail, (t) => { streamed += t; send("delta", { t }); }, site);
-        if (!ans.text) ans.text = streamed || "Sorry, something went wrong.";
-        finish(ans);
-        send("done", { reply: ans.text, citations: ans.citations });
-      } catch { finish({ text: streamed || "Sorry, something went wrong.", citations: [] }); send("done", { reply: streamed || "Sorry, something went wrong.", citations: [] }); }
-      ctl.close();
+        const ans = await respond(c.messages, text, c.signals, !!c.visitorEmail, (t) => { streamed += t; send("delta", { t }); }, site, ac.signal);
+        if (!ans.text) ans.text = streamed;
+        if (!ans.text && !ac.signal.aborted) ans.text = "Sorry, something went wrong.";
+        if (!ans.text && ac.signal.aborted) {
+          send("done", { reply: "", citations: [], stopped: true, empty: true });
+        } else {
+          await finish(ans, { counted: !!ans.text && !replacedCounted });
+          send("done", { reply: ans.text, citations: ans.citations, stopped: ac.signal.aborted });
+        }
+      } catch {
+        const textOut = streamed || (ac.signal.aborted ? "" : "Sorry, something went wrong.");
+        await finish({ text: textOut, citations: [] }, { counted: !!streamed && !replacedCounted });
+        send("done", { reply: textOut, citations: [], stopped: ac.signal.aborted });
+      }
+      try { req.signal.removeEventListener("abort", onAbort); } catch {}
+      try { ctl.close(); } catch {}
     },
+    cancel() { ac.abort(); },
   });
   return new Response(body, { headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", Connection: "keep-alive", "X-Accel-Buffering": "no" } });
 }

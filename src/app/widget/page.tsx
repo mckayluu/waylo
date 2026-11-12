@@ -1,23 +1,11 @@
 "use client";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { emptyHeadline } from "@/lib/suggestions";
+import { SafeMd } from "@/lib/markdown";
 type C = { title: string; url: string };
 const citeHref = (u: string) => { if (/^https?:\/\//i.test(u) || u.startsWith("mailto:")) return u; const base = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || "https://waylo-j5hv.onrender.com"); try { return new URL(u.startsWith("/") ? u : `/${u}`, base).href; } catch { return u; } };
 type M = { id?: string; role: "visitor" | "bot"; text: string; citations?: C[]; feedback?: "up" | "down"; streaming?: boolean };
 type B = { botName: string; accent: string; greeting: string; published?: boolean; paused?: boolean; siteName?: string; suggestions?: string[] };
-
-// Tiny safe markdown: **bold**, `code`, "- " bullets, paragraphs.
-function inline(s: string, k: string) {
-  return s.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map((p, i) =>
-    p.startsWith("**") ? <strong key={k + i}>{p.slice(2, -2)}</strong> : p.startsWith("`") ? <code key={k + i} className="rounded bg-stone-200/70 px-1 text-[12px]">{p.slice(1, -1)}</code> : p);
-}
-function Md({ text }: { text: string }) {
-  return <>{text.split(/\n{2,}/).map((blk, i) => {
-    const lines = blk.split("\n");
-    if (lines.every((l) => /^\s*[-*] /.test(l))) return <ul key={i} className="my-1 ml-4 list-disc space-y-0.5">{lines.map((l, j) => <li key={j}>{inline(l.replace(/^\s*[-*] /, ""), `${i}-${j}`)}</li>)}</ul>;
-    return <p key={i} className="my-1">{lines.map((l, j) => <span key={j}>{j > 0 && <br />}{inline(l, `${i}-${j}`)}</span>)}</p>;
-  })}</>;
-}
 
 const SITE = () => (typeof location !== "undefined" && new URLSearchParams(location.search).get("site")) || "default";
 const EMBED = () => (typeof location !== "undefined" && new URLSearchParams(location.search).get("embed")) || "";
@@ -33,26 +21,44 @@ const DEFAULT_SUGGESTIONS = (self: boolean) => self
 function SendIcon() {
   return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 19V5M5 12l7-7 7 7" /></svg>;
 }
+function StopIcon() {
+  return <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden><rect x="2" y="2" width="8" height="8" rx="1.2" fill="currentColor" /></svg>;
+}
 
-function Composer({ value, onChange, onSubmit, accent, placeholder, disabled, inputRef, autoFocus }: {
-  value: string; onChange: (v: string) => void; onSubmit: () => void; accent: string; placeholder: string; disabled: boolean;
-  inputRef: RefObject<HTMLInputElement>; autoFocus?: boolean;
+function Composer({ value, onChange, onSubmit, onStop, accent, placeholder, busy, inputRef }: {
+  value: string; onChange: (v: string) => void; onSubmit: () => void; onStop?: () => void; accent: string; placeholder: string; busy: boolean;
+  inputRef: RefObject<HTMLTextAreaElement>;
 }) {
+  const grow = (el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 128) + "px";
+  };
+  useEffect(() => { grow(inputRef.current); }, [value, inputRef]);
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="flex items-center gap-1.5 rounded-full border border-stone-200 bg-white py-1 pl-4 pr-1 shadow-sm focus-within:border-stone-400 focus-within:shadow">
-      <input
+    <form onSubmit={(e) => { e.preventDefault(); if (!busy) onSubmit(); }} className="flex items-end gap-1.5 rounded-[28px] border border-stone-200 bg-white py-1 pl-4 pr-1 shadow-sm focus-within:border-stone-400 focus-within:shadow">
+      <textarea
         ref={inputRef}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        rows={1}
+        onChange={(e) => { onChange(e.target.value); grow(e.target); }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (!busy) onSubmit(); }
+        }}
         placeholder={placeholder}
         aria-label={placeholder}
         autoComplete="off"
-        autoFocus={autoFocus}
-        className="min-w-0 flex-1 bg-transparent py-2 text-[15px] text-stone-800 outline-none placeholder:text-stone-400"
+        className="max-h-32 min-h-[36px] min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] leading-6 text-stone-800 outline-none placeholder:text-stone-400"
       />
-      <button type="submit" disabled={disabled || !value.trim()} aria-label="Send" className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-white transition-opacity disabled:opacity-35 motion-reduce:transition-none" style={{ background: accent }}>
-        <SendIcon />
-      </button>
+      {busy ? (
+        <button type="button" onClick={onStop} aria-label="Stop generating" className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-white" style={{ background: accent }}>
+          <StopIcon />
+        </button>
+      ) : (
+        <button type="submit" disabled={!value.trim()} aria-label="Send" className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-white transition-opacity disabled:opacity-35 motion-reduce:transition-none" style={{ background: accent }}>
+          <SendIcon />
+        </button>
+      )}
     </form>
   );
 }
@@ -63,7 +69,10 @@ export default function Widget() {
   const [msgs, setMsgs] = useState<M[]>([]);
   const [input, setInput] = useState(""); const [busy, setBusy] = useState(false); const [menu, setMenu] = useState(false);
   const [cid, setCid] = useState<string | null>(null); const [vid, setVid] = useState<string | null>(null); const end = useRef<HTMLDivElement>(null);
-  const box = useRef<HTMLInputElement>(null);
+  const box = useRef<HTMLTextAreaElement>(null);
+  const cidRef = useRef<string | null>(null); const vidRef = useRef<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const [copied, setCopied] = useState<number | null>(null);
   const [ho, setHo] = useState<"" | "ask" | "sending" | "sent">(""); const [hoEmail, setHoEmail] = useState(""); const [hoNote, setHoNote] = useState("");
   const launcher = EMBED() !== "sidebar";
   async function requestHuman(e?: React.FormEvent) {
@@ -83,15 +92,17 @@ export default function Widget() {
 
   useEffect(() => {
     fetch(api("/api/branding")).then((r) => r.json()).then(setB).catch(() => {});
-    setCid(localStorage.getItem(LS("waylo_cid")));
+    const id = localStorage.getItem(LS("waylo_cid")); setCid(id); cidRef.current = id;
     const fromUrl = new URLSearchParams(location.search).get("vid");
     let v = fromUrl || localStorage.getItem(LS("waylo_vid"));
     if (!v) v = "v_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-    localStorage.setItem(LS("waylo_vid"), v); setVid(v);
+    localStorage.setItem(LS("waylo_vid"), v); setVid(v); vidRef.current = v;
     if (localStorage.getItem(LS("waylo_handoff"))) setHo("sent");
     try { setMsgs((JSON.parse(localStorage.getItem(LS("waylo_msgs")) || "[]") as M[]).filter((m) => m.text).map((m) => ({ ...m, streaming: false }))); } catch {}
   }, []);
-  useEffect(() => { localStorage.setItem(LS("waylo_msgs"), JSON.stringify(msgs)); if (msgs.length) end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy]);
+  useEffect(() => { cidRef.current = cid; }, [cid]);
+  useEffect(() => { vidRef.current = vid; }, [vid]);
+  useEffect(() => { localStorage.setItem(LS("waylo_msgs"), JSON.stringify(msgs.filter((m) => !m.streaming || m.text))); if (msgs.length) end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy]);
   useEffect(() => {
     if (tab !== "chat") return;
     focusInput();
@@ -100,35 +111,93 @@ export default function Widget() {
     return () => window.removeEventListener("message", onMsg);
   }, [tab, msgs.length]);
 
-  async function ask(text: string) {
-    if (!text || busy) return;
-    setInput(""); setBusy(true);
-    setMsgs((m) => [...m, { role: "visitor", text }, { role: "bot", text: "", streaming: true }]);
-    const patch = (p: Partial<M>) => setMsgs((m) => { const c = [...m]; c[c.length - 1] = { ...c[c.length - 1], ...p }; return c; });
-    try {
-      const r = await fetch(api("/api/chat"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, text, visitorId: vid, stream: true }) });
-      if (!r.ok || !r.body) throw new Error();
-      const reader = r.body.getReader(); const dec = new TextDecoder(); let buf = "", acc = "";
-      for (;;) {
-        const { done, value } = await reader.read(); if (done) break;
-        buf += dec.decode(value, { stream: true }); const evs = buf.split("\n\n"); buf = evs.pop()!;
-        for (const ev of evs) {
-          const name = ev.match(/^event: (.+)$/m)?.[1]; const data = JSON.parse(ev.match(/^data: (.+)$/m)?.[1] || "{}");
-          if (name === "meta") { setCid(data.conversationId); localStorage.setItem(LS("waylo_cid"), data.conversationId); patch({ id: data.messageId }); }
-          else if (name === "delta") { acc += data.t; patch({ text: acc }); }
-          else if (name === "done") { patch({ text: data.reply, citations: data.citations, streaming: false }); if (data.paused) setB((x) => ({ ...x, paused: true })); }
-        }
+  function patchLast(p: Partial<M>) {
+    setMsgs((m) => { const c = [...m]; if (!c.length) return c; c[c.length - 1] = { ...c[c.length - 1], ...p }; return c; });
+  }
+
+  async function readSse(r: Response, onMeta: (d: any) => void, onDelta: (t: string) => void, onDone: (d: any) => void) {
+    const reader = r.body!.getReader(); const dec = new TextDecoder(); let buf = "";
+    for (;;) {
+      const { done, value } = await reader.read(); if (done) break;
+      buf += dec.decode(value, { stream: true }); const evs = buf.split("\n\n"); buf = evs.pop()!;
+      for (const ev of evs) {
+        const name = ev.match(/^event: (.+)$/m)?.[1]; const data = JSON.parse(ev.match(/^data: (.+)$/m)?.[1] || "{}");
+        if (name === "meta") onMeta(data);
+        else if (name === "delta") onDelta(data.t || "");
+        else if (name === "done") onDone(data);
       }
-      patch({ streaming: false });
-    } catch { patch({ text: "Sorry, something went wrong.", streaming: false }); }
+    }
+  }
+
+  async function ask(text: string, opts?: { regenerate?: boolean }) {
+    if (!text && !opts?.regenerate) return;
+    if (busy) return;
+    setInput(""); setBusy(true);
+    if (opts?.regenerate) setMsgs((m) => { const c = [...m]; if (c.at(-1)?.role === "bot") c.pop(); return [...c, { role: "bot", text: "", streaming: true }]; });
+    else setMsgs((m) => [...m, { role: "visitor", text }, { role: "bot", text: "", streaming: true }]);
+    const ac = new AbortController(); abortRef.current = ac;
+    let acc = "";
+    const applyMeta = (data: any) => {
+      if (data.conversationId) { setCid(data.conversationId); cidRef.current = data.conversationId; localStorage.setItem(LS("waylo_cid"), data.conversationId); }
+      if (data.messageId) patchLast({ id: data.messageId });
+      if (data.paused) setB((x) => ({ ...x, paused: true }));
+    };
+    const applyDone = (data: any) => {
+      if (data.paused) setB((x) => ({ ...x, paused: true }));
+      if (data.empty && !acc) { setMsgs((m) => (m.at(-1)?.role === "bot" && !m.at(-1)?.text ? m.slice(0, -1) : m)); return; }
+      patchLast({ text: data.reply ?? acc, citations: data.citations, streaming: false });
+    };
+    const body = (stream: boolean) => JSON.stringify({ conversationId: cidRef.current, text, visitorId: vidRef.current, stream, regenerate: !!opts?.regenerate });
+    try {
+      let r = await fetch(api("/api/chat"), { method: "POST", headers: { "Content-Type": "application/json" }, body: body(true), signal: ac.signal });
+      const ctype = r.headers.get("content-type") || "";
+      if (r.ok && r.body && ctype.includes("text/event-stream")) {
+        await readSse(r, applyMeta, (t) => { acc += t; patchLast({ text: acc }); }, applyDone);
+        patchLast({ streaming: false });
+      } else {
+        // Non-streaming fallback
+        if (!r.ok || ctype.includes("text/event-stream")) r = await fetch(api("/api/chat"), { method: "POST", headers: { "Content-Type": "application/json" }, body: body(false), signal: ac.signal });
+        if (!r.ok) throw new Error();
+        const data = await r.json();
+        applyMeta(data);
+        patchLast({ text: data.reply, citations: data.citations, streaming: false });
+        if (data.paused) setB((x) => ({ ...x, paused: true }));
+      }
+    } catch (e) {
+      if ((e as Error).name === "AbortError") {
+        if (!acc) setMsgs((m) => (m.at(-1)?.role === "bot" && !m.at(-1)?.text ? m.slice(0, -1) : m));
+        else patchLast({ streaming: false, text: acc });
+      } else if (!acc) {
+        try {
+          const r = await fetch(api("/api/chat"), { method: "POST", headers: { "Content-Type": "application/json" }, body: body(false) });
+          if (!r.ok) throw new Error();
+          const data = await r.json();
+          applyMeta(data);
+          patchLast({ text: data.reply, citations: data.citations, streaming: false });
+        } catch { patchLast({ text: "Sorry, something went wrong.", streaming: false }); }
+      } else patchLast({ streaming: false, text: acc });
+    }
+    abortRef.current = null;
     setBusy(false);
   }
+  function stop() { abortRef.current?.abort(); }
   async function rate(i: number, v: "up" | "down") {
     const m = msgs[i]; if (!m.id || !cid) return; const next = m.feedback === v ? null : v;
     setMsgs((all) => all.map((x, j) => j === i ? { ...x, feedback: next ?? undefined } : x));
     fetch(api("/api/feedback"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ conversationId: cid, messageId: m.id, feedback: next }) });
   }
-  function clear() { localStorage.removeItem(LS("waylo_handoff")); setHo(""); setMsgs([]); setCid(null); localStorage.removeItem(LS("waylo_cid")); localStorage.removeItem(LS("waylo_msgs")); setMenu(false); }
+  async function copyMsg(i: number) {
+    const t = msgs[i]?.text; if (!t) return;
+    try { await navigator.clipboard.writeText(t); } catch {
+      const el = document.createElement("textarea"); el.value = t; document.body.appendChild(el); el.select(); document.execCommand("copy"); el.remove();
+    }
+    setCopied(i); setTimeout(() => setCopied((x) => x === i ? null : x), 1500);
+  }
+  function lastVisitorText() {
+    for (let i = msgs.length - 1; i >= 0; i--) if (msgs[i].role === "visitor") return msgs[i].text;
+    return "";
+  }
+  function newChat() { abortRef.current?.abort(); localStorage.removeItem(LS("waylo_handoff")); setHo(""); setMsgs([]); setCid(null); cidRef.current = null; localStorage.removeItem(LS("waylo_cid")); localStorage.removeItem(LS("waylo_msgs")); setMenu(false); setBusy(false); }
   async function submit(intent: "message" | "demo") {
     if (!form.name || !form.email || !form.message) return setFstate("Please fill in all required fields.");
     if (!form.consent) return setFstate("Please accept the privacy notice.");
@@ -145,8 +214,9 @@ export default function Widget() {
   const placeholder = `Ask ${company} anything`;
   const suggestions = (b.suggestions && b.suggestions.length ? b.suggestions : DEFAULT_SUGGESTIONS(SELF())).slice(0, 4);
   const headline = emptyHeadline(b.greeting);
+  const lastBot = [...msgs].reverse().find((m) => m.role === "bot");
   const composer = !b.paused ? (
-    <Composer value={input} onChange={setInput} onSubmit={() => ask(input.trim())} accent={a} placeholder={placeholder} disabled={busy} inputRef={box} autoFocus={false} />
+    <Composer value={input} onChange={setInput} onSubmit={() => ask(input.trim())} onStop={stop} accent={a} placeholder={placeholder} busy={busy} inputRef={box} />
   ) : (
     <div className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">AI answers are paused right now. <button onClick={() => setTab("contact")} className="font-semibold underline">Leave a message</button> and the team will reply by email.</div>
   );
@@ -166,7 +236,7 @@ export default function Widget() {
           {empty && <button onClick={() => setTab("contact")} className="rounded-full px-2.5 py-1 text-xs text-stone-500 hover:bg-stone-100 hover:text-stone-800">Contact</button>}
           <div className="relative">
             <button onClick={() => setMenu(!menu)} className="rounded-full px-2 py-1 text-lg text-stone-500 hover:bg-stone-200" aria-label="Menu" aria-expanded={menu}>⋮</button>
-            {menu && <div className="absolute right-0 z-10 mt-1 w-40 rounded-xl border border-stone-200 bg-white py-1 text-sm shadow-lg">{!SELF() && <button onClick={() => { setTab("chat"); setHo(ho === "sent" ? "sent" : "ask"); setMenu(false); }} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Talk to a person</button>}<button onClick={clear} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Clear history</button></div>}
+            {menu && <div className="absolute right-0 z-10 mt-1 w-40 rounded-xl border border-stone-200 bg-white py-1 text-sm shadow-lg">{!SELF() && <button onClick={() => { setTab("chat"); setHo(ho === "sent" ? "sent" : "ask"); setMenu(false); }} className="block w-full px-3 py-2 text-left hover:bg-stone-100">Talk to a person</button>}<button onClick={newChat} className="block w-full px-3 py-2 text-left hover:bg-stone-100">New chat</button></div>}
           </div>
           {launcher && <button type="button" onClick={closePanel} className="rounded-full px-2 py-1 text-lg leading-none text-stone-500 hover:bg-stone-200" aria-label="Close chat">×</button>}
         </div>
@@ -201,15 +271,29 @@ export default function Widget() {
       ) : (<>
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-3">
           {msgs.map((m, i) => m.role === "visitor" ? (
-            <div key={i} className="flex justify-end"><div className="max-w-[85%] rounded-2xl rounded-br-sm px-3.5 py-2 text-sm text-white" style={{ background: a }}>{m.text}</div></div>
+            <div key={i} className="flex justify-end"><div className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm px-3.5 py-2 text-sm text-white" style={{ background: a }}>{m.text}</div></div>
           ) : (
             <div key={i} className="border-l-2 pl-3 text-sm leading-relaxed" style={{ borderColor: a }}>
-              {m.text ? <Md text={m.text} /> : <p className="animate-pulse text-xs text-stone-500 motion-reduce:animate-none">Looking up answers…</p>}{m.streaming && m.text && <span className="ml-0.5 inline-block h-3.5 w-1.5 animate-pulse align-middle motion-reduce:animate-none" style={{ background: a }} />}
-              {!!m.citations?.length && <div className="mt-2 flex flex-wrap gap-1.5">{m.citations.map((c, j) =>
+              {m.streaming && !m.text ? (
+                <p className="flex items-center gap-2 text-xs text-stone-400" aria-live="polite">
+                  <span className="flex gap-0.5" aria-hidden>
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-stone-400 motion-reduce:animate-none [animation-delay:-.3s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-stone-400 motion-reduce:animate-none [animation-delay:-.15s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-stone-400 motion-reduce:animate-none" />
+                  </span>
+                  Thinking…
+                </p>
+              ) : m.text ? <SafeMd text={m.text} /> : null}
+              {m.streaming && m.text && <span className="ml-0.5 inline-block h-3.5 w-1.5 animate-pulse align-middle motion-reduce:animate-none" style={{ background: a }} />}
+              {!m.streaming && !!m.citations?.length && <div className="mt-2 flex flex-wrap gap-1.5">{m.citations.map((c, j) =>
                 <a key={j} href={citeHref(c.url)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border border-stone-300 bg-white px-2 py-0.5 text-xs hover:border-stone-500">
                   <span className="font-mono text-[10px] font-semibold" style={{ color: a }}>{j + 1}</span>{c.title}</a>)}</div>}
-              {m.id && !m.streaming && <div className="mt-1.5 flex gap-1 text-xs text-stone-400">{(["up", "down"] as const).map((v) =>
-                <button key={v} onClick={() => rate(i, v)} aria-label={v} className={`rounded px-1.5 py-0.5 hover:bg-stone-200 ${m.feedback === v ? "bg-stone-200 text-stone-700" : ""}`}>{v === "up" ? "👍" : "👎"}</button>)}</div>}
+              {!m.streaming && m.text && <div className="mt-1.5 flex flex-wrap items-center gap-0.5 text-xs text-stone-400">
+                <button type="button" onClick={() => copyMsg(i)} className="rounded px-1.5 py-0.5 hover:bg-stone-200 hover:text-stone-700" aria-label="Copy">{copied === i ? "Copied" : "Copy"}</button>
+                {m === lastBot && !busy && lastVisitorText() && <button type="button" onClick={() => ask(lastVisitorText(), { regenerate: true })} className="rounded px-1.5 py-0.5 hover:bg-stone-200 hover:text-stone-700" aria-label="Regenerate">Regenerate</button>}
+                {m.id && (["up", "down"] as const).map((v) =>
+                  <button key={v} onClick={() => rate(i, v)} aria-label={v === "up" ? "Thumbs up" : "Thumbs down"} className={`rounded px-1.5 py-0.5 hover:bg-stone-200 ${m.feedback === v ? "bg-stone-200 text-stone-700" : ""}`}>{v === "up" ? "👍" : "👎"}</button>)}
+              </div>}
             </div>))}
           <div ref={end} />
         </div>
