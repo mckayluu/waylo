@@ -26,13 +26,13 @@ function HeroCollage() {
 const does: [string, string, string, string, string][] = [
   ["Answers you can trust.", "Waylo only answers from your site and links to the page it used. If your site doesn’t cover something, it says so instead of guessing.", "/product/admin-conv.webp", "object-[30%_30%]", "w-tile-blush"],
   ["See what people want.", "Every question shows up in your dashboard, so you learn what buyers care about and which pages leave them stuck.", "/product/admin-tracking.webp", "object-[15%_20%]", "w-tile-mist"],
-  ["Know when someone’s ready.", "When a visitor asks about pricing or getting started, you get a Slack message with the whole conversation.", "/product/admin-integrations.webp", "object-[38%_22%]", "w-tile-cream"],
+  ["Know when someone’s ready.", "When a visitor asks about pricing or says they’re ready to buy, you get a Slack message with the whole conversation.", "/product/admin-integrations.webp", "object-[38%_22%]", "w-tile-cream"],
 ];
 const helps: [string, string, string][] = [
   ["SaaS companies", "Evaluators get answers from your pricing and docs pages without waiting on your team.", "/solutions/saas"],
   ["B2B service firms", "Prospects learn what you do and how you work, and you hear from the ones ready to talk.", "/use-cases/b2b-services"],
   ["Online stores", "Shoppers get answers on shipping and returns from your own policy pages before they buy.", "/use-cases/ecommerce"],
-  ["Agencies", "Give each client site its own AI chat, with a separate workspace for every client.", "/use-cases/agencies"],
+  ["Agencies", "Add Waylo to each client’s site. Every site gets its own workspace.", "/use-cases/agencies"],
   ["Sales teams", "Reps hear about serious visitors in Slack, along with the question they asked.", "/solutions/sales"],
   ["Support teams", "Repeat how-to questions get answered from your docs, with a link to the right article.", "/use-cases/support-deflection"],
 ];
@@ -85,7 +85,7 @@ export default function Home() {
             <div id="how" className="w-tile w-band-navy relative overflow-hidden p-8 sm:p-10">
               <div aria-hidden className="absolute -right-5 -top-5 h-24 w-24 rotate-6 rounded-[22px] bg-rasp-600" />
               <h2 className="w-h-lg relative font-semibold text-white">Set it up yourself.</h2>
-              <p className="relative mt-4 text-lg leading-8 text-white/80">Add your website, paste one line of code, and it’s live. No call needed.</p>
+              <p className="relative mt-4 text-lg leading-8 text-white/80">Add your website, paste one line of code, and publish. No call needed.</p>
               <Link href="/how-it-works" className="w-btn-accent w-btn-lg relative mt-8 inline-flex">See how it works</Link>
             </div>
             <div id="pricing" className="w-tile w-tile-blush relative overflow-hidden p-8 sm:p-10">
