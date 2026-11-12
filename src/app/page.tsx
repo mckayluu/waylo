@@ -22,7 +22,7 @@ function HeroCollage() {
         <ChatBubble className="absolute -left-8 top-6 hidden w-rise-2 sm:block" />
         <SlackCard className="relative z-10 -mt-14 ml-auto mr-1 max-w-[300px] w-rise-3 sm:absolute sm:-bottom-2 sm:right-[-1.5rem] sm:mr-0 sm:mt-0" />
       </div>
-      <figcaption className="mt-6 text-xs leading-5 text-white/65"><span className="sm:hidden">Slack card is an illustration · </span><span className="hidden sm:inline">Chat and Slack cards are illustrations · </span><Link href="/demo" className="underline hover:text-white">Northpoint Ops</Link> is fictional</figcaption>
+      <figcaption className="mt-6 text-xs leading-5 text-white/65 lg:max-w-[15rem]"><span className="sm:hidden">Slack card is an illustration · </span><span className="hidden sm:inline">Chat and Slack cards are illustrations · </span><Link href="/demo" className="underline hover:text-white">Northpoint Ops</Link> is fictional</figcaption>
     </figure>
   );
 }
