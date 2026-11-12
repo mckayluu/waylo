@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { MegaMenu, MobileMenu } from "./MegaMenu";
 export function Wordmark({ invert = false }: { invert?: boolean }) {
-  return <Link href="/" aria-label="Waylo home" className={`flex items-center gap-2 text-lg font-semibold tracking-tight ${invert ? "text-white" : "text-warm-900"}`}>
+  // Mast lockup. Light backgrounds use lockup.svg; the Night Navy footer uses lockup-on-navy.svg.
+  return <Link href="/" aria-label="Waylo home" className="flex shrink-0 items-center">
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    {/* TODO(rebrand): logo/wordmark not picked yet. Swap /brand/mark.svg when McKay chooses. */}<img src="/brand/mark.svg" alt="" width={28} height={28} className="h-7 w-7" />Waylo</Link>;
+    <img src={invert ? "/brand/lockup-on-navy.svg" : "/brand/lockup.svg"} alt="Waylo" width={101} height={36} className="h-9 w-auto" /></Link>;
 }
 export function Header() {
   return (

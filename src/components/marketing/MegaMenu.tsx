@@ -55,11 +55,11 @@ export function MobileMenu() {
   }, [open]);
   const close = () => setOpen(false);
   const drawer = (
-    <div className="fixed inset-0 z-[2147483000] md:hidden" role="dialog" aria-modal="true" aria-label="Site menu">
+    <div className="mk fixed inset-0 z-[2147483000] md:hidden" role="dialog" aria-modal="true" aria-label="Site menu">
       <button type="button" aria-label="Close menu" tabIndex={-1} onClick={close} className="absolute inset-0 h-full w-full bg-warm-950/50 backdrop-blur-sm" />
       <div id="mobile-nav" className="absolute inset-y-0 right-0 flex h-[100dvh] w-[88%] max-w-sm flex-col bg-white shadow-2xl">
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-warm-200 px-5">
-          <Link href="/" onClick={close} className="flex items-center gap-2 text-lg font-semibold text-warm-900">{/* eslint-disable-next-line @next/next/no-img-element */}{/* TODO(rebrand): swap mark when the logo is picked. */}<img src="/brand/mark.svg" alt="" width={28} height={28} className="h-7 w-7" />Waylo</Link>
+          <Link href="/" onClick={close} aria-label="Waylo home" className="flex items-center">{/* eslint-disable-next-line @next/next/no-img-element */}<img src="/brand/lockup.svg" alt="Waylo" width={90} height={32} className="h-8 w-auto" /></Link>
           <button type="button" onClick={close} aria-label="Close menu" className="grid h-11 w-11 place-items-center rounded-md text-warm-900 ring-1 ring-warm-300"><svg width="20" height="20" viewBox="0 0 18 18" aria-hidden><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="2" /></svg></button>
         </div>
         <nav aria-label="Mobile" className="flex-1 overflow-y-auto overscroll-contain px-5 pb-10">

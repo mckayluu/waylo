@@ -4,14 +4,14 @@ export const SITE_NAME = "Waylo";
 export const TAGLINE = "AI chat for your website. It answers from your own pages and links the page behind each answer.";
 export const DEFINITION = "Waylo is AI chat for B2B and SaaS websites. It reads your public pages and answers visitor questions with a link to the page behind each answer. It flags buying intent, records the pages each visitor read, and can post warm leads to Slack or your CRM. It installs with one script tag.";
 
-export const OG = { url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo, AI chat for your website" };
+export const OG = { url: "/brand/og.png", width: 1200, height: 630, alt: "Waylo – Your website’s own AI chat" };
 export function pageMeta(path: string, title: string, description: string): Metadata {
   return { title, description, alternates: { canonical: path }, openGraph: { title: `${title} | Waylo`, description, url: path, siteName: SITE_NAME, type: "website", images: [OG] }, twitter: { card: "summary_large_image", images: ["/brand/og.png"], title: `${title} | Waylo`, description } };
 }
 export function JsonLd({ data }: { data: object | object[] }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
 }
-export const orgLd = { "@context": "https://schema.org", "@type": "Organization", "@id": `${SITE_URL}/#org`, name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/brand/mark.svg`, description: TAGLINE };
+export const orgLd = { "@context": "https://schema.org", "@type": "Organization", "@id": `${SITE_URL}/#org`, name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/icon-512.png`, description: TAGLINE };
 export const appLd = { "@context": "https://schema.org", "@type": "SoftwareApplication", "@id": `${SITE_URL}/#app`, name: SITE_NAME, applicationCategory: "BusinessApplication", operatingSystem: "Web", url: SITE_URL, description: DEFINITION, publisher: { "@id": `${SITE_URL}/#org` },
   offers: [{ "@type": "Offer", name: "Trial", price: "0", priceCurrency: "USD" }, { "@type": "Offer", name: "Starter", price: "79", priceCurrency: "USD" }, { "@type": "Offer", name: "Growth", price: "249", priceCurrency: "USD" }],
   featureList: ["Answers with cited sources", "Site crawling", "Buying-intent signals", "Contact and demo handoff", "Slack and CRM webhooks", "Guidance rules and facts", "Audiences", "Team roles"] };

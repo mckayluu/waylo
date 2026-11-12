@@ -42,7 +42,7 @@ export default function Install() {
     <p>Configure the widget with <code>data-*</code> attributes on the script tag.</p>
     <div className="mt-4 w-card overflow-x-auto"><table className="w-full min-w-[520px] text-sm"><thead className="bg-warm-50"><tr><th className="w-th">Attribute</th><th className="w-th">Default</th><th className="w-th">Description</th></tr></thead><tbody className="divide-y divide-warm-100">{attrs.map(([a, d, x]) => <tr key={a}><td className="px-5 py-3"><code>{a}</code></td><td className="px-5 py-3"><code>{d}</code></td><td className="px-5 py-3 text-warm-600">{x}</td></tr>)}</tbody></table></div>
     <h3>Example: left side, custom color</h3>
-    <Code>{`<script src="${WAYLO_URL}/waylo.js" data-site="default" data-color="#4338CA" data-position="left" async></script>`}</Code>
+    <Code>{`<script src="${WAYLO_URL}/waylo.js" data-site="default" data-color="#A81B48" data-position="left" async></script>`}</Code>
     <h3>Example: tracking only</h3>
     <Code>{`<script src="${WAYLO_URL}/waylo.js" data-site="default" data-mode="track" async></script>`}</Code>
     <h2 id="api">JavaScript API</h2>
