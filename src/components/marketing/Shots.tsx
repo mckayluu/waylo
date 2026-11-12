@@ -17,10 +17,10 @@ export const SHOTS = {
 export type ShotKey = keyof typeof SHOTS;
 export function Shot({ k, className = "", crop, priority }: { k: ShotKey; className?: string; crop?: string; priority?: boolean }) {
   const s = SHOTS[k];
-  return <figure className={`overflow-hidden rounded-md bg-white ring-1 ring-warm-200 shadow-lg shadow-navy-950/5 ${className}`}>
-    <div className="flex items-center gap-1.5 border-b border-warm-200 bg-warm-100 px-3 py-2"><span className="h-2 w-2 rounded-full bg-warm-300" /><span className="h-2 w-2 rounded-full bg-warm-300" /><span className="h-2 w-2 rounded-full bg-warm-300" /><span className="ml-2 truncate text-[11px] text-warm-500">{s.where}</span></div>
+  return <figure className={`w-shot-float ${className}`}>
+    <div className="flex items-center gap-1.5 border-b border-warm-200 bg-paper px-3 py-2"><span className="h-2 w-2 rounded-full bg-rasp-600/70" /><span className="h-2 w-2 rounded-full bg-blush" /><span className="h-2 w-2 rounded-full bg-navy-200" /><span className="ml-2 truncate text-[11px] text-warm-500">{s.where}</span></div>
     <Image src={s.src} alt={s.alt} width={s.w} height={s.h} priority={priority} sizes="(min-width:1024px) 640px, 100vw" className={crop ? `w-full object-cover object-left-top ${crop}` : "h-auto w-full"} />
-    <figcaption className="border-t border-warm-200 px-3 py-2 text-xs leading-5 text-warm-500">{s.caption}</figcaption>
+    <figcaption className="border-t border-warm-200 bg-card px-4 py-2.5 text-xs leading-5 text-warm-500">{s.caption}</figcaption>
   </figure>;
 }
 export function ShotNote() {

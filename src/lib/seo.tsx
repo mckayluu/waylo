@@ -24,9 +24,9 @@ export const FACTS: [string, string][] = [
   ["When unsure", "Says it doesn’t know and offers the contact form"],
   ["Signals", "Flags questions about pricing, integrations, security, and demos"],
   ["Integrations", "Every plan, Trial included. A Slack incoming webhook and a JSON webhook you can route to HubSpot or Salesforce with Zapier, Make, or your own endpoint."],
-  ["Install", "One async script tag before </body>. Works with Webflow, WordPress, Shopify, Squarespace, Wix, and GTM."],
-  ["Embed modes", "Launcher, sidebar, or track (page views only)"],
-  ["Pricing", "Trial $0 (500 AI messages), Starter $79/mo (3,000), Growth $249/mo (15,000, 3 sites)"],
+  ["Install", "One script tag before </body>, or through Google Tag Manager. Works anywhere you can add a script tag."],
+  ["Embed modes", "Launcher, sidebar, or track mode (data-mode=\"track\"), which records page views with no chat"],
+  ["Pricing", "Trial $0 for 14 days with 500 replies and no card. Starter $79/mo, Growth $249/mo. Every plan has every feature."],
   ["Availability", "Early access, self-serve"],
 ];
 export const FAQS: [string, string][] = [
