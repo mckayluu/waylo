@@ -10,7 +10,7 @@ export const COMPARE: InfoDef[] = [
     { t: "table", eyebrow: "Side by side", h: "Where they differ", head: ["", "Waylo", "Typical generic AI chatbot"], rows: [
       ["Where answers come from", "Your crawled pages and your Facts, Rules, and Skills", "A general model, often with your docs added"], ["Shows sources", "Numbered chips linking the pages used, on every answer", "Sometimes. Often no links."],
       ["When it doesn’t know", "Says so and offers Contact or a person", "Often guesses"], ["Buying intent", "Pricing, demo, enterprise, and integration signals, plus a high-intent flag", "Usually not tracked"],
-      ["Sales handoff", "Slack alert and JSON webhook with a link to the conversation (Starter and up)", "Varies. Often email transcripts."], ["Journeys", "Pages viewed before and during the chat", "Varies"],
+      ["Sales handoff", "Slack alert and JSON webhook with a link to the conversation (every plan)", "Varies. Often email transcripts."], ["Journeys", "Pages viewed before and during the chat", "Varies"],
       ["Channels", "Website only", "Often web, WhatsApp, Messenger, email"], ["Integrations", "Slack and one JSON webhook", "Often dozens of native apps"],
       ["Flow builder", "None. You use Guidance rules and skills.", "Often visual flows and buttons"], ["Maturity", "Early access", "Usually established"]],
       note: "“Typical generic AI chatbot” describes the category. It doesn’t describe any one product. Check each vendor’s current features yourself." },
@@ -19,10 +19,10 @@ export const COMPARE: InfoDef[] = [
     { t: "faq", items: [["Can’t I get citations from any GPT-based bot?", "Some can. Check whether the links point to your exact pages, whether it refuses when nothing matches, and whether you can see which page each answer used afterward."], ["Is Waylo a GPT wrapper?", "It uses OpenAI’s API to write replies. The product is everything around the model: the crawl, retrieval, guidance, citations, signals, routing, and the admin."]] }],
   related: [["Waylo and live chat", "/compare/live-chat", "People and AI on your site."], ["How to make a site chatbot cite sources", "/resources/make-a-website-chatbot-cite-sources", "Guide."], ["Citations", "/product/citations", "How chips work."]] },
 
-{ path: "/compare/live-chat", crumb: "Waylo and live chat", parent: C, eyebrow: "Compare", hero: "conv",
+{ path: "/compare/live-chat", crumb: "Waylo and live chat", parent: C, eyebrow: "Compare", hero: "answer",
   title: "Waylo compared with staffed live chat",
   sub: "Live chat puts a person on the other end. Waylo answers right away from your pages and brings a person in when it matters. Plenty of teams use both.",
-  answer: "Live chat tools send visitor messages to people on your team in a shared inbox. Waylo answers visitors from your site with cited sources at any hour. On Starter and up it alerts your team in Slack when a visitor is high-intent or asks for a person. Waylo has no agent inbox, so follow-up happens by email.",
+  answer: "Live chat tools send visitor messages to people on your team in a shared inbox. Waylo answers visitors from your site with cited sources at any hour. It alerts your team in Slack when a visitor is high-intent or asks for a person. Waylo has no agent inbox, so follow-up happens by email.",
   metaTitle: "Waylo compared with live chat", metaDesc: "How Waylo’s cited AI website chat compares with staffed live chat on hours, speed, accuracy, staffing, and handoff, and when to keep live chat.",
   blocks: [
     { t: "table", eyebrow: "Side by side", h: "They do different jobs", head: ["", "Waylo", "Live chat (staffed)"], rows: [

@@ -24,7 +24,7 @@ export default function Install() {
       ["Allow your domains", <>Add the root domain, <code>www</code>, and staging to the embed allowlist.</>],
       ["Verify the crawl", <>In the admin, check that your pricing, docs, and integrations pages are in the crawled list. Waylo re-crawls every 3 days on the Trial and daily on paid plans. Click Re-crawl after big changes if you can’t wait.</>],
       ["Ask a test question", <>Ask something only your pricing page answers. The reply should link that page. Then ask something that isn’t on your site. It should say it doesn’t know.</>],
-      ["Connect Slack", <>Create a Slack incoming webhook for your leads channel, paste it in Admin → Integrations, and run a test handoff (Starter and up).</>],
+      ["Connect Slack", <>Create a Slack incoming webhook for your leads channel, paste it in Admin → Integrations, and run a test handoff.</>],
     ] as const).map(([h, d], i) => <li key={h} className="grid gap-1 py-3 sm:grid-cols-[28px_180px_1fr]"><span className="font-mono text-navy-700">{i + 1}</span><span className="font-semibold text-warm-900">{h}</span><span className="text-warm-600">{d}</span></li>)}</ol>
     <p className="text-sm text-warm-500">You can do every step yourself. The <a href="/how-it-works">product tour</a> shows each screen.</p>
     <h2 id="snippet">1. Add the snippet</h2>

@@ -16,7 +16,7 @@ export const NAV: NavGroup[] = [
   ], feature: { title: "Try the live demo", body: "Ask the fictional Northpoint Ops site a question and see the cited answer.", href: "/demo", cta: "Open demo", img: "/marketing/laptop.webp" } },
   { id: "solutions", label: "Solutions", href: "/use-cases", blurb: "How different teams use Waylo.", items: [
     { label: "Marketing teams", href: "/solutions/marketing", desc: "See which questions come before a demo", icon: "📣", t: "teal" },
-    { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts on pricing and demo interest", icon: "🎯", t: "amber" },
+    { label: "Sales teams", href: "/solutions/sales", desc: "Slack alerts when a buyer looks ready", icon: "🎯", t: "amber" },
     { label: "SaaS and docs", href: "/solutions/saas", desc: "Cited answers from docs and pricing", icon: "🧪", t: "indigo" },
     { label: "SaaS pre-sales to Slack", href: "/use-cases/saas-presales-slack", desc: "Cited answers, then a rep in Slack", icon: "#", t: "amber" },
     { label: "Agencies", href: "/use-cases/agencies", desc: "A workspace per client site", icon: "🏢", t: "teal" },
@@ -25,7 +25,7 @@ export const NAV: NavGroup[] = [
     { label: "Support deflection", href: "/use-cases/support-deflection", desc: "Docs answers with the link", icon: "🛟", t: "teal" },
     { label: "Compare", href: "/compare", desc: "Waylo next to chatbots and live chat", icon: "⚖", t: "indigo" },
     { label: "All use cases", href: "/use-cases", desc: "Compare every team side by side", icon: "↗", t: "amber" },
-  ], feature: { title: "Sales handoff in minutes", body: "On Starter and up, reps get a Slack post with the question and a link to the conversation.", href: "/solutions/sales", cta: "See how", img: "/marketing/meeting.webp" } },
+  ], feature: { title: "Sales handoff in minutes", body: "Reps get a Slack post with the question and a link to the conversation.", href: "/solutions/sales", cta: "See how", img: "/marketing/meeting.webp" } },
   { id: "resources", label: "Resources", href: "/resources", blurb: "Docs, guides, and answers for trying and running Waylo.", items: [
     { label: "Resources hub", href: "/resources", desc: "Everything in one place", icon: "📚", t: "indigo" },
     { label: "Documentation", href: "/docs", desc: "How every feature works", icon: "📘", t: "teal" },

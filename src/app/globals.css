@@ -141,3 +141,31 @@ body { @apply bg-stone-50 text-stone-900 antialiased; }
 .ad .w-admin-rail { background: linear-gradient(180deg,#0F1C33 0%,#0F1C33 55%,#163352 100%); }
 .ad.w-admin-main, .ad .w-admin-main { background: #F5F0EA; }
 .ad .w-admin-eyebrow { color: rgba(216,208,198,.7); }
+
+/* Top-sites pass (Nov 2026). Design language adapted from the Awardco reference, in our own Raspberry Navy + Mast brand:
+   mono pill labels, solid colour blocking (Night Navy bands, Paper and tinted tiles), a raspberry marker on one hero phrase,
+   large soft-cornered tiles and a larger heading scale. No layout or asset is copied. */
+.mk .w-pill { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid rgba(26,23,20,.28); border-radius: 999px; padding: .3rem .75rem; font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: #5A534C; background: transparent; }
+.mk .w-pill-dark { border-color: rgba(255,255,255,.32); color: rgba(255,255,255,.78); }
+.mk .w-pill-dot { width: 6px; height: 6px; border-radius: 999px; background: #A81B48; }
+.mk .w-marker { position: relative; display: inline-block; background: #A81B48; color: #fff; padding: 0 .16em .04em; border-radius: .14em; transform: rotate(-1deg); }
+.mk .w-marker::after { content: ""; position: absolute; right: -.18em; bottom: -.16em; width: .32em; height: .32em; background: #E8A8B8; border-radius: .06em; }
+.mk .w-band-navy { background: #0F1C33; color: #fff; }
+.mk .w-band-paper { background: #F5F0EA; }
+.mk .w-band-mist { background: #EEF2F6; }
+.mk .w-tile { border-radius: 20px; overflow: hidden; }
+.mk .w-tile-blush { background: #F6E8EC; }
+.mk .w-tile-navy { background: #163352; }
+.mk .w-tile-cream { background: #EFE8DF; }
+.mk .w-tile-mist { background: #E8EEF3; }
+.mk .w-tile-card { background: #FFFCF8; box-shadow: inset 0 0 0 1px #E4DDD4; }
+.mk .w-shot-float { border-radius: 12px; box-shadow: 0 18px 40px -18px rgba(10,20,36,.45), 0 0 0 1px rgba(10,20,36,.08); background: #fff; overflow: hidden; }
+.mk .w-h-xl { font-size: clamp(2.5rem, 5.4vw, 4.25rem); line-height: 1.04; letter-spacing: -0.02em; }
+.mk .w-h-lg { font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.08; letter-spacing: -0.015em; }
+.mk .w-btn-lg { padding: .8rem 1.3rem; font-size: 1rem; border-radius: 6px; }
+@media (prefers-reduced-motion: no-preference) {
+  .mk .w-rise { animation: w-rise .6s ease-out both; }
+  .mk .w-rise-2 { animation: w-rise .6s .12s ease-out both; }
+  .mk .w-rise-3 { animation: w-rise .6s .24s ease-out both; }
+  @keyframes w-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+}

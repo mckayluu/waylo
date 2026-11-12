@@ -8,13 +8,13 @@ Site: https://waylo-j5hv.onrender.com · Help and support: https://waylo-j5hv.on
 - Answers come from crawled public pages (sitemap first, plus linked PDF and .docx files) and facts the customer adds. Every answer cites sources.
 - When content doesn't cover a question, Waylo says so and offers the contact form.
 - Buying-intent signals: pricing, integration, security, and demo interest.
-- Integrations (Starter and up): Slack incoming webhook and a JSON outbound webhook. Route it to HubSpot, Salesforce, and others with Zapier, Make, or your own endpoint. No native CRM apps.
-- Install: `<script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="YOUR_SITE" async></script>` before </body>. Works with Webflow, WordPress, Shopify, Squarespace, Wix, Google Tag Manager.
-- Embed modes: launcher (default), sidebar, track (analytics only).
+- Integrations (every plan, Trial included): Slack incoming webhook and a JSON outbound webhook. Route it to HubSpot, Salesforce, and others with Zapier, Make, or your own endpoint. No native CRM apps.
+- Install: `<script src="https://waylo-j5hv.onrender.com/waylo.js" data-site="YOUR_SITE" async></script>` before </body>. Works anywhere you can add a script tag, with guides for Webflow, WordPress, Shopify, Squarespace, Wix and Google Tag Manager.
+- Embed modes: launcher (default), sidebar, and data-mode="track" for analytics without the chat.
 - Try without signing up: https://waylo-j5hv.onrender.com/try reads up to 20 pages of your site and answers up to 12 questions. It carries over into a Trial when you sign up.
 - Re-crawl: automatic every 3 days on the Trial and daily on paid plans, plus a manual Re-crawl button.
 - Team: invite your whole team as Owner, Editor, or Viewer.
-- Pricing: Trial $0 (1 site, 500 AI messages, 100 pages); Starter $79/mo (3,000 messages a month, 500 pages, Slack and webhooks); Growth $249/mo (3 sites, 15,000 messages a month, 2,000 pages, Audiences). No overage fees. At the limit the chat pauses and shows the contact form.
+- Pricing: Trial $0 (1 site, 500 AI messages, 100 pages); Starter $79/mo (1 site, 3,000 messages a month, 500 pages); Growth $249/mo (3 sites, 15,000 messages a month, 2,000 pages). Every feature, including Slack and CRM webhooks, Guidance, roles and Audiences, is on every plan. Plans differ only in messages, pages and sites. No overage fees. At the limit the chat pauses and shows the contact form.
 - AI model: OpenAI API (gpt-4o-mini by default).
 - Public /demo (https://waylo-j5hv.onrender.com/demo) is a fictional field-service company, Northpoint Ops. Its chat answers from that site’s pages.
 - Subprocessors: Supabase (database), Render (hosting), OpenAI (AI answers), Stripe (billing), Resend (email).

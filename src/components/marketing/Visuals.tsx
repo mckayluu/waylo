@@ -18,7 +18,7 @@ function Frame({ title, children }: { title: string; children: React.ReactNode }
 export function ChatVisual() {
   return <Frame title="yoursite.com/pricing · Waylo chat">
     <div className="ml-auto w-fit max-w-[85%] rounded-md rounded-br-sm bg-navy-700 px-3 py-2 text-white">Does the Starter plan include CRM webhooks?</div>
-    <div className="mt-3 max-w-[92%] rounded-md rounded-bl-sm bg-warm-100 px-3 py-2 text-warm-800">Yes. Starter ($79/mo) includes Slack and CRM webhooks plus contact and demo handoff.<sup className="ml-0.5 font-semibold text-navy-700">1</sup></div>
+    <div className="mt-3 max-w-[92%] rounded-md rounded-bl-sm bg-warm-100 px-3 py-2 text-warm-800">Yes. Every plan includes Slack and CRM webhooks plus contact and demo handoff, the Trial too.<sup className="ml-0.5 font-semibold text-navy-700">1</sup></div>
     <div className="mt-2 flex flex-wrap gap-1.5"><Chip t="indigo">1 · Pricing</Chip><Chip t="indigo">2 · Integrations</Chip></div>
     <div className="mt-4 flex items-center justify-between rounded-md border border-rasp-200 bg-rasp-50 px-3 py-2 text-xs text-rasp-900"><span>Signal: <b>pricing</b> + <b>integration</b></span><span className="font-semibold">Hot lead</span></div>
   </Frame>;
@@ -73,19 +73,19 @@ export function WorkflowStrip() {
     ["indigo", "Crawl", "Paste your domain", "Waylo reads your public pages in the background. You don’t upload a sitemap."],
     ["teal", "Answer", "Cited replies", "Visitors get answers from your pages, with links they can check."],
     ["amber", "Signal", "Intent and journey", "Questions about pricing, security, integrations, and demos are flagged as they happen."],
-    ["indigo", "Hand off", "Slack and webhook", "On Starter and up, contact and demo requests post to Slack with signals and a link to the conversation."],
+    ["indigo", "Hand off", "Slack and webhook", "Contact and demo requests post to Slack with signals and a link to the conversation."],
   ];
   return <ol className="grid gap-3 md:grid-cols-4">{steps.map(([t, k, h, d], i) => <li key={k} className="w-card-lg relative p-5">
     <div className="flex items-center gap-3"><IconTile t={t}>{i + 1}</IconTile><div><p className="text-[11px] font-semibold uppercase tracking-wider text-warm-500">{k}</p><h3 className="font-semibold text-warm-900">{h}</h3></div></div>
     <p className="mt-3 text-sm leading-6 text-warm-600">{d}</p>{i < 3 && <span aria-hidden className="absolute -right-2.5 top-1/2 hidden h-5 w-5 -translate-y-1/2 place-items-center rounded-full bg-white text-xs text-warm-400 ring-1 ring-warm-200 md:grid">→</span>}</li>)}</ol>;
 }
 export function ProofBar() {
-  const facts: [Tone, string, string][] = [["teal", "1 script tag", "to install on any site"], ["indigo", "Every reply", "links its source pages"], ["amber", "Buying signals", "on every conversation"], ["teal", "Slack and CRM", "alerts on Starter and up"]];
+  const facts: [Tone, string, string][] = [["teal", "1 script tag", "to install on any site"], ["indigo", "Every reply", "links its source pages"], ["amber", "Buying signals", "on every conversation"], ["teal", "Slack and CRM", "alerts on every plan"]];
   return <div className="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-warm-200 ring-1 ring-warm-200 md:grid-cols-4">{facts.map(([t, a, b]) => <div key={a} className="bg-white px-5 py-4"><p className={`text-lg font-semibold ${t === "amber" ? "text-rasp-700" : t === "indigo" ? "text-navy-700" : "text-navy-700"}`}>{a}</p><p className="text-sm text-warm-600">{b}</p></div>)}</div>;
 }
 export const PHOTOS = {
   support: { src: "/marketing/support.webp", alt: "Team reviewing website conversations on laptops", tag: "Support deflection", t: "teal" as Tone, caption: "Waylo answers the repeat pre-sales questions from your docs, with sources. Your team takes the hard ones." },
-  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps see a Slack post about a lead who asked about pricing, with a link to the conversation." },
+  meeting: { src: "/marketing/meeting.webp", alt: "Sales team meeting around a table", tag: "Sales handoff", t: "amber" as Tone, caption: "Reps see a Slack post when a visitor looks ready to buy or leaves their details, with a link to the conversation." },
   dashboard: { src: "/marketing/dashboard.webp", alt: "Analytics dashboard on a laptop screen", tag: "Signals", t: "indigo" as Tone, caption: "Journeys and signals show which pages lead to buying questions." },
   workshop: { src: "/marketing/workshop.webp", alt: "Marketing team collaborating at a whiteboard", tag: "Guidance", t: "teal" as Tone, caption: "Marketing owns the voice. Facts, rules, and skills keep answers in your words." },
 };

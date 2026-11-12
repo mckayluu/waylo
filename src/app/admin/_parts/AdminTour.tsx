@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 const KEY = "waylo_tour_v1";
 const STEPS: { sel: string; title: string; body: string }[] = [
   { sel: 'a[href="/admin"]', title: "Home: your setup checklist", body: "Six steps from URL to live. Each one turns green on its own as you finish it, including a real install check on your domain." },
-  { sel: 'aside a[href="/admin/content"]', title: "Content: what your bot knows", body: "Waylo reads your sitemap and pages (PDFs too). Re-crawls run automatically on paid plans; you can crawl again any time." },
+  { sel: 'aside a[href="/admin/content"]', title: "Content: what your bot knows", body: "Waylo reads your sitemap and pages (PDFs too). Re-crawls run automatically every 3 days on the Trial, daily on paid plans; you can crawl again any time." },
   { sel: 'aside a[href="/admin/guidance"]', title: "Guidance: how it answers", body: "Add facts, rules and skills, like “never quote custom pricing” or “send security questions to the trust page”." },
   { sel: 'aside a[href="/admin/questions"]', title: "Questions: what visitors ask", body: "Every question with the answer and its sources. Thumbs-down and “not covered” answers show you what to write next." },
   { sel: 'aside a[href="/admin/tracking"]', title: "Tracking: who's ready to buy", body: "Page journeys, traffic source, time on page and scroll depth, scored High / Medium / Low so you know who to follow up with." },

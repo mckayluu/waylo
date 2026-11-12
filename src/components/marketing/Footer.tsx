@@ -10,9 +10,9 @@ export function Footer() {
   return (
     <footer className="relative bg-navy-900 text-cream"><div className="w-accent-line" />
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-5">
-        <div><Wordmark invert /><p className="mt-3 text-sm text-cream">AI website chat with cited answers, intent signals, and lead handoff to Slack and your CRM.</p></div>
+        <div><Wordmark invert /><p className="mt-3 text-sm text-cream">AI chat for your website. Every answer links the page it came from.</p></div>
         {cols.map(([h, links]) => (
-          <div key={h}><p className="text-xs font-semibold uppercase tracking-wider text-warm-400">{h}</p>
+          <div key={h}><p className="font-plex text-[11px] font-medium uppercase tracking-[0.09em] text-warm-400">{h}</p>
             <ul className="mt-3 space-y-2 text-sm">{links.map(([l, href]) => <li key={l}><Link href={href} className="text-cream hover:text-white hover:underline">{l}</Link></li>)}</ul></div>
         ))}
       </div>
